@@ -1,0 +1,32 @@
+{
+    "name": "raytracing",
+    "version": "1.0.0",
+    "dependencies": [
+        {
+            "name": "assimp"
+        },
+        {
+            "name": "glad"
+        },
+        {
+            "name": "glfw3"
+        },
+        {
+            "name": "glm"
+        },
+        {
+            "name": "imgui",
+            "features": [
+              "docking-experimental",
+              "glfw-binding",
+              "opengl3-binding"
+            ]
+        },
+        {
+            "name": "opengl"
+        },
+        {
+            "name": "stb"
+        }
+    ]
+}
