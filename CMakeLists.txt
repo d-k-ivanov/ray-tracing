@@ -26,56 +26,56 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 endif()
 
 set(SOURCE_FILES
-    ## Main
-    src/main.cpp
+    Source/Main.cpp
 
-    # src/SomeSourceFile.cpp
-    # src/SomeHeaderFile.h
+    Source/Math/Constants.h
+    Source/Math/Converters.h
+    Source/Math/Vector3.h
 
-    ## Shaders
-    # resources/shaders/SomeFragmentShader.frag
-    # resources/shaders/VertexShader.vert
+    Source/UI/Application.cpp
+    Source/UI/Application.h
+    Source/UI/Layers.h
+
+    Source/Utils/Filesystem.cpp
+    Source/Utils/Filesystem.h
+    Source/Utils/Random.h
+    Source/Utils/Timers.h
 )
-source_group("Sources" SOURCE_FILES REGULAR_EXPRESSION ".*\\.(h|cpp)")
-source_group("Shaders" SOURCE_FILES REGULAR_EXPRESSION ".*\\.(glsl|frag|vert)")
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES})
 
-find_package(assimp REQUIRED)
-find_package(glad REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(imgui REQUIRED)
-find_package(OpenGL REQUIRED)
 find_package(Stb REQUIRED)
+find_package(Vulkan REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(
     ${PROJECT_NAME}
-        assimp::assimp
-        glad::glad
         glfw
         imgui::imgui
-        OpenGL::GL
+        Vulkan::Vulkan
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE "Source" ${Stb_INCLUDE_DIR})
 
-if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/dummy")
-    message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/dummy\" exists, remove it!")
+if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy")
+    message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy\" exists, remove it!")
 endif()
 
 add_custom_target(
     always_run_target ALL
     DEPENDS
-        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/dummy" # fake! ensure we run!
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy" # fake! ensure we run!
 )
 
 add_custom_command(
     OUTPUT
-        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/dummy" # fake! ensure we run!
-        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/resources"
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy" # fake! ensure we run!
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/resources"
-        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/resources"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
 )
 
 if(MSVC)

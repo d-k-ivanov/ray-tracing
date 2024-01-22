@@ -3,12 +3,6 @@
     "version": "1.0.0",
     "dependencies": [
         {
-            "name": "assimp"
-        },
-        {
-            "name": "glad"
-        },
-        {
             "name": "glfw3"
         },
         {
@@ -19,14 +13,17 @@
             "features": [
               "docking-experimental",
               "glfw-binding",
-              "opengl3-binding"
+              "vulkan-binding"
             ]
         },
         {
-            "name": "opengl"
+            "name": "spdlog"
         },
         {
             "name": "stb"
+        },
+        {
+            "name": "vulkan"
         }
     ]
 }
