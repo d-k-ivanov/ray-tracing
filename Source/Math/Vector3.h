@@ -39,8 +39,8 @@ public:
     Vector3 operator-(const Vector3& other) const
     {
         return {e[0] - other.e[0],
-            e[1] - other.e[1],
-            e[2] - other.e[2]};
+                e[1] - other.e[1],
+                e[2] - other.e[2]};
     }
 
     void operator-=(const Vector3& other)
@@ -124,8 +124,8 @@ inline std::ostream& operator<<(std::ostream& out, const Vector3& v)
 inline Vector3 operator+(const Vector3& u, const Vector3& v)
 {
     return {u.e[0] + v.e[0],
-        u.e[1] + v.e[1],
-        u.e[2] + v.e[2]};
+            u.e[1] + v.e[1],
+            u.e[2] + v.e[2]};
 }
 
 // inline Vector3 operator-(const Vector3 &u, const Vector3 &v)
@@ -138,15 +138,15 @@ inline Vector3 operator+(const Vector3& u, const Vector3& v)
 inline Vector3 operator*(const Vector3& u, const Vector3& v)
 {
     return {u.e[0] * v.e[0],
-        u.e[1] * v.e[1],
-        u.e[2] * v.e[2]};
+            u.e[1] * v.e[1],
+            u.e[2] * v.e[2]};
 }
 
 inline Vector3 operator*(const double t, const Vector3& v)
 {
     return {t * v.e[0],
-        t * v.e[1],
-        t * v.e[2]};
+            t * v.e[1],
+            t * v.e[2]};
 }
 
 inline Vector3 operator*(const Vector3& v, double t)
@@ -167,8 +167,8 @@ inline double Dot(const Vector3& u, const Vector3& v)
 inline Vector3 Cross(const Vector3& u, const Vector3& v)
 {
     return {u.e[1] * v.e[2] - u.e[2] * v.e[1],
-        u.e[2] * v.e[0] - u.e[0] * v.e[2],
-        u.e[0] * v.e[1] - u.e[1] * v.e[0]};
+            u.e[2] * v.e[0] - u.e[0] * v.e[2],
+            u.e[0] * v.e[1] - u.e[1] * v.e[0]};
 }
 
 inline Vector3 UnitVector(const Vector3& v)
@@ -205,16 +205,16 @@ inline Vector3 RandomUnitVector()
     return UnitVector(RandomInUnitSphere());
 }
 
-inline Vector3 random_on_hemisphere(const Vector3& normal)
+inline Vector3 RandomOnHemisphere(const Vector3& normal)
 {
-    const Vector3 on_unit_sphere = RandomUnitVector();
-    if(Dot(on_unit_sphere, normal) > 0.0)    // In the same hemisphere as the normal
+    const Vector3 onUnitSphere = RandomUnitVector();
+    if(Dot(onUnitSphere, normal) > 0.0)    // In the same hemisphere as the normal
     {
-        return on_unit_sphere;
+        return onUnitSphere;
     }
     else
     {
-        return -on_unit_sphere;
+        return -onUnitSphere;
     }
 }
 
@@ -223,10 +223,10 @@ inline Vector3 Reflect(const Vector3& v, const Vector3& n)
     return v - 2 * Dot(v, n) * n;
 }
 
-inline Vector3 Refract(const Vector3& uv, const Vector3& n, double etai_over_etat)
+inline Vector3 Refract(const Vector3& uv, const Vector3& n, const double etaIOverEtaT)
 {
     const auto    cosTheta     = fmin(Dot(-uv, n), 1.0);
-    const Vector3 rOutPerp     = etai_over_etat * (uv + cosTheta * n);
+    const Vector3 rOutPerp     = etaIOverEtaT * (uv + cosTheta * n);
     const Vector3 rOutParallel = -sqrt(fabs(1.0 - rOutPerp.LengthSquared())) * n;
     return rOutPerp + rOutParallel;
 }

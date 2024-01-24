@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Math/Vector3.h>
-
 #include <random>
 
 class Random
@@ -39,11 +37,6 @@ public:
     static double Double(const double min, const double max)
     {
         return min + (max - min) * Double();
-    }
-
-    static Vector3 Vector3()
-    {
-        return {Double(), Double(), Double()};
     }
 
     // Returns a random integer in [min,max].

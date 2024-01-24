@@ -1,30 +1,11 @@
-# RayTracer
+# Ray Tracer
 
 Ray-Tracing Framework and Visualizer.
 
-## Compilation: Linux
+This work heavily inspired by:
 
-- [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Install VCPKG](https://vcpkg.io/en/getting-started.html)
-- Add VCPKG folder to PATH:
-  - Option 1: Temporary local environment
-
-    ```bash
-    # Assuming that VCPKG cloned and bootstrapped in ~/vcpkg
-    export PATH="~/vcpkg;${PATH}"
-    ```
-
-  - Option 2: Local environment and Bash profile
-
-    ```bash
-    # Assuming that VCPKG cloned and bootstrapped in c:\src\vcpkg
-    export PATH="~/vcpkg;${PATH}"
-    echo 'export PATH="~/vcpkg;${PATH}"' >> ~/.bashrc
-    ```
-
-  - **Important Note:** the VCPKG requests installation of additional packages
-- Navigate to the folder with the YOUR_FANCY_PROJECT_NAME App
-- Run `build.sh`
+- [Yan Chernikov](http://www.youtube.com/@TheCherno) and his [Walnut Application](https://github.com/StudioCherno/Walnut)
+- [Peter Shirley](https://www.petershirley.com/) and [Ray Tracing in One Weekend series](https://raytracing.github.io/)
 
 ## Compilation: Windows
 
@@ -49,7 +30,29 @@ Ray-Tracing Framework and Visualizer.
     Set-Item -Path Env:PATH -Value "c:\src\vcpkg;${PATH}"
     ```
 
-  - Option 3: Manualy in *System Properties* --> *Environment Variables*
-- Navigate to the folder with the YOUR_FANCY_PROJECT_NAME App
+  - Option 3: Manually in *System Properties* → *Environment Variables*
 - Run `build.bat`
-- Open `build\YOUR_FANCY_PROJECT_NAME.sln` in Visual Studio to work with the source code
+- Open `build\ray-tracing.sln` in Visual Studio to work with the source code
+
+## Compilation: Linux
+
+- [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Install VCPKG](https://vcpkg.io/en/getting-started.html)
+- Add VCPKG folder to PATH:
+  - Option 1: Temporary local environment
+
+    ```bash
+    # Assuming that VCPKG cloned and bootstrapped in ~/vcpkg
+    export PATH="~/vcpkg;${PATH}"
+    ```
+
+  - Option 2: Local environment and Bash profile
+
+    ```bash
+    # Assuming that VCPKG cloned and bootstrapped in c:\src\vcpkg
+    export PATH="~/vcpkg;${PATH}"
+    echo 'export PATH="~/vcpkg;${PATH}"' >> ~/.bashrc
+    ```
+
+  - **Important Note:** the VCPKG requests installation of additional packages
+- Run `build.sh`
