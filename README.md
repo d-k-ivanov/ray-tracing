@@ -11,6 +11,7 @@ This work heavily inspired by:
 
 - [Install Visual Studio](https://visualstudio.microsoft.com/downloads/)
 - [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Install Vulkan SDK](https://vulkan.lunarg.com/sdk/home)
 - [Install VCPKG](https://vcpkg.io/en/getting-started.html)
 - Add VCPKG folder to PATH:
   - Option 1: Command Line tools
@@ -37,6 +38,7 @@ This work heavily inspired by:
 ## Compilation: Linux
 
 - [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Install Vulkan SDK](https://vulkan.lunarg.com/sdk/home)
 - [Install VCPKG](https://vcpkg.io/en/getting-started.html)
 - Add VCPKG folder to PATH:
   - Option 1: Temporary local environment
