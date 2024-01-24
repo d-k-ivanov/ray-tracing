@@ -9,7 +9,7 @@
 
 #include "Utils/VulkanException.h"
 
-namespace
+namespace Impl
 {
 
 uint32_t GetVulkanMemoryType(const VkMemoryPropertyFlags properties, const uint32_t typeBits)
@@ -75,7 +75,7 @@ Image::Image(const std::string_view path)
     m_Width  = width;
     m_Height = height;
 
-    AllocateMemory(static_cast<int64_t>(m_Width) * m_Height * BytesPerPixel(m_Format));
+    AllocateMemory(static_cast<int64_t>(m_Width) * m_Height * Impl::BytesPerPixel(m_Format));
     SetData(data);
     stbi_image_free(data);
 }
@@ -85,7 +85,7 @@ Image::Image(const uint32_t width, const uint32_t height, const ImageFormat form
     , m_Height(height)
     , m_Format(format)
 {
-    AllocateMemory(static_cast<int64_t>(m_Width) * m_Height * BytesPerPixel(m_Format));
+    AllocateMemory(static_cast<int64_t>(m_Width) * m_Height * Impl::BytesPerPixel(m_Format));
     if(data)
         SetData(data);
 }
@@ -98,7 +98,7 @@ Image::~Image()
 void Image::AllocateMemory([[maybe_unused]] uint64_t size)
 {
     VkDevice device       = Application::GetDevice();
-    VkFormat vulkanFormat = FormatToVulkanFormat(m_Format);
+    VkFormat vulkanFormat = Impl::FormatToVulkanFormat(m_Format);
 
     // Create the Image
     {
@@ -122,7 +122,7 @@ void Image::AllocateMemory([[maybe_unused]] uint64_t size)
         VkMemoryAllocateInfo allocInfo = {};
         allocInfo.sType                = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize       = req.size;
-        allocInfo.memoryTypeIndex      = GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits);
+        allocInfo.memoryTypeIndex      = Impl::GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits);
         VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &m_Memory));
         VK_CHECK(vkBindImageMemory(device, m_Image, m_Memory, 0));
     }
@@ -190,7 +190,7 @@ void Image::Release()
 void Image::SetData(const void* data)
 {
     VkDevice device     = Application::GetDevice();
-    size_t   uploadSize = static_cast<size_t>(m_Width) * m_Height * BytesPerPixel(m_Format);
+    size_t   uploadSize = static_cast<size_t>(m_Width) * m_Height * Impl::BytesPerPixel(m_Format);
 
     if(!m_StagingBuffer)
     {
@@ -208,7 +208,7 @@ void Image::SetData(const void* data)
             VkMemoryAllocateInfo allocInfo = {};
             allocInfo.sType                = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
             allocInfo.allocationSize       = req.size;
-            allocInfo.memoryTypeIndex      = GetVulkanMemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits);
+            allocInfo.memoryTypeIndex      = Impl::GetVulkanMemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits);
             VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &m_StagingBufferMemory));
             VK_CHECK(vkBindBufferMemory(device, m_StagingBuffer, m_StagingBufferMemory, 0));
         }
@@ -279,7 +279,7 @@ void Image::Resize(const uint32_t width, const uint32_t height)
     m_Height = height;
 
     Release();
-    AllocateMemory(static_cast<uint64_t>(m_Width) * m_Height * BytesPerPixel(m_Format));
+    AllocateMemory(static_cast<uint64_t>(m_Width) * m_Height * Impl::BytesPerPixel(m_Format));
 }
 
 void* Image::Decode(const void* buffer, const uint64_t length, uint32_t& outWidth, uint32_t& outHeight)

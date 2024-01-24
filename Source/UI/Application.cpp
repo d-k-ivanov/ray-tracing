@@ -31,8 +31,9 @@ extern bool g_ApplicationRunning;
 #ifdef _DEBUG
 #define IMGUI_VULKAN_DEBUG_REPORT
 #endif
-namespace
+namespace Impl
 {
+
 VkAllocationCallbacks*   g_Allocator      = nullptr;
 VkInstance               g_Instance       = VK_NULL_HANDLE;
 VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
@@ -429,30 +430,30 @@ void VkCheckResultCallback(const VkResult result)
         abort();
 }
 
-}    // namespace
+}    // namespace Impl
 
 Application::Application(ApplicationSpecs specification)
     : m_Specification(std::move(specification))
 {
-    g_AppInstance = this;
+    Impl::g_AppInstance = this;
     Init();
 }
 
 Application::~Application()
 {
     Shutdown();
-    g_AppInstance = nullptr;
+    Impl::g_AppInstance = nullptr;
 }
 
 Application& Application::Get()
 {
-    return *g_AppInstance;
+    return *Impl::g_AppInstance;
 }
 
 void Application::Init()
 {
     // Setup GLFW window
-    glfwSetErrorCallback(GLFWErrorCallback);
+    glfwSetErrorCallback(Impl::GLFWErrorCallback);
     if(glfwInit() != GLFW_TRUE)
     {
         std::cerr << "Could not initalize GLFW!\n";
@@ -474,20 +475,20 @@ void Application::Init()
     const char**          glfwExtensions  = glfwGetRequiredInstanceExtensions(&extensionsCount);
     for(uint32_t i = 0; i < extensionsCount; i++)
         extensions.push_back(glfwExtensions[i]);
-    SetupVulkan(extensions);
+    Impl::SetupVulkan(extensions);
 
     // Create Window Surface
     VkSurfaceKHR surface;
-    VK_CHECK(glfwCreateWindowSurface(g_Instance, m_WindowHandle, g_Allocator, &surface));
+    VK_CHECK(glfwCreateWindowSurface(Impl::g_Instance, m_WindowHandle, Impl::g_Allocator, &surface));
 
     // Create Framebuffers
     int w, h;
     glfwGetFramebufferSize(m_WindowHandle, &w, &h);
-    ImGui_ImplVulkanH_Window* wd = &g_MainWindowData;
-    SetupVulkanWindow(wd, surface, w, h);
+    ImGui_ImplVulkanH_Window* wd = &Impl::g_MainWindowData;
+    Impl::SetupVulkanWindow(wd, surface, w, h);
 
-    g_AllocatedCommandBuffers.resize(wd->ImageCount);
-    g_ResourceFreeQueue.resize(wd->ImageCount);
+    Impl::g_AllocatedCommandBuffers.resize(wd->ImageCount);
+    Impl::g_ResourceFreeQueue.resize(wd->ImageCount);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -524,19 +525,19 @@ void Application::Init()
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForVulkan(m_WindowHandle, true);
     ImGui_ImplVulkan_InitInfo initInfo = {};
-    initInfo.Instance                  = g_Instance;
-    initInfo.PhysicalDevice            = g_PhysicalDevice;
-    initInfo.Device                    = g_Device;
-    initInfo.QueueFamily               = g_QueueFamily;
-    initInfo.Queue                     = g_Queue;
-    initInfo.PipelineCache             = g_PipelineCache;
-    initInfo.DescriptorPool            = g_DescriptorPool;
+    initInfo.Instance                  = Impl::g_Instance;
+    initInfo.PhysicalDevice            = Impl::g_PhysicalDevice;
+    initInfo.Device                    = Impl::g_Device;
+    initInfo.QueueFamily               = Impl::g_QueueFamily;
+    initInfo.Queue                     = Impl::g_Queue;
+    initInfo.PipelineCache             = Impl::g_PipelineCache;
+    initInfo.DescriptorPool            = Impl::g_DescriptorPool;
     initInfo.Subpass                   = 0;
-    initInfo.MinImageCount             = g_MinImageCount;
+    initInfo.MinImageCount             = Impl::g_MinImageCount;
     initInfo.ImageCount                = wd->ImageCount;
     initInfo.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
-    initInfo.Allocator                 = g_Allocator;
-    initInfo.CheckVkResultFn           = VkCheckResultCallback;
+    initInfo.Allocator                 = Impl::g_Allocator;
+    initInfo.CheckVkResultFn           = Impl::VkCheckResultCallback;
     ImGui_ImplVulkan_Init(&initInfo, wd->RenderPass);
 
     ImFontConfig fontConfig;
@@ -552,7 +553,7 @@ void Application::Init()
         VkCommandPool   commandPool   = wd->Frames[wd->FrameIndex].CommandPool;
         VkCommandBuffer commandBuffer = wd->Frames[wd->FrameIndex].CommandBuffer;
 
-        VK_CHECK(vkResetCommandPool(g_Device, commandPool, 0));
+        VK_CHECK(vkResetCommandPool(Impl::g_Device, commandPool, 0));
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -566,8 +567,8 @@ void Application::Init()
         endInfo.commandBufferCount = 1;
         endInfo.pCommandBuffers    = &commandBuffer;
         VK_CHECK(vkEndCommandBuffer(commandBuffer));
-        VK_CHECK(vkQueueSubmit(g_Queue, 1, &endInfo, VK_NULL_HANDLE));
-        VK_CHECK(vkDeviceWaitIdle(g_Device));
+        VK_CHECK(vkQueueSubmit(Impl::g_Queue, 1, &endInfo, VK_NULL_HANDLE));
+        VK_CHECK(vkDeviceWaitIdle(Impl::g_Device));
     }
 }
 
@@ -579,22 +580,22 @@ void Application::Shutdown()
     m_LayerStack.clear();
 
     // Cleanup
-    VK_CHECK(vkDeviceWaitIdle(g_Device));
+    VK_CHECK(vkDeviceWaitIdle(Impl::g_Device));
 
     // Free resources in queue
-    for(auto& queue : g_ResourceFreeQueue)
+    for(auto& queue : Impl::g_ResourceFreeQueue)
     {
         for(auto& func : queue)
             func();
     }
-    g_ResourceFreeQueue.clear();
+    Impl::g_ResourceFreeQueue.clear();
 
     ImGui_ImplVulkan_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    CleanupVulkanWindow();
-    CleanupVulkan();
+    Impl::CleanupVulkanWindow();
+    Impl::CleanupVulkan();
 
     glfwDestroyWindow(m_WindowHandle);
     glfwTerminate();
@@ -606,7 +607,7 @@ void Application::Run()
 {
     m_Running = true;
 
-    ImGui_ImplVulkanH_Window* window     = &g_MainWindowData;
+    ImGui_ImplVulkanH_Window* window     = &Impl::g_MainWindowData;
     constexpr ImVec4          clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     const ImGuiIO&            io         = ImGui::GetIO();
 
@@ -624,21 +625,21 @@ void Application::Run()
             layer->OnUpdate(m_TimeStep);
 
         // Resize swap chain?
-        if(g_SwapChainRebuild)
+        if(Impl::g_SwapChainRebuild)
         {
             int width, height;
             glfwGetFramebufferSize(m_WindowHandle, &width, &height);
             if(width > 0 && height > 0)
             {
-                ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
-                ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &g_MainWindowData, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
-                g_MainWindowData.FrameIndex = 0;
+                ImGui_ImplVulkan_SetMinImageCount(Impl::g_MinImageCount);
+                ImGui_ImplVulkanH_CreateOrResizeWindow(Impl::g_Instance, Impl::g_PhysicalDevice, Impl::g_Device, &Impl::g_MainWindowData, Impl::g_QueueFamily, Impl::g_Allocator, width, height, Impl::g_MinImageCount);
+                Impl::g_MainWindowData.FrameIndex = 0;
 
                 // Clear allocated command buffers from here since entire pool is destroyed
-                g_AllocatedCommandBuffers.clear();
-                g_AllocatedCommandBuffers.resize(g_MainWindowData.ImageCount);
+                Impl::g_AllocatedCommandBuffers.clear();
+                Impl::g_AllocatedCommandBuffers.resize(Impl::g_MainWindowData.ImageCount);
 
-                g_SwapChainRebuild = false;
+                Impl::g_SwapChainRebuild = false;
             }
         }
 
@@ -713,7 +714,7 @@ void Application::Run()
         window->ClearValue.color.float32[2] = clearColor.z * clearColor.w;
         window->ClearValue.color.float32[3] = clearColor.w;
         if(!mainIsMinimized)
-            FrameRender(window, mainDrawData);
+            Impl::FrameRender(window, mainDrawData);
 
         // Update and Render additional Platform Windows
         if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -724,7 +725,7 @@ void Application::Run()
 
         // Present Main Platform Window
         if(!mainIsMinimized)
-            FramePresent(window);
+            Impl::FramePresent(window);
 
         const double time = GetTime();
         m_FrameTime       = time - m_LastFrameTime;
@@ -745,22 +746,22 @@ double Application::GetTime() const
 
 VkInstance Application::GetInstance()
 {
-    return g_Instance;
+    return Impl::g_Instance;
 }
 
 VkPhysicalDevice Application::GetPhysicalDevice()
 {
-    return g_PhysicalDevice;
+    return Impl::g_PhysicalDevice;
 }
 
 VkDevice Application::GetDevice()
 {
-    return g_Device;
+    return Impl::g_Device;
 }
 
 VkCommandBuffer Application::GetCommandBuffer(bool begin)
 {
-    const ImGui_ImplVulkanH_Window* window = &g_MainWindowData;
+    const ImGui_ImplVulkanH_Window* window = &Impl::g_MainWindowData;
 
     // Use any command queue
     const VkCommandPool commandPool = window->Frames[window->FrameIndex].CommandPool;
@@ -771,9 +772,9 @@ VkCommandBuffer Application::GetCommandBuffer(bool begin)
     cmdBufAllocateInfo.level                       = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     cmdBufAllocateInfo.commandBufferCount          = 1;
 
-    VkCommandBuffer& commandBuffer = g_AllocatedCommandBuffers[window->FrameIndex].emplace_back();
+    VkCommandBuffer& commandBuffer = Impl::g_AllocatedCommandBuffers[window->FrameIndex].emplace_back();
 
-    VK_CHECK(vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &commandBuffer));
+    VK_CHECK(vkAllocateCommandBuffers(Impl::g_Device, &cmdBufAllocateInfo, &commandBuffer));
 
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -798,13 +799,13 @@ void Application::FlushCommandBuffer(const VkCommandBuffer commandBuffer)
     fenceCreateInfo.sType             = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceCreateInfo.flags             = 0;
     VkFence fence;
-    VK_CHECK(vkCreateFence(g_Device, &fenceCreateInfo, nullptr, &fence));
-    VK_CHECK(vkQueueSubmit(g_Queue, 1, &endInfo, fence));
-    VK_CHECK(vkWaitForFences(g_Device, 1, &fence, VK_TRUE, defaultFenceTimeout));
-    vkDestroyFence(g_Device, fence, nullptr);
+    VK_CHECK(vkCreateFence(Impl::g_Device, &fenceCreateInfo, nullptr, &fence));
+    VK_CHECK(vkQueueSubmit(Impl::g_Queue, 1, &endInfo, fence));
+    VK_CHECK(vkWaitForFences(Impl::g_Device, 1, &fence, VK_TRUE, defaultFenceTimeout));
+    vkDestroyFence(Impl::g_Device, fence, nullptr);
 }
 
 void Application::SubmitResourceFree(std::function<void()>&& func)
 {
-    g_ResourceFreeQueue[g_CurrentFrameIndex].emplace_back(std::move(func));
+    Impl::g_ResourceFreeQueue[Impl::g_CurrentFrameIndex].emplace_back(std::move(func));
 }
