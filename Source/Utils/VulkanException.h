@@ -1,3 +1,4 @@
+// ReSharper disable CppUnusedIncludeDirective
 #pragma once
 
 #include <Utils/Log.h>
@@ -52,9 +53,9 @@ std::ostream& operator<<(std::ostream& out, VkResult result);
 
 struct CodeLocation
 {
-    const char* function;
-    const char* file;
-    uint32_t    line;
+    const char* FunctionName;
+    const char* FileName;
+    uint32_t    LineNumber;
 };
 
 std::ostream& operator<<(std::ostream& out, const CodeLocation& loc);

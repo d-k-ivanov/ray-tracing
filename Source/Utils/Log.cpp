@@ -5,7 +5,6 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-
 std::shared_ptr<spdlog::logger> Log::s_Logger;
 
 void Log::Init()

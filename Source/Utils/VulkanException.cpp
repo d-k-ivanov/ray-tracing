@@ -70,7 +70,7 @@ std::ostream& operator<<(std::ostream& out, const VkResult result)
 
 std::ostream& operator<<(std::ostream& out, const CodeLocation& loc)
 {
-    out << loc.function << " at " << loc.file << ":" << loc.line;
+    out << loc.FunctionName << " at " << loc.FileName << ":" << loc.LineNumber;
     return out;
 }
 

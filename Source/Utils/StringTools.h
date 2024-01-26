@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -62,7 +61,7 @@ inline std::ostream& GetString(std::ostream& ss, const T& t, const Args&... args
 template <typename... Args>
 struct StringWrapper final
 {
-    static std::string call(const Args&... args)
+    static std::string Call(const Args&... args)
     {
         std::ostringstream ss;
         GetString(ss, args...);
@@ -73,7 +72,7 @@ struct StringWrapper final
 template <>
 struct StringWrapper<> final
 {
-    static EmptyString call()
+    static EmptyString Call()
     {
         return {};
     }
@@ -84,5 +83,5 @@ struct StringWrapper<> final
 template <typename... Args>
 inline std::string ConcatenateStrings(const Args&... args)
 {
-    return Impl::StringWrapper<typename Impl::CanonicalizeStrTypes<Args>::StringType...>::call(args...);
+    return Impl::StringWrapper<typename Impl::CanonicalizeStrTypes<Args>::StringType...>::Call(args...);
 }

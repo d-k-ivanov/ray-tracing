@@ -30,7 +30,20 @@ set(SOURCE_FILES
 
     Source/Math/Constants.h
     Source/Math/Converters.h
+    Source/Math/Interval.h
     Source/Math/Vector3.h
+
+    Source/Render/Camera.h
+    Source/Render/Color.h
+    Source/Render/Hittable.h
+    Source/Render/HittableList.h
+    Source/Render/Material.h
+    Source/Render/Ray.h
+    Source/Render/Renderer.cpp
+    Source/Render/Renderer.h
+    Source/Render/Scene.cpp
+    Source/Render/Scene.h
+    Source/Render/Sphere.h
 
     Source/UI/Application.cpp
     Source/UI/Application.h

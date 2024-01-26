@@ -53,7 +53,7 @@ VkFormat FormatToVulkanFormat(const ImageFormat format)
     return static_cast<VkFormat>(0);
 }
 
-}    // namespace
+}    // namespace Impl
 
 Image::Image(const std::string_view path)
     : m_Filepath(path)

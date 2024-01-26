@@ -17,8 +17,8 @@ std::string ThisExecutableLocation()
     char              rawPathName[MAX_PATH];
     const std::string executablePath = {rawPathName, GetModuleFileNameA(nullptr, rawPathName, MAX_PATH)};
 #else
-    char  rawPathName[PATH_MAX];
-    char* res = realpath("/proc/self/exe", rawPathName);
+    char        rawPathName[PATH_MAX];
+    const char* res = realpath("/proc/self/exe", rawPathName);
     if(!res)
     {
         return ".";

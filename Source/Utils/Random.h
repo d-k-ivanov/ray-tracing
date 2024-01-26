@@ -28,8 +28,8 @@ public:
     // Returns a random double in [0,1).
     static double Double()
     {
-        std::random_device randDevice;
-        std::mt19937 generator(randDevice());
+        std::random_device               randDevice;
+        std::mt19937                     generator(randDevice());
         std::uniform_real_distribution<> distribution(0.0, 1.0);
         return distribution(generator);
     }

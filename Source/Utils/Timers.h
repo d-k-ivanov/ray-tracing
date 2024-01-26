@@ -46,5 +46,5 @@ public:
 
 private:
     std::string m_Name;
-    Timer m_Timer;
+    Timer       m_Timer;
 };
