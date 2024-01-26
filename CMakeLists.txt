@@ -41,9 +41,14 @@ set(SOURCE_FILES
     Source/Render/Ray.h
     Source/Render/Renderer.cpp
     Source/Render/Renderer.h
-    Source/Render/Scene.cpp
-    Source/Render/Scene.h
     Source/Render/Sphere.h
+
+    Source/Scenes/Scene.h
+    Source/Scenes/RTWeekOneDefaultScene.cpp
+    Source/Scenes/RTWeekOneFinalScene.cpp
+    Source/Scenes/RTWeekOneScene.cpp
+    Source/Scenes/RTWeekNextDefaultScene.cpp
+    Source/Scenes/RTWeekNextScene.cpp
 
     Source/UI/Application.cpp
     Source/UI/Application.h

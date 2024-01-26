@@ -32,7 +32,7 @@ public:
         {
             scatterDirection = rec.Normal;
         }
-        scattered   = Ray(rec.P, scatterDirection);
+        scattered   = Ray(rec.P, scatterDirection, rIn.Time());
         attenuation = m_Albedo;
         return true;
     }
@@ -53,7 +53,7 @@ public:
     bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const override
     {
         const Vector3 reflected = Reflect(UnitVector(rIn.Direction()), rec.Normal);
-        scattered               = Ray(rec.P, reflected + m_Fuzz * RandomUnitVector());
+        scattered               = Ray(rec.P, reflected + m_Fuzz * RandomUnitVector(), rIn.Time());
         attenuation             = m_Albedo;
         return (DotProduct(scattered.Direction(), rec.Normal) > 0);
     }
@@ -93,7 +93,7 @@ public:
             direction = Refract(unitDirection, rec.Normal, refractionRatio);
         }
 
-        scattered = Ray(rec.P, direction);
+        scattered = Ray(rec.P, direction, rIn.Time());
 
         return true;
     }

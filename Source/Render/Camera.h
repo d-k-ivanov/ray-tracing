@@ -23,6 +23,7 @@ public:
     double  DefocusAngle    = 0;                   // Variation angle of rays through each pixel
     double  FocusDist       = 10;                  // Distance from camera lookfrom point to plane of perfect focus
 
+    // TODO: Original Renderer, Need to move my custom rendering functions here.
     void Render(const Hittable& world)
     {
         Initialize();
@@ -94,8 +95,9 @@ public:
 
         auto       rayOrigin    = (DefocusAngle <= 0) ? m_Center : DefocusDiskSample();
         const auto rayDirection = pixelSample - rayOrigin;
+        const auto rayTime      = Random::Double();
 
-        return {rayOrigin, rayDirection};
+        return {rayOrigin, rayDirection, rayTime};
     }
 
     Color3 RayColor(const Ray& r, const int depth, const Hittable& world) const

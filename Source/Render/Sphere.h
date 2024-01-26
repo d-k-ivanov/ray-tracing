@@ -12,15 +12,26 @@ public:
         : m_Center(center)
         , m_Radius(radius)
         , m_Material(material)
+        , m_IsMoving(false)
     {
+    }
+
+    Sphere(const Point3& center, const Point3& center2, const double radius, const std::shared_ptr<Material>& material)
+        : m_Center(center)
+        , m_Radius(radius)
+        , m_Material(material)
+        , m_IsMoving(true)
+    {
+        m_CenterV = center - center2;
     }
 
     bool Hit(const Ray& r, const Interval rayT, HitRecord& rec) const override
     {
-        const Vector3 oc    = r.Origin() - m_Center;
-        const double  a     = r.Direction().LengthSquared();
-        const double  halfB = DotProduct(oc, r.Direction());
-        const double  c     = oc.LengthSquared() - m_Radius * m_Radius;
+        const Point3  center = m_IsMoving ? SphereCenter(r.Time()) : m_Center;
+        const Vector3 oc     = r.Origin() - center;
+        const double  a      = r.Direction().LengthSquared();
+        const double  halfB  = DotProduct(oc, r.Direction());
+        const double  c      = oc.LengthSquared() - m_Radius * m_Radius;
 
         const double discriminant = halfB * halfB - a * c;
         if(discriminant < 0)
@@ -49,6 +60,15 @@ public:
 
 private:
     Point3                    m_Center;
+    Vector3                   m_CenterV;
     double                    m_Radius;
     std::shared_ptr<Material> m_Material;
+    bool                      m_IsMoving;
+
+    // Linearly interpolate from center1 to center2 according to time.
+    // Where t=0 yields center1, and t=1 yields center2.
+    Point3 SphereCenter(const double time) const
+    {
+        return m_Center + time * m_CenterV;
+    }
 };
