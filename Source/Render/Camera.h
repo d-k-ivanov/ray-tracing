@@ -17,8 +17,8 @@ public:
     int     SamplesPerPixel = 10;                  // Count of random samples for each pixel
     int     MaxDepth        = 10;                  // Maximum number of ray bounces into scene
     double  Vfov            = 90;                  // Vertical view angle (field of view)
-    Point3  LookFrom        = Point3(0, 0, -1);    // Point camera is looking from
-    Point3  LookAt          = Point3(0, 0, 0);     // Point camera is looking at
+    Point3  LookFrom        = Point3(0, 0, 0);     // Point camera is looking from
+    Point3  LookAt          = Point3(0, 0, -1);    // Point camera is looking at
     Vector3 VUp             = Vector3(0, 1, 0);    // Camera-relative "up" direction
     double  DefocusAngle    = 0;                   // Variation angle of rays through each pixel
     double  FocusDist       = 10;                  // Distance from camera lookfrom point to plane of perfect focus

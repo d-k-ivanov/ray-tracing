@@ -18,11 +18,11 @@ public:
     bool Hit(const Ray& r, const Interval rayT, HitRecord& rec) const override
     {
         const Vector3 oc    = r.Origin() - m_Center;
-        const auto    a     = r.Direction().LengthSquared();
-        const auto    halfB = DotProduct(oc, r.Direction());
-        const auto    c     = oc.LengthSquared() - m_Radius * m_Radius;
+        const double  a     = r.Direction().LengthSquared();
+        const double  halfB = DotProduct(oc, r.Direction());
+        const double  c     = oc.LengthSquared() - m_Radius * m_Radius;
 
-        const auto discriminant = halfB * halfB - a * c;
+        const double discriminant = halfB * halfB - a * c;
         if(discriminant < 0)
         {
             return false;
@@ -30,7 +30,7 @@ public:
         const auto sqrtd = sqrt(discriminant);
 
         // Find the nearest root that lies in the acceptable range.
-        auto root = (-halfB - sqrtd) / a;
+        double root = (-halfB - sqrtd) / a;
         if(!rayT.Surrounds(root))
         {
             root = (-halfB + sqrtd) / a;

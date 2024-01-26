@@ -8,7 +8,7 @@
 class HittableList final : public Hittable
 {
 public:
-    std::vector<std::shared_ptr<Hittable>> objects;
+    std::vector<std::shared_ptr<Hittable>> Objects;
 
     HittableList() = default;
 
@@ -19,12 +19,12 @@ public:
 
     void Clear()
     {
-        objects.clear();
+        Objects.clear();
     }
 
     void Add(const std::shared_ptr<Hittable>& object)
     {
-        objects.emplace_back(object);
+        Objects.emplace_back(object);
     }
 
     // bool hit(const Ray &r, double ray_tmin, double ray_tmax, HitRecord &rec) const override
@@ -34,7 +34,7 @@ public:
         bool      hitAnything  = false;
         auto      closestSoFar = rayT.Max;
 
-        for(const auto& object : objects)
+        for(const auto& object : Objects)
         {
             if(object->Hit(r, Interval(rayT.Min, closestSoFar), tempRec))
             {

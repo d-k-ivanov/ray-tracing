@@ -34,7 +34,7 @@ void Renderer::Render(Camera& camera, const Hittable& world) const
             Color3 pixelColor(0, 0, 0);
             for(int sample = 0; sample < camera.SamplesPerPixel; ++sample)
             {
-                Ray r = camera.GetRay(x, y);
+                Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y));
                 pixelColor += camera.RayColor(r, camera.MaxDepth, world);
             }
             m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SamplesPerPixel);

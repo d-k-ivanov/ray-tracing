@@ -63,19 +63,19 @@ public:
     void Render()
     {
         const Timer timer;
-        const auto scene = std::make_shared<RtOneSceneFinal>(m_AspectRatio, m_ViewportWidth, 10, 10);
+        const auto  scene = std::make_shared<RtOneSceneWIP>(m_AspectRatio, m_ViewportWidth, 10, 50);
+        // const auto scene = std::make_shared<RtOneSceneFinal>(m_AspectRatio, m_ViewportWidth, 10, 10);
         m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
         m_Renderer.Render(scene->GetCamera(), scene->GetWorld());
         m_LastRenderTime = timer.ElapsedMillis();
     }
 
 private:
-    double                 m_AspectRatio = 16.0 / 9.0;
-    Renderer               m_Renderer;
-    // int                    m_Width          = 400;
-    uint32_t               m_ViewportWidth  = 0;
-    uint32_t               m_ViewportHeight = 0;
-    double                 m_LastRenderTime = 0.0;
+    Renderer m_Renderer;
+    double   m_AspectRatio    = 16.0 / 9.0;
+    uint32_t m_ViewportWidth  = 0;
+    uint32_t m_ViewportHeight = 0;
+    double   m_LastRenderTime = 0.0;
 };
 
 // class ImGuiDemoLayer final : public Layer
