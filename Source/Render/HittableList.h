@@ -25,6 +25,7 @@ public:
     void Add(const std::shared_ptr<Hittable>& object)
     {
         Objects.emplace_back(object);
+        m_BoundingBox = AABB(m_BoundingBox, object->BoundingBox());
     }
 
     // bool hit(const Ray &r, double ray_tmin, double ray_tmax, HitRecord &rec) const override
@@ -46,4 +47,9 @@ public:
 
         return hitAnything;
     }
+
+    AABB BoundingBox() const override { return m_BoundingBox; }
+
+private:
+    AABB m_BoundingBox;
 };

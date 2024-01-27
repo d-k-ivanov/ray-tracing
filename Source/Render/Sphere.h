@@ -14,6 +14,8 @@ public:
         , m_Material(material)
         , m_IsMoving(false)
     {
+        const auto rvec = Vector3(radius, radius, radius);
+        m_BoundingBox   = AABB(center - rvec, center + rvec);
     }
 
     Sphere(const Point3& center, const Point3& center2, const double radius, const std::shared_ptr<Material>& material)
@@ -22,6 +24,11 @@ public:
         , m_Material(material)
         , m_IsMoving(true)
     {
+        const auto rvec = Vector3(radius, radius, radius);
+        const AABB box1(center - rvec, center + rvec);
+        const AABB box2(center2 - rvec, center2 + rvec);
+        m_BoundingBox = AABB(box1, box2);
+
         m_CenterV = center - center2;
     }
 
@@ -58,12 +65,15 @@ public:
         return true;
     }
 
+    AABB BoundingBox() const override { return m_BoundingBox; }
+
 private:
     Point3                    m_Center;
     Vector3                   m_CenterV;
     double                    m_Radius;
     std::shared_ptr<Material> m_Material;
     bool                      m_IsMoving;
+    AABB                      m_BoundingBox;
 
     // Linearly interpolate from center1 to center2 according to time.
     // Where t=0 yields center1, and t=1 yields center2.

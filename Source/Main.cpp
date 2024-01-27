@@ -150,8 +150,8 @@ private:
     uint32_t m_ViewportHeight = 0;
     double   m_LastRenderTime = 0.0;
     int      m_RendererId     = 3;
-    int      m_SceneId        = 3;
-    int      m_SceneSamples   = 100;
+    int      m_SceneId        = 4;
+    int      m_SceneSamples   = 10;
     int      m_SceneDepth     = 50;
 
     // ImGui Stuff

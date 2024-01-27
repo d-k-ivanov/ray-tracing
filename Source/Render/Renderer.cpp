@@ -94,7 +94,7 @@ void Renderer::RenderMultiCore(Camera& camera, const Hittable& world) const
     camera.Initialize();
     std::for_each(std::execution::par, m_ImageHeightIterator.begin(), m_ImageHeightIterator.end(), [this, &camera, &world](uint32_t y)
                   {
-        std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << "                    " << std::flush;
+        std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
     	std::for_each(std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
     		[this, y, &camera, &world](uint32_t x)
     		{
@@ -106,7 +106,7 @@ void Renderer::RenderMultiCore(Camera& camera, const Hittable& world) const
                 }
                 m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SamplesPerPixel);
     		}); });
-    std::clog << "\rDone.                                                  \n";
+    std::clog << "\rDone.                 \n";
 
     m_Image->SetData(m_ImageData);
 }

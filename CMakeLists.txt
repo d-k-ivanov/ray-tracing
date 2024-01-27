@@ -33,6 +33,8 @@ set(SOURCE_FILES
     Source/Math/Interval.h
     Source/Math/Vector3.h
 
+    Source/Render/AABB.h
+    Source/Render/BVH.h
     Source/Render/Camera.h
     Source/Render/Color.h
     Source/Render/Hittable.h

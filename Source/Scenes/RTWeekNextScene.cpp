@@ -1,9 +1,12 @@
 #include "Scene.h"
 
 #include <Math/Vector3.h>
+#include <Render/BVH.h>
 #include <Render/Material.h>
 #include <Render/Sphere.h>
 #include <Utils/Random.h>
+
+#include <memory>
 
 RTWeekNextScene::RTWeekNextScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
@@ -56,6 +59,8 @@ RTWeekNextScene::RTWeekNextScene(const double aspectRatio, const int width, cons
 
     auto material3 = std::make_shared<Metal>(Color3(0.7, 0.6, 0.5), 0.0);
     m_World.Add(std::make_shared<Sphere>(Point3(4, 1, 0), 1.0, material3));
+
+    m_World = HittableList(std::make_shared<BVHNode>(m_World));
 
     m_Camera.AspectRatio     = m_AspectRatio;
     m_Camera.ImageWidth      = m_Width;

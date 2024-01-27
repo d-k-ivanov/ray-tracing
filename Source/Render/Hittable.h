@@ -3,9 +3,11 @@
 
 #include <Math/Interval.h>
 #include <Math/Vector3.h>
+#include <Render/AABB.h>
 #include <Render/Ray.h>
 
 #include <memory>
+
 
 class Material;
 
@@ -35,4 +37,5 @@ public:
     // old:
     // virtual bool hit(const Ray &r, double ray_tmin, double ray_tmax, HitRecord &rec) const = 0;
     virtual bool Hit(const Ray& r, Interval rayT, HitRecord& rec) const = 0;
+    virtual AABB BoundingBox() const = 0;
 };
