@@ -7,6 +7,6 @@ public:
 
     virtual void OnAttach() {}
     virtual void OnDetach() {}
-    virtual void OnUpdate(double ts) {}
+    virtual void OnUpdate(double deltaTime) {}
     virtual void OnUIRender() {}
 };

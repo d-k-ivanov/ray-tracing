@@ -22,6 +22,7 @@ public:
         ImGuiSettings::ShowStyleSelector("Colors");
         ImGuiSettings::ShowFontSelector("Font");
 
+        ImGui::SeparatorText("Scene:");
         const char* sceneList[] = {
             "RTWeekOneDefaultScene",
             "RTWeekOneScene",
@@ -29,7 +30,6 @@ public:
             "RTWeekNextDefaultScene",
             "RTWeekNextScene"
         };
-        ImGui::SeparatorText("Scene:");
         ImGui::Combo("Name", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
         ImGui::InputInt("Depth", &m_SceneDepth);
@@ -41,10 +41,23 @@ public:
         ImGui::Text("Image Width: %.2f", m_ImageWidth);
         ImGui::Text("Image Height: %.2f", m_ImageHeight);
 
+        const char* rendererList[] = {
+            "Single Core: Random INT",
+            "Single Core: Hello World",
+            "Single Core: Ray Tracer",
+            "Multi Core: Ray Tracer"
+        };
+        ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList));
+
         if(ImGui::Button("Render", ImVec2(-FLT_MIN, 0.0f)))
         {
             Render();
         }
+
+        static bool loopRendering = false;
+        ImGui::Checkbox("Loop Rendering", &loopRendering);
+
+
         ImGui::Text("Rendering time: %.3fms", m_LastRenderTime);
         ImGui::End();
 
@@ -70,11 +83,14 @@ public:
             ImGui::SetCursorPos(cursorPosition);
             ImGui::Image(image->GetDescriptorSet(), {m_ImageWidth, m_ImageHeight});
         }
-
         ImGui::End();
         ImGui::PopStyleVar();
 
-        // Render();
+
+        if (loopRendering)
+        {
+            Render();
+        }
     }
 
     void Render()
@@ -104,7 +120,24 @@ public:
         }
 
         m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
-        m_Renderer.Render(scene->GetCamera(), scene->GetWorld());
+        switch(m_RendererId)
+        {
+            case 0:
+                m_Renderer.RenderRandom();
+                break;
+            case 1:
+                m_Renderer.RenderHelloWorld();
+                break;
+            case 2:
+                m_Renderer.RenderSingleCore(scene->GetCamera(), scene->GetWorld());
+                break;
+            case 3:
+                m_Renderer.RenderMultiCore(scene->GetCamera(), scene->GetWorld());
+                break;
+            default:
+                m_Renderer.RenderRandom();
+                break;
+        }
         m_LastRenderTime = timer.ElapsedMillis();
     }
 
@@ -116,6 +149,7 @@ private:
     uint32_t m_ViewportWidth  = 0;
     uint32_t m_ViewportHeight = 0;
     double   m_LastRenderTime = 0.0;
+    int      m_RendererId     = 3;
     int      m_SceneId        = 3;
     int      m_SceneSamples   = 100;
     int      m_SceneDepth     = 50;
