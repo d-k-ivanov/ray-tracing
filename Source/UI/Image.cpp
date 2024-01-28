@@ -53,9 +53,19 @@ VkFormat FormatToVulkanFormat(const ImageFormat format)
     return static_cast<VkFormat>(0);
 }
 
+// Return the value clamped to the range [low, high).
+uint32_t Clamp(const uint32_t x, const uint32_t low, const uint32_t high)
+{
+    if(x < low)
+        return low;
+    if(x < high)
+        return x;
+    return high - 1;
+}
+
 }    // namespace Impl
 
-Image::Image(const std::string_view path)
+Image::Image(const std::string_view path, const bool storeImageData)
     : m_Filepath(path)
 {
     int      width, height, channels;
@@ -77,7 +87,14 @@ Image::Image(const std::string_view path)
 
     AllocateMemory(static_cast<int64_t>(m_Width) * m_Height * Impl::BytesPerPixel(m_Format));
     SetData(data);
-    stbi_image_free(data);
+    if (storeImageData)
+    {
+        m_Data = data;
+    } else
+    {
+        stbi_image_free(data);
+    }
+
 }
 
 Image::Image(const uint32_t width, const uint32_t height, const ImageFormat format, const void* data)
@@ -140,7 +157,7 @@ void Image::AllocateMemory([[maybe_unused]] uint64_t size)
         VK_CHECK(vkCreateImageView(device, &info, nullptr, &m_ImageView));
     }
 
-    // Create sampler:
+    // Create Sampler:
     {
         VkSamplerCreateInfo info = {};
         info.sType               = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -177,7 +194,8 @@ void Image::Release()
             vkFreeMemory(device, memory, nullptr);
             vkDestroyBuffer(device, stagingBuffer, nullptr);
             vkFreeMemory(device, stagingBufferMemory, nullptr);
-        });
+        }
+    );
 
     m_Sampler             = nullptr;
     m_ImageView           = nullptr;
@@ -282,15 +300,18 @@ void Image::Resize(const uint32_t width, const uint32_t height)
     AllocateMemory(static_cast<uint64_t>(m_Width) * m_Height * Impl::BytesPerPixel(m_Format));
 }
 
-void* Image::Decode(const void* buffer, const uint64_t length, uint32_t& outWidth, uint32_t& outHeight)
+// Return the address of the three bytes of the pixel at x,y (or magenta if no data).
+const uint8_t* Image::PixelData(uint32_t x, uint32_t y) const
 {
-    int      width;
-    int      height;
-    int      channels;
-    uint8_t* data = stbi_load_from_memory(static_cast<const stbi_uc*>(buffer), static_cast<int>(length), &width, &height, &channels, 4);
+    static uint8_t magenta[] = {255, 0, 255};
+    if(m_Data == nullptr)
+        return magenta;
 
-    outWidth  = width;
-    outHeight = height;
+    x = Impl::Clamp(x, 0, m_Width);
+    y = Impl::Clamp(y, 0, m_Height);
 
-    return data;
+    const auto verticalOffset = y * m_Width * Impl::BytesPerPixel(m_Format);
+    const auto horisontalOffset = x * Impl::BytesPerPixel(m_Format);
+
+    return m_Data + verticalOffset + horisontalOffset;
 }

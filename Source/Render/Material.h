@@ -1,9 +1,11 @@
-// ReSharper disable CppNonExplicitConvertingConstructor
 #pragma once
 
 #include <Render/Color.h>
 #include <Render/Hittable.h>
 #include <Render/Ray.h>
+#include <Render/Texture.h>
+
+#include <memory>
 
 class HitRecord;
 
@@ -11,6 +13,10 @@ class Material
 {
 public:
     virtual ~Material() = default;
+    virtual Color3 Emitted(double u, double v, const Point3& p) const
+    {
+        return {0, 0, 0};
+    }
 
     virtual bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const = 0;
 };
@@ -18,8 +24,13 @@ public:
 class Lambertian final : public Material
 {
 public:
-    Lambertian(const Color3& color)
-        : m_Albedo(color)
+    explicit Lambertian(const Color3& color)
+        : m_Albedo(std::make_shared<SolidColor>(color))
+    {
+    }
+
+    explicit Lambertian(const std::shared_ptr<Texture>& texture)
+        : m_Albedo(texture)
     {
     }
 
@@ -33,18 +44,18 @@ public:
             scatterDirection = rec.Normal;
         }
         scattered   = Ray(rec.P, scatterDirection, rIn.Time());
-        attenuation = m_Albedo;
+        attenuation = m_Albedo->Value(rec.U, rec.V, rec.P);
         return true;
     }
 
 private:
-    Color3 m_Albedo;
+    std::shared_ptr<Texture> m_Albedo;
 };
 
 class Metal final : public Material
 {
 public:
-    Metal(const Color3& color, const double fuzz)
+    explicit Metal(const Color3& color, const double fuzz)
         : m_Albedo(color)
         , m_Fuzz(fuzz < 1 ? fuzz : 1)
     {
@@ -66,7 +77,7 @@ private:
 class Dielectric final : public Material
 {
 public:
-    Dielectric(const double indexOfRefraction)
+    explicit Dielectric(const double indexOfRefraction)
         : m_Ir(indexOfRefraction)
     {
     }
@@ -108,4 +119,55 @@ private:
         r0      = r0 * r0;
         return r0 + (1 - r0) * pow((1 - cosine), 5);
     }
+};
+
+class DiffuseLight final : public Material
+{
+public:
+    explicit DiffuseLight(const std::shared_ptr<Texture>& texture)
+        : m_Emit(texture)
+    {
+    }
+
+    explicit DiffuseLight(Color3 color)
+        : m_Emit(std::make_shared<SolidColor>(color))
+    {
+    }
+
+    bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const override
+    {
+        return false;
+    }
+
+    Color3 Emitted(const double u, const double v, const Point3& p) const override
+    {
+        return m_Emit->Value(u, v, p);
+    }
+
+private:
+    std::shared_ptr<Texture> m_Emit;
+};
+
+class Isotropic final : public Material
+{
+public:
+    explicit Isotropic(Color3 color)
+        : m_Albedo(std::make_shared<SolidColor>(color))
+    {
+    }
+
+    explicit Isotropic(const std::shared_ptr<Texture>& texture)
+        : m_Albedo(texture)
+    {
+    }
+
+    bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const override
+    {
+        scattered   = Ray(rec.P, RandomUnitVector(), rIn.Time());
+        attenuation = m_Albedo->Value(rec.U, rec.V, rec.P);
+        return true;
+    }
+
+private:
+    std::shared_ptr<Texture> m_Albedo;
 };

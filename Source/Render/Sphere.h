@@ -56,11 +56,14 @@ public:
                 return false;
         }
 
-        rec.T                 = root;
-        rec.P                 = r.At(rec.T);
-        rec.Material          = m_Material;
+        rec.T = root;
+        rec.P = r.At(rec.T);
+
         Vector3 outwardNormal = (rec.P - m_Center) / m_Radius;
         rec.SetFaceNormal(r, outwardNormal);
+        GetSphereUV(outwardNormal, rec.U, rec.V);
+
+        rec.Material = m_Material;
 
         return true;
     }
@@ -80,5 +83,20 @@ private:
     Point3 SphereCenter(const double time) const
     {
         return m_Center + time * m_CenterV;
+    }
+
+    // p: a given point on the sphere of radius one, centered at the origin.
+    // u: returned value [0,1] of angle around the Y axis from X=-1.
+    // v: returned value [0,1] of angle from Y=-1 to Y=+1.
+    //     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+    //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+    //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+    static void GetSphereUV(const Point3& p, double& u, double& v)
+    {
+        const auto theta = acos(-p.Y());
+        const auto phi   = atan2(-p.Z(), p.X()) + Pi;
+
+        u = phi / (2 * Pi);
+        v = theta / Pi;
     }
 };

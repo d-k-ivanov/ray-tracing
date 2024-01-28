@@ -33,10 +33,10 @@ public:
     RTWeekOneDefaultScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
 
-class RTWeekOneScene final : public Scene
+class RTWeekOneTestScene final : public Scene
 {
 public:
-    RTWeekOneScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+    RTWeekOneTestScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
 
 class RTWeekOneFinalScene final : public Scene
@@ -51,9 +51,20 @@ public:
     RTWeekNextDefaultScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
 
-
-class RTWeekNextScene final : public Scene
+class RTWeekNextRandomSpheresScene final : public Scene
 {
 public:
-    RTWeekNextScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+    RTWeekNextRandomSpheresScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};
+
+class RTWeekNextTwoSpheresScene final : public Scene
+{
+public:
+    RTWeekNextTwoSpheresScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};
+
+class RTWeekNextEarthScene final : public Scene
+{
+public:
+    RTWeekNextEarthScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };

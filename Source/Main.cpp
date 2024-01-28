@@ -24,11 +24,13 @@ public:
 
         ImGui::SeparatorText("Scene:");
         const char* sceneList[] = {
-            "RTWeekOneDefaultScene",
-            "RTWeekOneScene",
-            "RTWeekOneFinalScene",
-            "RTWeekNextDefaultScene",
-            "RTWeekNextScene"
+            "RTWeekOne: Default",
+            "RTWeekOne: Test",
+            "RTWeekOne: Final",
+            "RTWeekNext: Default",
+            "RTWeekNext: Random Spheres",
+            "RTWeekNext: Two Spheres",
+            "RTWeekNext: Earth"
         };
         ImGui::Combo("Name", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
@@ -42,10 +44,10 @@ public:
         ImGui::Text("Image Height: %.2f", m_ImageHeight);
 
         const char* rendererList[] = {
-            "Single Core: Random INT",
-            "Single Core: Hello World",
-            "Single Core: Ray Tracer",
-            "Multi Core: Ray Tracer"
+            "Random INT",
+            "Hello World",
+            "Ray Tracer 1Core",
+            "Ray Tracer Parallel"
         };
         ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList));
 
@@ -103,7 +105,7 @@ public:
                 scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 1:
-                scene = std::make_shared<RTWeekOneScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                scene = std::make_shared<RTWeekOneTestScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 2:
                 scene = std::make_shared<RTWeekOneFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
@@ -112,7 +114,13 @@ public:
                 scene = std::make_shared<RTWeekNextDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 4:
-                scene = std::make_shared<RTWeekNextScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                scene = std::make_shared<RTWeekNextRandomSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 5:
+                scene = std::make_shared<RTWeekNextTwoSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 6:
+                scene = std::make_shared<RTWeekNextEarthScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             default:
                 scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);

@@ -4,15 +4,19 @@
 #include <Render/BVH.h>
 #include <Render/Material.h>
 #include <Render/Sphere.h>
+#include <Render/Texture.h>
 #include <Utils/Random.h>
 
 #include <memory>
 
-RTWeekNextScene::RTWeekNextScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
+RTWeekNextRandomSpheresScene::RTWeekNextRandomSpheresScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
 {
-    auto groundMaterial = std::make_shared<Lambertian>(Color3(0.5, 0.5, 0.5));
-    m_World.Add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, groundMaterial));
+    // auto groundMaterial = std::make_shared<Lambertian>(Color3(0.5, 0.5, 0.5));
+    // m_World.Add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, groundMaterial));
+
+    auto checker = std::make_shared<CheckerTexture>(0.32, Color3(.2, .3, .1), Color3(.9, .9, .9));
+    m_World.Add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, std::make_shared<Lambertian>(checker)));
 
     for(int a = -11; a < 11; a++)
     {

@@ -40,17 +40,21 @@ set(SOURCE_FILES
     Source/Render/Hittable.h
     Source/Render/HittableList.h
     Source/Render/Material.h
+    Source/Render/PerlinNoise.h
     Source/Render/Ray.h
     Source/Render/Renderer.cpp
     Source/Render/Renderer.h
     Source/Render/Sphere.h
+    Source/Render/Texture.h
 
     Source/Scenes/Scene.h
     Source/Scenes/RTWeekOneDefaultScene.cpp
     Source/Scenes/RTWeekOneFinalScene.cpp
-    Source/Scenes/RTWeekOneScene.cpp
+    Source/Scenes/RTWeekOneTestScene.cpp
     Source/Scenes/RTWeekNextDefaultScene.cpp
-    Source/Scenes/RTWeekNextScene.cpp
+    Source/Scenes/RTWeekNextRandomSpheresScene.cpp
+    Source/Scenes/RTWeekNextTwoSpheresScene.cpp
+    Source/Scenes/RTWeekNextEarthScene.cpp
 
     Source/UI/Application.cpp
     Source/UI/Application.h

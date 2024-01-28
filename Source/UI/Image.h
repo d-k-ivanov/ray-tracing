@@ -1,9 +1,8 @@
-// ReSharper disable CppNonExplicitConvertingConstructor
 #pragma once
 
-#include <string>
+#include <vulkan/vulkan.h>
 
-#include "vulkan/vulkan.h"
+#include <string>
 
 enum class ImageFormat
 {
@@ -15,7 +14,7 @@ enum class ImageFormat
 class Image
 {
 public:
-    Image(std::string_view path);
+    explicit Image(std::string_view path, bool storeImageData = false);
     Image(uint32_t width, uint32_t height, ImageFormat format, const void* data = nullptr);
     ~Image();
 
@@ -28,7 +27,7 @@ public:
     uint32_t GetWidth() const { return m_Width; }
     uint32_t GetHeight() const { return m_Height; }
 
-    static void* Decode(const void* buffer, uint64_t length, uint32_t& outWidth, uint32_t& outHeight);
+    const uint8_t* PixelData(uint32_t x, uint32_t y) const;
 
 private:
     void AllocateMemory(uint64_t size);
@@ -38,6 +37,7 @@ private:
     uint32_t m_Width  = 0;
     uint32_t m_Height = 0;
 
+    uint8_t*       m_Data      = nullptr;
     VkImage        m_Image     = nullptr;
     VkImageView    m_ImageView = nullptr;
     VkDeviceMemory m_Memory    = nullptr;

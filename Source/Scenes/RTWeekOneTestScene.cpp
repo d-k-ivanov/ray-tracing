@@ -4,7 +4,7 @@
 #include <Render/Material.h>
 #include <Render/Sphere.h>
 
-RTWeekOneScene::RTWeekOneScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
+RTWeekOneTestScene::RTWeekOneTestScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
 {
     // Metals

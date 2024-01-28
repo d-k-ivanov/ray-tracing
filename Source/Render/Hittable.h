@@ -8,7 +8,6 @@
 
 #include <memory>
 
-
 class Material;
 
 class HitRecord
@@ -18,8 +17,10 @@ public:
     Vector3                   Normal;
     std::shared_ptr<Material> Material;
     double                    T;
+    double                    U;
+    double                    V;
+    bool                      FrontFace;
 
-    bool FrontFace;
     void SetFaceNormal(const Ray& r, Vector3& outwardNormal)
     {
         // Sets the hit record normal vector.
@@ -37,5 +38,5 @@ public:
     // old:
     // virtual bool hit(const Ray &r, double ray_tmin, double ray_tmax, HitRecord &rec) const = 0;
     virtual bool Hit(const Ray& r, Interval rayT, HitRecord& rec) const = 0;
-    virtual AABB BoundingBox() const = 0;
+    virtual AABB BoundingBox() const                                    = 0;
 };

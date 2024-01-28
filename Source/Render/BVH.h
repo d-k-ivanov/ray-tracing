@@ -1,4 +1,3 @@
-// ReSharper disable CppNonExplicitConvertingConstructor
 #pragma once
 
 #include <Render/Hittable.h>
@@ -10,7 +9,7 @@
 class BVHNode final : public Hittable
 {
 public:
-    BVHNode(const HittableList& list)
+    explicit BVHNode(const HittableList& list)
         : BVHNode(list.Objects, 0, list.Objects.size())
     {
     }

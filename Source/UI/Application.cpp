@@ -3,6 +3,7 @@
 
 #include <Utils/Filesystem.h>
 #include <Utils/Log.h>
+#include <Utils/VulkanException.h>
 
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
@@ -16,7 +17,6 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "Utils/VulkanException.h"
 
 extern bool g_ApplicationRunning;
 
