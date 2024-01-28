@@ -12,7 +12,7 @@ class Renderer
 public:
     Renderer() = default;
 
-    void OnResize(uint32_t width, uint32_t height);
+    void SetSize(uint32_t width, uint32_t height);
     void RenderRandom() const;
     void RenderHelloWorld() const;
     void RenderSingleCore(Camera& camera, const Hittable& world) const;

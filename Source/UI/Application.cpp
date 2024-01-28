@@ -543,7 +543,13 @@ void Application::Init()
     ImFontConfig fontConfig;
     fontConfig.FontDataOwnedByAtlas = false;
     auto    robotoFontPath          = ThisExecutableLocation() + "/Resources/Fonts/Roboto-Regular.ttf";
+    io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 10.0f);
+    io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 11.0f);
+    io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 12.0f);
     ImFont* robotoFont              = io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 14.0f);
+    io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 16.0f);
+    io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 18.0f);
+    io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 20.0f);
     IM_ASSERT(robotoFont != nullptr);
     io.FontDefault = robotoFont;
 

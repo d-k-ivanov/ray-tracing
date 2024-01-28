@@ -1,6 +1,7 @@
 #include "ImGuiHelper.h"
 
 #include <imgui.h>
+#include <string_view>
 
 void ImGuiSettings::ShowStyleSelector(const char* label)
 {

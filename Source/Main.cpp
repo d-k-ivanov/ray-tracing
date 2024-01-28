@@ -22,7 +22,7 @@ public:
         ImGuiSettings::ShowStyleSelector("Colors");
         ImGuiSettings::ShowFontSelector("Font");
 
-        ImGui::SeparatorText("Scene:");
+        ImGui::SeparatorText("Rendering");
         const char* sceneList[] = {
             "RTWeekOne: Default",
             "RTWeekOne: Test",
@@ -36,26 +36,23 @@ public:
             "RTWeekNext: Simple Light",
             "RTWeekNext: Cornell Box",
             "RTWeekNext: Cornell Smoke",
-            "RTWeekNext: Final"
-        };
-        ImGui::Combo("Name", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
+            "RTWeekNext: Final"};
+        ImGui::Combo("Scene", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
         ImGui::InputInt("Depth", &m_SceneDepth);
 
-        ImGui::SeparatorText("Rendering");
         // ImGui::Text("Aspect Ratio: %.6f", m_AspectRatio);
         ImGui::InputDouble("Aspect Ratio", &m_AspectRatio);
-        ImGui::Text("Viewport Width: %d", m_ViewportWidth);
-        ImGui::Text("Viewport Height: %d", m_ViewportHeight);
-        ImGui::Text("Image Width: %.2f", m_ImageWidth);
-        ImGui::Text("Image Height: %.2f", m_ImageHeight);
+        ImGui::InputInt("Width", &m_Width, 0, 1920);
+        // ImGui::Text("Viewport Height: %d", m_ViewportHeight);
+        // ImGui::Text("Image Width: %.2f", m_ImageWidth);
+        // ImGui::Text("Image Height: %.2f", m_ImageHeight);
 
         const char* rendererList[] = {
             "Random INT",
             "Hello World",
             "Ray Tracer 1Core",
-            "Ray Tracer Parallel"
-        };
+            "Ray Tracer Parallel"};
         ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList));
 
         if(ImGui::Button("Render", ImVec2(-FLT_MIN, 0.0f)))
@@ -66,8 +63,31 @@ public:
         static bool loopRendering = false;
         ImGui::Checkbox("Loop Rendering", &loopRendering);
 
+        const int miliseconds = static_cast<int>(m_LastRenderTime) % 1000;
+        const int seconds     = static_cast<int>(m_LastRenderTime) / 1000 % 60;
+        const int minutes     = static_cast<int>(m_LastRenderTime) / 1000 / 60 % 60;
+        const int hours       = static_cast<int>(m_LastRenderTime) / 1000 / 60 / 60;
 
-        ImGui::Text("Rendering time: %.3fms", m_LastRenderTime);
+        ImGui::Text("Rendering time: %.3f ms", m_LastRenderTime);
+        ImGui::Text("Rendering time (human): ");
+        ImGui::SameLine();
+        if(hours >= 1)
+        {
+            ImGui::Text("%dh ", hours);
+            ImGui::SameLine();
+        }
+        if(minutes >= 1)
+        {
+            ImGui::Text("%dm ", minutes);
+            ImGui::SameLine();
+        }
+        if(seconds >= 1)
+        {
+            ImGui::Text("%ds ", seconds);
+            ImGui::SameLine();
+        }
+        ImGui::Text("%dms", miliseconds);
+
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -78,9 +98,9 @@ public:
         // m_ViewportWidth  = static_cast<uint32_t>(ImGui::GetContentRegionAvail().x);
         // m_ViewportHeight = static_cast<uint32_t>(ImGui::GetContentRegionAvail().y);
 
-        // m_ViewportWidth = static_cast<uint32_t>(m_Width);
-        m_ViewportWidth  = static_cast<uint32_t>(ImGui::GetContentRegionAvail().x);
-        m_ViewportHeight = static_cast<uint32_t>(m_ViewportWidth / m_AspectRatio);
+        m_ViewportWidth = static_cast<uint32_t>(m_Width);
+        // m_ViewportWidth  = static_cast<int>(ImGui::GetContentRegionAvail().x);
+        m_ViewportHeight = static_cast<int>(m_ViewportWidth / m_AspectRatio);
         m_ViewportHeight = (m_ViewportHeight < 1) ? 1 : m_ViewportHeight;
 
         if(const auto image = m_Renderer.GetImage())
@@ -95,8 +115,7 @@ public:
         ImGui::End();
         ImGui::PopStyleVar();
 
-
-        if (loopRendering)
+        if(loopRendering)
         {
             Render();
         }
@@ -148,11 +167,11 @@ public:
                 scene = std::make_shared<RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             default:
-                scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                scene = std::make_shared<RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
         }
 
-        m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
+        m_Renderer.SetSize(m_ViewportWidth, m_ViewportHeight);
         switch(m_RendererId)
         {
             case 0:
@@ -171,19 +190,21 @@ public:
                 m_Renderer.RenderRandom();
                 break;
         }
-        m_LastRenderTime = timer.ElapsedMillis();
+        m_LastRenderTime = timer.ElapsedMilliseconds();
     }
 
 private:
     Renderer m_Renderer;
-    double   m_AspectRatio    = 16.0 / 9.0;
+    // double   m_AspectRatio    = 16.0 / 9.0;
+    double   m_AspectRatio    = 1.0;
+    int      m_Width          = 400;
     float    m_ImageWidth     = 0;
     float    m_ImageHeight    = 0;
-    uint32_t m_ViewportWidth  = 0;
+    uint32_t m_ViewportWidth  = 400;
     uint32_t m_ViewportHeight = 0;
     double   m_LastRenderTime = 0.0;
     int      m_RendererId     = 3;
-    int      m_SceneId        = 10;
+    int      m_SceneId        = INT_MAX;
     int      m_SceneSamples   = 10;
     int      m_SceneDepth     = 50;
 
@@ -208,7 +229,7 @@ Application* CreateApplication(int argc, char** argv)
 
     Application* app = new Application(spec);
     app->PushLayer<RayTracinUILayer>();
-    app->PushLayer<ImGuiDemoLayer>();
+    // app->PushLayer<ImGuiDemoLayer>();
     app->SetMenubarCallback([app]()
                             {
         if (ImGui::BeginMenu("File"))

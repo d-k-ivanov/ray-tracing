@@ -17,14 +17,14 @@ public:
         m_Start = std::chrono::high_resolution_clock::now();
     }
 
-    double Elapsed() const
+    double ElapsedSeconds() const
     {
         return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - m_Start).count() * 0.001 * 0.001 * 0.001;
     }
 
-    double ElapsedMillis() const
+    double ElapsedMilliseconds() const
     {
-        return Elapsed() * 1000.0;
+        return ElapsedSeconds() * 1000.0;
     }
 
 private:
@@ -40,7 +40,7 @@ public:
     }
     ~ScopedTimer()
     {
-        const double time = m_Timer.ElapsedMillis();
+        const double time = m_Timer.ElapsedMilliseconds();
         std::cout << "[TIMER] " << m_Name << " - " << time << "ms\n";
     }
 

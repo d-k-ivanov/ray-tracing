@@ -5,7 +5,7 @@
 
 #include <execution>
 
-void Renderer::OnResize(uint32_t width, uint32_t height)
+void Renderer::SetSize(uint32_t width, uint32_t height)
 {
     if(m_Image)
     {
