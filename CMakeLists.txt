@@ -30,6 +30,7 @@ set(SOURCE_FILES
 
     Source/Math/Constants.h
     Source/Math/Converters.h
+    Source/Math/Interval.cpp
     Source/Math/Interval.h
     Source/Math/Vector3.h
 
@@ -37,6 +38,7 @@ set(SOURCE_FILES
     Source/Render/BVH.h
     Source/Render/Camera.h
     Source/Render/Color.h
+    Source/Render/ConstantMedium.h
     Source/Render/Hittable.h
     Source/Render/HittableList.h
     Source/Render/Material.h
@@ -58,6 +60,9 @@ set(SOURCE_FILES
     Source/Scenes/RTWeekNextEarthScene.cpp
     Source/Scenes/RTWeekNextTwoPerlinSpheresScene.cpp
     Source/Scenes/RTWeekNextQuadsScene.cpp
+    Source/Scenes/RTWeekNextSimpleLightScene.cpp
+    Source/Scenes/RTWeekNextCornellBoxScene.cpp
+    Source/Scenes/RTWeekNextCornellSmokeScene.cpp
 
     Source/UI/Application.cpp
     Source/UI/Application.h

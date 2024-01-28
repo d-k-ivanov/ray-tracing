@@ -80,3 +80,21 @@ class RTWeekNextQuadsScene final : public Scene
 public:
     RTWeekNextQuadsScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
+
+class RTWeekNextSimpleLightScene final : public Scene
+{
+public:
+    RTWeekNextSimpleLightScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};
+
+class RTWeekNextCornellBoxScene final : public Scene
+{
+public:
+    RTWeekNextCornellBoxScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};
+
+class RTWeekNextCornellSmokeScene final : public Scene
+{
+public:
+    RTWeekNextCornellSmokeScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};

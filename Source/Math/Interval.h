@@ -7,14 +7,17 @@
 class Interval
 {
 public:
-    double Min;
-    double Max;
+    double                Min;
+    double                Max;
+    static const Interval Empty;
+    static const Interval Universe;
 
+    // Default interval is empty
     Interval()
         : Min(+Infinity)
         , Max(-Infinity)
     {
-    }    // Default interval is empty
+    }
 
     Interval(const double min, const double max)
         : Min(min)
@@ -28,46 +31,12 @@ public:
     {
     }
 
-    double Size() const
-    {
-        return Max - Min;
-    }
-
-    Interval Expand(const double delta) const
-    {
-        const auto padding = delta / 2;
-        return {Min - padding, Max + padding};
-    }
-
-    bool Contains(const double x) const
-    {
-        return Min <= x && x <= Max;
-    }
-
-    bool Surrounds(const double x) const
-    {
-        return Min < x && x < Max;
-    }
-
-    double Clamp(const double x) const
-    {
-        if(x < Min)
-        {
-            return Min;
-        }
-        if(x > Max)
-        {
-            return Max;
-        }
-        return x;
-    }
-
-    static const Interval Empty;
-    static const Interval Universe;
+    double   Size() const;
+    Interval Expand(double delta) const;
+    bool     Contains(double x) const;
+    bool     Surrounds(double x) const;
+    double   Clamp(double x) const;
 };
-
-const static Interval Empty(+Infinity, -Infinity);
-const static Interval Universe(-Infinity, +Infinity);
 
 inline Interval operator+(const Interval& intervalValue, const double displacement)
 {

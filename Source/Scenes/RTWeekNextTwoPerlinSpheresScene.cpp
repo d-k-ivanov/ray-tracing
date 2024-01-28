@@ -1,7 +1,6 @@
 #include "Scene.h"
 
 #include <Math/Vector3.h>
-#include <Render/BVH.h>
 #include <Render/Material.h>
 #include <Render/Sphere.h>
 #include <Render/Texture.h>
@@ -21,6 +20,7 @@ RTWeekNextTwoPerlinSpheresScene::RTWeekNextTwoPerlinSpheresScene(const double as
     m_Camera.ImageWidth      = m_Width;
     m_Camera.SamplesPerPixel = m_SamplesPerPixel;
     m_Camera.MaxDepth        = m_MaxDepth;
+    m_Camera.Background      = Color3(0.70, 0.80, 1.00);
 
     m_Camera.Vfov = 20;
 

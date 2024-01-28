@@ -16,6 +16,7 @@ RTWeekOneDefaultScene::RTWeekOneDefaultScene(const double aspectRatio, const int
     m_Camera.ImageWidth      = m_Width;
     m_Camera.SamplesPerPixel = m_SamplesPerPixel;
     m_Camera.MaxDepth        = m_MaxDepth;
+    m_Camera.Background      = Color3(0.70, 0.80, 1.00);
 
     m_Camera.DefocusAngle = 1.0;
     m_Camera.FocusDist    = 1.0;

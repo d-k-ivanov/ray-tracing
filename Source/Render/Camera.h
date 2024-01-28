@@ -110,10 +110,33 @@ public:
 
         HitRecord rec;
 
-        // TBA: If the ray hits nothing, return the background color.
-        // if (!world.Hit(r, Interval(0.001, Infinity), rec))
-        //     return Background;
+        // If the ray hits nothing, return the background color.
+        if(!world.Hit(r, Interval(0.001, Infinity), rec))
+        {
+            return Background;
+        }
 
+        Ray          scattered;
+        Color3       attenuation;
+        const Color3 colorFromEmission = rec.Material->Emitted(rec.U, rec.V, rec.P);
+
+        if(!rec.Material->Scatter(r, rec, attenuation, scattered))
+            return colorFromEmission;
+
+        const Color3 colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);
+
+        return colorFromEmission + colorFromScatter;
+    }
+
+    Color3 RayColorWithoutBackground(const Ray& r, const int depth, const Hittable& world) const
+    {
+        // If we've exceeded the ray bounce limit, no more light is gathered.
+        if(depth <= 0)
+        {
+            return {0, 0, 0};
+        }
+
+        HitRecord rec;
 
         if(world.Hit(r, Interval(0.001, Infinity), rec))
         {

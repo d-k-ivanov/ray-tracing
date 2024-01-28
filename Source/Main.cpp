@@ -32,7 +32,10 @@ public:
             "RTWeekNext: Two Spheres",
             "RTWeekNext: Earth",
             "RTWeekNext: Two Perlin Spheres",
-            "RTWeekNext: Quads"
+            "RTWeekNext: Quads",
+            "RTWeekNext: Simple Light",
+            "RTWeekNext: Cornell Box",
+            "RTWeekNext: Cornell Smoke"
         };
         ImGui::Combo("Name", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
@@ -131,6 +134,15 @@ public:
             case 8:
                 scene = std::make_shared<RTWeekNextQuadsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
+            case 9:
+                scene = std::make_shared<RTWeekNextSimpleLightScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 10:
+                scene = std::make_shared<RTWeekNextCornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 11:
+                scene = std::make_shared<RTWeekNextCornellSmokeScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
             default:
                 scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
@@ -167,7 +179,7 @@ private:
     uint32_t m_ViewportHeight = 0;
     double   m_LastRenderTime = 0.0;
     int      m_RendererId     = 3;
-    int      m_SceneId        = 7;
+    int      m_SceneId        = 10;
     int      m_SceneSamples   = 10;
     int      m_SceneDepth     = 50;
 

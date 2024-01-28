@@ -10,8 +10,8 @@ RTWeekNextDefaultScene::RTWeekNextDefaultScene(const double aspectRatio, const i
 {
     auto materialGround = std::make_shared<Lambertian>(Color3(0.8, 0.8, 0.0));
     auto materialCenter = std::make_shared<Lambertian>(Color3(0.1, 0.2, 0.5));
-    auto center = Point3(0.0, 0.0, -1.0);
-    auto center2 = center + Vector3(Random::Double(0.0,0.5), 0, 0);
+    auto center         = Point3(0.0, 0.0, -1.0);
+    auto center2        = center + Vector3(Random::Double(0.0, 0.5), 0, 0);
 
     m_World.Add(std::make_shared<Sphere>(Point3(0.0, -100.5, -1.0), 100.0, materialGround));
     m_World.Add(std::make_shared<Sphere>(center, center2, 0.5, materialCenter));
@@ -20,6 +20,7 @@ RTWeekNextDefaultScene::RTWeekNextDefaultScene(const double aspectRatio, const i
     m_Camera.ImageWidth      = m_Width;
     m_Camera.SamplesPerPixel = m_SamplesPerPixel;
     m_Camera.MaxDepth        = m_MaxDepth;
+    m_Camera.Background      = Color3(0.70, 0.80, 1.00);
 
     m_Camera.DefocusAngle = 1.0;
     m_Camera.FocusDist    = 1.0;
