@@ -1,6 +1,3 @@
-// ReSharper disable CppClangTidyModernizeUseNodiscard
-// ReSharper disable CppMemberFunctionMayBeStatic
-// ReSharper disable CppTooWideScopeInitStatement
 #pragma once
 
 #include <Math/Converters.h>

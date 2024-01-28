@@ -41,6 +41,7 @@ set(SOURCE_FILES
     Source/Render/HittableList.h
     Source/Render/Material.h
     Source/Render/PerlinNoise.h
+    Source/Render/Quad.h
     Source/Render/Ray.h
     Source/Render/Renderer.cpp
     Source/Render/Renderer.h
@@ -56,6 +57,7 @@ set(SOURCE_FILES
     Source/Scenes/RTWeekNextTwoSpheresScene.cpp
     Source/Scenes/RTWeekNextEarthScene.cpp
     Source/Scenes/RTWeekNextTwoPerlinSpheresScene.cpp
+    Source/Scenes/RTWeekNextQuadsScene.cpp
 
     Source/UI/Application.cpp
     Source/UI/Application.h

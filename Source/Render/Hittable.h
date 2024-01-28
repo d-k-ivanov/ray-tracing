@@ -1,4 +1,3 @@
-// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
 #pragma once
 
 #include <Math/Interval.h>
@@ -21,10 +20,10 @@ public:
     double                    V;
     bool                      FrontFace;
 
-    void SetFaceNormal(const Ray& r, Vector3& outwardNormal)
+    // Sets the hit record normal vector.
+    // NOTE: the parameter `outwardNormal` is assumed to have unit length.
+    void SetFaceNormal(const Ray& r, const Vector3& outwardNormal)
     {
-        // Sets the hit record normal vector.
-        // NOTE: the parameter `outwardNormal` is assumed to have unit length.
         FrontFace = DotProduct(r.Direction(), outwardNormal) < 0;
         Normal    = FrontFace ? outwardNormal : -outwardNormal;
     }

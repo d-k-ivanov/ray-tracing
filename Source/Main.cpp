@@ -31,14 +31,16 @@ public:
             "RTWeekNext: Random Spheres",
             "RTWeekNext: Two Spheres",
             "RTWeekNext: Earth",
-            "RTWeekNext: Two Perlin Spheres"
+            "RTWeekNext: Two Perlin Spheres",
+            "RTWeekNext: Quads"
         };
         ImGui::Combo("Name", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
         ImGui::InputInt("Depth", &m_SceneDepth);
 
         ImGui::SeparatorText("Rendering");
-        ImGui::Text("Aspect Ratio: %.5f", m_AspectRatio);
+        // ImGui::Text("Aspect Ratio: %.6f", m_AspectRatio);
+        ImGui::InputDouble("Aspect Ratio", &m_AspectRatio);
         ImGui::Text("Viewport Width: %d", m_ViewportWidth);
         ImGui::Text("Viewport Height: %d", m_ViewportHeight);
         ImGui::Text("Image Width: %.2f", m_ImageWidth);
@@ -125,6 +127,9 @@ public:
                 break;
             case 7:
                 scene = std::make_shared<RTWeekNextTwoPerlinSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 8:
+                scene = std::make_shared<RTWeekNextQuadsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             default:
                 scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);

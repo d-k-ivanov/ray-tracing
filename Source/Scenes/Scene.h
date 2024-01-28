@@ -74,3 +74,9 @@ class RTWeekNextTwoPerlinSpheresScene final : public Scene
 public:
     RTWeekNextTwoPerlinSpheresScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
+
+class RTWeekNextQuadsScene final : public Scene
+{
+public:
+    RTWeekNextQuadsScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};

@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-// ReSharper disable once CppInconsistentNaming
 struct GLFWwindow;
 
 struct ApplicationSpecs

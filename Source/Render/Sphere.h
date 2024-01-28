@@ -59,7 +59,7 @@ public:
         rec.T = root;
         rec.P = r.At(rec.T);
 
-        Vector3 outwardNormal = (rec.P - m_Center) / m_Radius;
+        const Vector3 outwardNormal = (rec.P - m_Center) / m_Radius;
         rec.SetFaceNormal(r, outwardNormal);
         GetSphereUV(outwardNormal, rec.U, rec.V);
 

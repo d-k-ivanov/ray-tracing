@@ -1,4 +1,3 @@
-// ReSharper disable CppClangTidyModernizeUseNodiscard
 #pragma once
 
 #include <Math/Constants.h>

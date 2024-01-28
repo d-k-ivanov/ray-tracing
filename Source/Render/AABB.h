@@ -22,10 +22,9 @@ public:
     {
     }
 
+    // Treat the two points a and b as extrema for the bounding box, so we don't require a particular minimum/maximum coordinate order.
     AABB(const Point3& a, const Point3& b)
     {
-        // Treat the two points a and b as extrema for the bounding box, so we don't require a
-        // particular minimum/maximum coordinate order.
         X = Interval(fmin(a[0], b[0]), fmax(a[0], b[0]));
         Y = Interval(fmin(a[1], b[1]), fmax(a[1], b[1]));
         Z = Interval(fmin(a[2], b[2]), fmax(a[2], b[2]));

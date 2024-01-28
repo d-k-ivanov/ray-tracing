@@ -1,4 +1,3 @@
-// ReSharper disable CppClangTidyModernizeUseNodiscard
 #pragma once
 
 #include <Math/Constants.h>
@@ -10,74 +9,74 @@
 class Vector3
 {
 public:
-    double V[3];
+    double E[3];
 
     Vector3()
-        : V{0, 0, 0}
+        : E{0, 0, 0}
     {
     }
     Vector3(const double e0, const double e1, const double e2)
-        : V{e0, e1, e2}
+        : E{e0, e1, e2}
     {
     }
 
     double X() const
     {
-        return V[0];
+        return E[0];
     }
 
     double Y() const
     {
-        return V[1];
+        return E[1];
     }
 
     double Z() const
     {
-        return V[2];
+        return E[2];
     }
 
     Vector3 operator-(const Vector3& other) const
     {
-        return {V[0] - other.V[0],
-                V[1] - other.V[1],
-                V[2] - other.V[2]};
+        return {E[0] - other.E[0],
+                E[1] - other.E[1],
+                E[2] - other.E[2]};
     }
 
     void operator-=(const Vector3& other)
     {
-        V[0] -= other.V[0];
-        V[1] -= other.V[1];
-        V[2] -= other.V[2];
+        E[0] -= other.E[0];
+        E[1] -= other.E[1];
+        E[2] -= other.E[2];
     }
 
     Vector3 operator-() const
     {
-        return {-V[0], -V[1], -V[2]};
+        return {-E[0], -E[1], -E[2]};
     }
 
     double operator[](const int i) const
     {
-        return V[i];
+        return E[i];
     }
 
     double& operator[](const int i)
     {
-        return V[i];
+        return E[i];
     }
 
     Vector3& operator+=(const Vector3& v)
     {
-        V[0] += v.V[0];
-        V[1] += v.V[1];
-        V[2] += v.V[2];
+        E[0] += v.E[0];
+        E[1] += v.E[1];
+        E[2] += v.E[2];
         return *this;
     }
 
     Vector3& operator*=(const double t)
     {
-        V[0] *= t;
-        V[1] *= t;
-        V[2] *= t;
+        E[0] *= t;
+        E[1] *= t;
+        E[2] *= t;
         return *this;
     }
 
@@ -93,14 +92,14 @@ public:
 
     double LengthSquared() const
     {
-        return V[0] * V[0] + V[1] * V[1] + V[2] * V[2];
+        return E[0] * E[0] + E[1] * E[1] + E[2] * E[2];
     }
 
     // Return true if the vector is close to zero in all dimensions.
     bool NearZero() const
     {
         constexpr auto tolerance = 1e-8;
-        return (fabs(V[0]) < tolerance) && (fabs(V[1]) < tolerance) && (fabs(V[2]) < tolerance);
+        return (fabs(E[0]) < tolerance) && (fabs(E[1]) < tolerance) && (fabs(E[2]) < tolerance);
     }
 
     static Vector3 Random()
@@ -118,35 +117,35 @@ using Point3 = Vector3;
 
 inline std::ostream& operator<<(std::ostream& out, const Vector3& v)
 {
-    return out << v.V[0] << ' ' << v.V[1] << ' ' << v.V[2];
+    return out << v.E[0] << ' ' << v.E[1] << ' ' << v.E[2];
 }
 
 inline Vector3 operator+(const Vector3& u, const Vector3& v)
 {
-    return {u.V[0] + v.V[0],
-            u.V[1] + v.V[1],
-            u.V[2] + v.V[2]};
+    return {u.E[0] + v.E[0],
+            u.E[1] + v.E[1],
+            u.E[2] + v.E[2]};
 }
 
 // inline Vector3 operator-(const Vector3 &u, const Vector3 &v)
 // {
-//     return {u.V[0] - v.V[0],
-//             u.V[1] - v.V[1],
-//             u.V[2] - v.V[2]};
+//     return {u.E[0] - v.E[0],
+//             u.E[1] - v.E[1],
+//             u.E[2] - v.E[2]};
 // }
 
 inline Vector3 operator*(const Vector3& u, const Vector3& v)
 {
-    return {u.V[0] * v.V[0],
-            u.V[1] * v.V[1],
-            u.V[2] * v.V[2]};
+    return {u.E[0] * v.E[0],
+            u.E[1] * v.E[1],
+            u.E[2] * v.E[2]};
 }
 
 inline Vector3 operator*(const double t, const Vector3& v)
 {
-    return {t * v.V[0],
-            t * v.V[1],
-            t * v.V[2]};
+    return {t * v.E[0],
+            t * v.E[1],
+            t * v.E[2]};
 }
 
 inline Vector3 operator*(const Vector3& v, double t)
@@ -161,14 +160,14 @@ inline Vector3 operator/(const Vector3& v, const double t)
 
 inline double DotProduct(const Vector3& u, const Vector3& v)
 {
-    return u.V[0] * v.V[0] + u.V[1] * v.V[1] + u.V[2] * v.V[2];
+    return u.E[0] * v.E[0] + u.E[1] * v.E[1] + u.E[2] * v.E[2];
 }
 
 inline Vector3 CrossProduct(const Vector3& u, const Vector3& v)
 {
-    return {u.V[1] * v.V[2] - u.V[2] * v.V[1],
-            u.V[2] * v.V[0] - u.V[0] * v.V[2],
-            u.V[0] * v.V[1] - u.V[1] * v.V[0]};
+    return {u.E[1] * v.E[2] - u.E[2] * v.E[1],
+            u.E[2] * v.E[0] - u.E[0] * v.E[2],
+            u.E[0] * v.E[1] - u.E[1] * v.E[0]};
 }
 
 inline Vector3 UnitVector(const Vector3& v)
