@@ -115,12 +115,12 @@ private:
     double m_Scale;
 };
 
-class NoiseTextureMarble final : public Texture
+class NoiseTexture final : public Texture
 {
 public:
-    NoiseTextureMarble() = default;
+    NoiseTexture() = default;
 
-    explicit NoiseTextureMarble(const double scale)
+    explicit NoiseTexture(const double scale)
         : m_Scale(scale)
     {
     }

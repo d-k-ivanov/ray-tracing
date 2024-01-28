@@ -98,3 +98,9 @@ class RTWeekNextCornellSmokeScene final : public Scene
 public:
     RTWeekNextCornellSmokeScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
+
+class RTWeekNextFinalScene final : public Scene
+{
+public:
+    RTWeekNextFinalScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};

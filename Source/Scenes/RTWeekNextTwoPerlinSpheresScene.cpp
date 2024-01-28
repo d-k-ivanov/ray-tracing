@@ -12,7 +12,7 @@ RTWeekNextTwoPerlinSpheresScene::RTWeekNextTwoPerlinSpheresScene(const double as
 {
     // auto pertext = std::make_shared<NoiseTextureSmooth>(4);
     auto pertext = std::make_shared<NoiseTextureCamouflage>(4);
-    // auto pertext = std::make_shared<NoiseTextureMarble>(4);
+    // auto pertext = std::make_shared<NoiseTexture>(4);
     m_World.Add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, std::make_shared<Lambertian>(pertext)));
     m_World.Add(std::make_shared<Sphere>(Point3(0, 2, 0), 2, std::make_shared<Lambertian>(pertext)));
 

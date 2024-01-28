@@ -63,6 +63,7 @@ set(SOURCE_FILES
     Source/Scenes/RTWeekNextSimpleLightScene.cpp
     Source/Scenes/RTWeekNextCornellBoxScene.cpp
     Source/Scenes/RTWeekNextCornellSmokeScene.cpp
+    Source/Scenes/RTWeekNextFinalScene.cpp
 
     Source/UI/Application.cpp
     Source/UI/Application.h

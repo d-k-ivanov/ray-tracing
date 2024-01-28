@@ -23,7 +23,7 @@ public:
     double DefocusAngle = 0;     // Variation angle of rays through each pixel
     double FocusDist    = 10;    // Distance from camera lookfrom point to plane of perfect focus
 
-    // TODO: Original Renderer, Need to move my custom rendering functions here.
+    // TODO: Original Renderer. Need to move my custom rendering functions here.
     void Render(const Hittable& world)
     {
         Initialize();
@@ -128,7 +128,7 @@ public:
         return colorFromEmission + colorFromScatter;
     }
 
-    Color3 RayColorWithoutBackground(const Ray& r, const int depth, const Hittable& world) const
+    Color3 RayColorGradientBackground(const Ray& r, const int depth, const Hittable& world) const
     {
         // If we've exceeded the ray bounce limit, no more light is gathered.
         if(depth <= 0)

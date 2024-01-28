@@ -35,7 +35,8 @@ public:
             "RTWeekNext: Quads",
             "RTWeekNext: Simple Light",
             "RTWeekNext: Cornell Box",
-            "RTWeekNext: Cornell Smoke"
+            "RTWeekNext: Cornell Smoke",
+            "RTWeekNext: Final"
         };
         ImGui::Combo("Name", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
@@ -142,6 +143,9 @@ public:
                 break;
             case 11:
                 scene = std::make_shared<RTWeekNextCornellSmokeScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 12:
+                scene = std::make_shared<RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             default:
                 scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);

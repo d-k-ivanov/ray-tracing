@@ -10,7 +10,7 @@
 RTWeekNextSimpleLightScene::RTWeekNextSimpleLightScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
 {
-    auto perlinTexture = std::make_shared<NoiseTextureMarble>(4);
+    auto perlinTexture = std::make_shared<NoiseTexture>(4);
     m_World.Add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, std::make_shared<Lambertian>(perlinTexture)));
     m_World.Add(std::make_shared<Sphere>(Point3(0, 2, 0), 2, std::make_shared<Lambertian>(perlinTexture)));
 
