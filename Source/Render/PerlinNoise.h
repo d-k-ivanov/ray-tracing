@@ -7,10 +7,10 @@ class Perlin
 public:
     Perlin()
     {
-        m_Ranvec = new Vector3[PointCount];
+        m_RandomVector = new Vector3[PointCount];
         for(int i = 0; i < PointCount; ++i)
         {
-            m_Ranvec[i] = UnitVector(Vector3::Random(-1, 1));
+            m_RandomVector[i] = UnitVector(Vector3::Random(-1, 1));
         }
 
         m_PermX = PerlinGeneratePerm();
@@ -20,7 +20,7 @@ public:
 
     ~Perlin()
     {
-        delete[] m_Ranvec;
+        delete[] m_RandomVector;
         delete[] m_PermX;
         delete[] m_PermY;
         delete[] m_PermZ;
@@ -43,14 +43,14 @@ public:
             {
                 for(int dk = 0; dk < 2; dk++)
                 {
-                    c[di][dj][dk] = m_Ranvec[m_PermX[(i + di) & 255] ^ m_PermY[(j + dj) & 255] ^ m_PermZ[(k + dk) & 255]];
+                    c[di][dj][dk] = m_RandomVector[m_PermX[(i + di) & 255] ^ m_PermY[(j + dj) & 255] ^ m_PermZ[(k + dk) & 255]];
                 }
             }
         }
         return PerlinInterp(c, u, v, w);
     }
 
-    double Turb(const Point3& p, const int depth = 7) const
+    double Turbulence(const Point3& p, const int depth = 7) const
     {
         auto accum  = 0.0;
         auto tempP  = p;
@@ -68,7 +68,7 @@ public:
 
 private:
     static constexpr int PointCount = 256;
-    Vector3*             m_Ranvec;
+    Vector3*             m_RandomVector;
     int*                 m_PermX;
     int*                 m_PermY;
     int*                 m_PermZ;

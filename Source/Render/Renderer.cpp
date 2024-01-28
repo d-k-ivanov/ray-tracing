@@ -96,7 +96,7 @@ void Renderer::RenderMultiCore(Camera& camera, const Hittable& world) const
                   {
         std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
     	std::for_each(std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
-    		[this, y, &camera, &world](uint32_t x)
+    		[this, y, &camera, &world](const uint32_t x)
     		{
     			Color3 pixelColor(0, 0, 0);
                 for(int sample = 0; sample < camera.SamplesPerPixel; ++sample)

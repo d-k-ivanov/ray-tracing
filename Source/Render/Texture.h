@@ -74,12 +74,32 @@ private:
     std::shared_ptr<Texture> m_Odd;
 };
 
-class NoiseTexture final : public Texture
+class NoiseTextureSmooth final : public Texture
 {
 public:
-    NoiseTexture() = default;
+    NoiseTextureSmooth() = default;
 
-    explicit NoiseTexture(const double scale)
+    explicit NoiseTextureSmooth(const double scale)
+        : m_Scale(scale)
+    {
+    }
+
+    Color3 Value(double u, double v, const Point3& p) const override
+    {
+        return Color3(1, 1, 1) * 0.5 * (1.0 + m_Noise.Noise(m_Scale * p));
+    }
+
+private:
+    Perlin m_Noise;
+    double m_Scale;
+};
+
+class NoiseTextureCamouflage final : public Texture
+{
+public:
+    NoiseTextureCamouflage() = default;
+
+    explicit NoiseTextureCamouflage(const double scale)
         : m_Scale(scale)
     {
     }
@@ -87,7 +107,28 @@ public:
     Color3 Value(double u, double v, const Point3& p) const override
     {
         const auto s = m_Scale * p;
-        return Color3(1, 1, 1) * 0.5 * (1 + sin(s.Z() + 10 * m_Noise.Turb(s)));
+        return Color3(1, 1, 1) * m_Noise.Turbulence(s);
+    }
+
+private:
+    Perlin m_Noise;
+    double m_Scale;
+};
+
+class NoiseTextureMarble final : public Texture
+{
+public:
+    NoiseTextureMarble() = default;
+
+    explicit NoiseTextureMarble(const double scale)
+        : m_Scale(scale)
+    {
+    }
+
+    Color3 Value(double u, double v, const Point3& p) const override
+    {
+        const auto s = m_Scale * p;
+        return Color3(1, 1, 1) * 0.5 * (1 + sin(s.Z() + 10 * m_Noise.Turbulence(s)));
     }
 
 private:

@@ -55,6 +55,7 @@ set(SOURCE_FILES
     Source/Scenes/RTWeekNextRandomSpheresScene.cpp
     Source/Scenes/RTWeekNextTwoSpheresScene.cpp
     Source/Scenes/RTWeekNextEarthScene.cpp
+    Source/Scenes/RTWeekNextTwoPerlinSpheresScene.cpp
 
     Source/UI/Application.cpp
     Source/UI/Application.h

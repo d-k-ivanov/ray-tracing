@@ -30,7 +30,8 @@ public:
             "RTWeekNext: Default",
             "RTWeekNext: Random Spheres",
             "RTWeekNext: Two Spheres",
-            "RTWeekNext: Earth"
+            "RTWeekNext: Earth",
+            "RTWeekNext: Two Perlin Spheres"
         };
         ImGui::Combo("Name", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
@@ -122,6 +123,9 @@ public:
             case 6:
                 scene = std::make_shared<RTWeekNextEarthScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
+            case 7:
+                scene = std::make_shared<RTWeekNextTwoPerlinSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
             default:
                 scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
@@ -158,7 +162,7 @@ private:
     uint32_t m_ViewportHeight = 0;
     double   m_LastRenderTime = 0.0;
     int      m_RendererId     = 3;
-    int      m_SceneId        = 4;
+    int      m_SceneId        = 7;
     int      m_SceneSamples   = 10;
     int      m_SceneDepth     = 50;
 
