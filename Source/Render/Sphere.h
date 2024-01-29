@@ -2,6 +2,7 @@
 
 #include <Math/Vector3.h>
 #include <Render/Hittable.h>
+#include <Render/ONB.h>
 
 #include <memory>
 
@@ -35,9 +36,9 @@ public:
     bool Hit(const Ray& r, const Interval rayT, HitRecord& rec) const override
     {
         const Point3  center = m_IsMoving ? SphereCenter(r.Time()) : m_Center;
-        const Vector3 oc     = r.Origin() - center;
+        const Vector3 oc     = center - r.Origin();
         const double  a      = r.Direction().LengthSquared();
-        const double  halfB  = DotProduct(oc, r.Direction());
+        const double  halfB  = DotProduct(r.Direction(), oc);
         const double  c      = oc.LengthSquared() - m_Radius * m_Radius;
 
         const double discriminant = halfB * halfB - a * c;
@@ -48,10 +49,10 @@ public:
         const auto sqrtd = sqrt(discriminant);
 
         // Find the nearest root that lies in the acceptable range.
-        double root = (-halfB - sqrtd) / a;
+        double root = (halfB - sqrtd) / a;
         if(!rayT.Surrounds(root))
         {
-            root = (-halfB + sqrtd) / a;
+            root = (halfB + sqrtd) / a;
             if(!rayT.Surrounds(root))
                 return false;
         }
@@ -69,6 +70,28 @@ public:
     }
 
     AABB BoundingBox() const override { return m_BoundingBox; }
+
+    // This method only works for stationary spheres.
+    double PDFValue(const Point3& o, const Vector3& v) const override
+    {
+        HitRecord rec;
+        if(!this->Hit(Ray(o, v), Interval(0.001, Infinity), rec))
+            return 0;
+
+        const auto cosThetaMax = sqrt(1 - m_Radius * m_Radius / (m_Center - o).LengthSquared());
+        const auto solidAngle  = 2 * Pi * (1 - cosThetaMax);
+
+        return 1 / solidAngle;
+    }
+
+    Vector3 Random(const Point3& o) const override
+    {
+        const Vector3 direction       = m_Center - o;
+        const auto    distanceSquared = direction.LengthSquared();
+        ONB           uvw;
+        uvw.BuildFromW(direction);
+        return uvw.Local(RandomToSphere(m_Radius, distanceSquared));
+    }
 
 private:
     Point3                    m_Center;
@@ -98,5 +121,18 @@ private:
 
         u = phi / (2 * Pi);
         v = theta / Pi;
+    }
+
+    static Vector3 RandomToSphere(const double radius, const double distanceSquared)
+    {
+        const auto r1 = Random::Double();
+        const auto r2 = Random::Double();
+        auto       z  = 1 + r2 * (sqrt(1 - radius * radius / distanceSquared) - 1);
+
+        const auto phi = 2 * Pi * r1;
+        auto       x   = cos(phi) * sqrt(1 - z * z);
+        auto       y   = sin(phi) * sqrt(1 - z * z);
+
+        return {x, y, z};
     }
 };

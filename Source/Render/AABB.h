@@ -102,6 +102,19 @@ public:
         }
         return true;
     }
+
+    // Returns the index of the longest axis of the bounding box.
+    int LongestAxis() const {
+        if (X.Size() > Y.Size()){
+            return X.Size() > Y.Size() ? 0 : 2;
+        }
+        else {
+            return Y.Size() > Z.Size() ? 1 : 2;
+        }
+    }
+
+    static const AABB Empty;
+    static const AABB Universe;
 };
 
 inline AABB operator+(const AABB& bbox, const Vector3& offset)

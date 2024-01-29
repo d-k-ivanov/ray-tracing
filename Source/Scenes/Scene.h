@@ -17,10 +17,12 @@ public:
 
     virtual Camera&   GetCamera() { return m_Camera; }
     virtual Hittable& GetWorld() { return m_World; }
+    virtual Hittable& GetLights() { return m_Lights; }
 
 protected:
     Camera       m_Camera;
     HittableList m_World;
+    HittableList m_Lights;
     double       m_AspectRatio     = 16.0 / 9.0;
     int          m_Width           = 400;
     int          m_SamplesPerPixel = 1;
@@ -103,4 +105,22 @@ class RTWeekNextFinalScene final : public Scene
 {
 public:
     RTWeekNextFinalScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};
+
+class RTWeekRestACornellBoxScene final : public Scene
+{
+public:
+    RTWeekRestACornellBoxScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};
+
+class RTWeekRestBCornellBoxMirrorScene final : public Scene
+{
+public:
+    RTWeekRestBCornellBoxMirrorScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};
+
+class RTWeekRestCCornellBoxGlassScene final : public Scene
+{
+public:
+    RTWeekRestCCornellBoxGlassScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };

@@ -15,8 +15,9 @@ public:
     void SetSize(uint32_t width, uint32_t height);
     void RenderRandom() const;
     void RenderHelloWorld() const;
-    void RenderSingleCore(Camera& camera, const Hittable& world) const;
-    void RenderMultiCore(Camera& camera, const Hittable& world) const;
+    void CPUOneCore(Camera& camera, const Hittable& world, const Hittable& lights) const;
+    void CPUMultiCore(Camera& camera, const Hittable& world, const Hittable& lights) const;
+    void CPUMultiCoreStratified(Camera& camera, const Hittable& world, const Hittable& lights) const;
 
     std::shared_ptr<Image> GetImage() const { return m_Image; }
 

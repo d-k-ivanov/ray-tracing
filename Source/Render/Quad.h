@@ -18,6 +18,7 @@ public:
         m_Normal     = UnitVector(n);
         m_D          = DotProduct(m_Normal, m_Q);
         m_W          = n / DotProduct(n, n);
+        m_Area       = n.Length();
 
         SetBoundingBox();
     }
@@ -72,14 +73,35 @@ public:
         return true;
     }
 
+    double PDFValue(const Point3& origin, const Vector3& direction) const override
+    {
+        HitRecord rec;
+        if(!this->Hit(Ray(origin, direction), Interval(0.001, Infinity), rec))
+            return 0;
+
+        const auto distanceSquared = rec.T * rec.T * direction.LengthSquared();
+
+        const auto cosine = std::fabs(DotProduct(direction, rec.Normal) / direction.Length());
+
+        return distanceSquared / (cosine * m_Area);
+    }
+
+    Vector3 Random(const Point3& origin) const override
+    {
+        const auto p = m_Q + (Random::Double() * m_U) + (Random::Double() * m_V);
+        return p - origin;
+    }
+
 private:
     Point3                    m_Q;
-    Vector3                   m_U, m_V;
+    Vector3                   m_U;
+    Vector3                   m_V;
     std::shared_ptr<Material> m_Material;
     AABB                      m_BoundingBox;
     Vector3                   m_Normal;
     double                    m_D;
     Vector3                   m_W;
+    double                    m_Area;
 };
 
 inline std::shared_ptr<HittableList> Box(const Point3& a, const Point3& b, const std::shared_ptr<Material>& material)

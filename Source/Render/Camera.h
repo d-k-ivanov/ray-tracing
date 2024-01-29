@@ -12,6 +12,7 @@ public:
     double AspectRatio     = 1.0;    // Ratio of image width over height
     int    ImageWidth      = 100;    // Rendered image width in pixel count
     int    SamplesPerPixel = 10;     // Count of random samples for each pixel
+    int    SqrtSpp         = 1;      // Square root of number of samples per pixel
     int    MaxDepth        = 10;     // Maximum number of ray bounces into scene
     Color3 Background;               // Scene background color
 
@@ -24,30 +25,36 @@ public:
     double FocusDist    = 10;    // Distance from camera lookfrom point to plane of perfect focus
 
     // TODO: Original Renderer. Need to move my custom rendering functions here.
-    void Render(const Hittable& world)
-    {
-        Initialize();
-
-        std::cout << "P3\n";
-        std::cout << ImageWidth << ' ' << m_ImageHeight << "\n";
-        std::cout << "255\n";
-
-        for(int j = 0; j < m_ImageHeight; ++j)
-        {
-            std::clog << "\rScanlines remaining: " << (m_ImageHeight - j) << ' ' << std::flush;
-            for(int i = 0; i < ImageWidth; ++i)
-            {
-                Color3 pixelColor(0, 0, 0);
-                for(int sample = 0; sample < SamplesPerPixel; ++sample)
-                {
-                    Ray r = GetRay(i, j);
-                    pixelColor += RayColor(r, MaxDepth, world);
-                }
-                GetColorRGBA(pixelColor, SamplesPerPixel);
-            }
-        }
-        std::clog << "\rDone.                 \n";
-    }
+    // void Render(const Hittable& world, const hittable& lights)
+    // {
+    //     Initialize();
+    //
+    //     std::cout << "P3\n";
+    //     std::cout << ImageWidth << ' ' << m_ImageHeight << "\n";
+    //     std::cout << "255\n";
+    //
+    //     for(int j = 0; j < m_ImageHeight; j++)
+    //     {
+    //         std::clog << "\rScanlines remaining: " << (m_ImageHeight - j) << ' ' << std::flush;
+    //         for(int i = 0; i < ImageWidth; i++)
+    //         {
+    //             Color3 pixelColor(0, 0, 0);
+    //             // for(int sample = 0; sample < SamplesPerPixel; sample++)
+    //             // {
+    //             //     Ray r = GetRay(i, j);
+    //             //     pixelColor += RayColor(r, MaxDepth, world, lights);
+    //             // }
+    //              for (int s_j = 0; s_j < SqrtSpp; s_j++) {
+    //                  for (int s_i = 0; s_i < SqrtSpp; s_i++) {
+    //                      Ray r = GetRay(i, j, s_i, s_j);
+    //                      pixelColor += RayColor(r, MaxDepth, world, lights);
+    //                  }
+    //              }
+    //             GetColorRGBA(pixelColor, SamplesPerPixel);
+    //         }
+    //     }
+    //     std::clog << "\rDone.                 \n";
+    // }
 
     void Initialize()
     {
@@ -62,6 +69,9 @@ public:
 
         const auto viewportHeight = 2 * h * FocusDist;
         const auto viewportWidth  = viewportHeight * (static_cast<double>(ImageWidth) / m_ImageHeight);
+
+        SqrtSpp        = static_cast<int>(sqrt(SamplesPerPixel));
+        m_RecipSqrtSpp = 1.0 / SqrtSpp;
 
         // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
         m_W = UnitVector(LookFrom - LookAt);
@@ -91,6 +101,21 @@ public:
     {
         const auto pixelCenter = m_Pixel00Loc + (i * m_PixelDeltaU) + (j * m_PixelDeltaV);
         const auto pixelSample = pixelCenter + PixelSampleSquare();
+        // const auto pixelSample = pixelCenter + RandomInUnitDisk();
+
+        auto       rayOrigin    = (DefocusAngle <= 0) ? m_Center : DefocusDiskSample();
+        const auto rayDirection = pixelSample - rayOrigin;
+        const auto rayTime      = Random::Double();
+
+        return {rayOrigin, rayDirection, rayTime};
+    }
+
+    // Get a randomly-sampled camera ray for the pixel at location i,j,
+    // originating from the camera defocus disk, and randomly sampled around the pixel location.
+    Ray GetRay(const int i, const int j, const int iS, const int jS) const
+    {
+        const auto pixelCenter = m_Pixel00Loc + (i * m_PixelDeltaU) + (j * m_PixelDeltaV);
+        const auto pixelSample = pixelCenter + PixelSampleSquare(iS, jS);
         // const auto pixelSample = pixelCenter + RandomInUnitDisk();
 
         auto       rayOrigin    = (DefocusAngle <= 0) ? m_Center : DefocusDiskSample();
@@ -155,23 +180,76 @@ public:
         // return (1.0 - a) * Color3(1.0, 1.0, 1.0) + a * Color3(1.0, 0.0, 0.0);
     }
 
+    Color3 RayColor(const Ray& r, const int depth, const Hittable& world, const Hittable& lights) const
+    {
+        // If we've exceeded the ray bounce limit, no more light is gathered.
+        if(depth <= 0)
+        {
+            return {0, 0, 0};
+        }
+
+        HitRecord rec;
+
+        // If the ray hits nothing, return the background color.
+        if(!world.Hit(r, Interval(0.001, Infinity), rec))
+        {
+            return Background;
+        }
+
+        ScatterRecord srec;
+
+        const Color3 colorFromEmission = rec.Material->Emitted(r, rec, rec.U, rec.V, rec.P);
+
+        if(!rec.Material->Scatter(r, rec, srec))
+        {
+            return colorFromEmission;
+        }
+
+        if(srec.SkipPDF)
+        {
+            return srec.Attenuation * RayColor(srec.SkipPDFRay, depth - 1, world, lights);
+        }
+
+        const auto       lightPtr = std::make_shared<HittablePDF>(lights, rec.P);
+        const MixturePDF p(lightPtr, srec.PDFPtr);
+
+        const Ray  scattered = Ray(rec.P, p.Generate(), r.Time());
+        const auto pdfVal    = p.Value(scattered.Direction());
+
+        const double scatteringPDF = rec.Material->ScatteringPDF(r, rec, scattered);
+
+        const Color3 sampleColor      = RayColor(scattered, depth - 1, world, lights);
+        const Color3 colorFromScatter = (srec.Attenuation * scatteringPDF * sampleColor) / pdfVal;
+
+        return colorFromEmission + colorFromScatter;
+    }
+
 private:
-    int     m_ImageHeight = 0;    // Rendered image height
-    Point3  m_Center;             // Camera m_center
-    Point3  m_Pixel00Loc;         // Location of pixel 0, 0
-    Vector3 m_PixelDeltaU;        // Offset to pixel to the right
-    Vector3 m_PixelDeltaV;        // Offset to pixel below
-    Vector3 m_U;                  // Camera frame basis vectors
-    Vector3 m_V;                  // Camera frame basis vectors
-    Vector3 m_W;                  // Camera frame basis vectors
-    Vector3 m_DefocusDiskU;       // Defocus disk horizontal radius
-    Vector3 m_DefocusDiskV;       // Defocus disk vertical radius
+    int     m_ImageHeight  = 0;    // Rendered image height
+    double  m_RecipSqrtSpp = 1;    // 1 / sqrt_spp
+    Point3  m_Center;              // Camera m_center
+    Point3  m_Pixel00Loc;          // Location of pixel 0, 0
+    Vector3 m_PixelDeltaU;         // Offset to pixel to the right
+    Vector3 m_PixelDeltaV;         // Offset to pixel below
+    Vector3 m_U;                   // Camera frame basis vectors
+    Vector3 m_V;                   // Camera frame basis vectors
+    Vector3 m_W;                   // Camera frame basis vectors
+    Vector3 m_DefocusDiskU;        // Defocus disk horizontal radius
+    Vector3 m_DefocusDiskV;        // Defocus disk vertical radius
 
     // Returns a random point in the square surrounding a pixel at the origin.
     Vector3 PixelSampleSquare() const
     {
         const auto px = -0.5 + Random::Double();
         const auto py = -0.5 + Random::Double();
+        return (px * m_PixelDeltaU) + (py * m_PixelDeltaV);
+    }
+
+    // Returns a random point in the square surrounding a pixel at the origin, given the two subpixel indices.
+    Vector3 PixelSampleSquare(const int iS, const int jS) const
+    {
+        const auto px = -0.5 + m_RecipSqrtSpp * (iS + Random::Double());
+        const auto py = -0.5 + m_RecipSqrtSpp * (jS + Random::Double());
         return (px * m_PixelDeltaU) + (py * m_PixelDeltaV);
     }
 

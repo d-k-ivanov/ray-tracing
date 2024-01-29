@@ -8,7 +8,7 @@ public:
     Perlin()
     {
         m_RandomVector = new Vector3[PointCount];
-        for(int i = 0; i < PointCount; ++i)
+        for(int i = 0; i < PointCount; i++)
         {
             m_RandomVector[i] = UnitVector(Vector3::Random(-1, 1));
         }
@@ -50,7 +50,7 @@ public:
         return PerlinInterp(c, u, v, w);
     }
 
-    double Turbulence(const Point3& p, const int depth = 7) const
+    double Turbulence(const Point3& p, const int depth) const
     {
         auto accum  = 0.0;
         auto tempP  = p;

@@ -38,6 +38,16 @@ public:
     // virtual bool hit(const Ray &r, double ray_tmin, double ray_tmax, HitRecord &rec) const = 0;
     virtual bool Hit(const Ray& r, Interval rayT, HitRecord& rec) const = 0;
     virtual AABB BoundingBox() const                                    = 0;
+
+    virtual double PDFValue(const Vector3& o, const Vector3& v) const
+    {
+        return 0.0;
+    }
+
+    virtual Vector3 Random(const Vector3& o) const
+    {
+        return {1, 0, 0};
+    }
 };
 
 class Translate final : public Hittable

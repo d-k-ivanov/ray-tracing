@@ -34,6 +34,7 @@ set(SOURCE_FILES
     Source/Math/Interval.h
     Source/Math/Vector3.h
 
+    Source/Render/AABB.cpp
     Source/Render/AABB.h
     Source/Render/BVH.h
     Source/Render/Camera.h
@@ -42,6 +43,8 @@ set(SOURCE_FILES
     Source/Render/Hittable.h
     Source/Render/HittableList.h
     Source/Render/Material.h
+    Source/Render/ONB.h
+    Source/Render/PDF.h
     Source/Render/PerlinNoise.h
     Source/Render/Quad.h
     Source/Render/Ray.h
@@ -64,6 +67,9 @@ set(SOURCE_FILES
     Source/Scenes/RTWeekNextCornellBoxScene.cpp
     Source/Scenes/RTWeekNextCornellSmokeScene.cpp
     Source/Scenes/RTWeekNextFinalScene.cpp
+    Source/Scenes/RTWeekRestACornellBoxScene.cpp
+    Source/Scenes/RTWeekRestBCornellBoxMirrorScene.cpp
+    Source/Scenes/RTWeekRestCCornellBoxGlassScene.cpp
 
     Source/UI/Application.cpp
     Source/UI/Application.h

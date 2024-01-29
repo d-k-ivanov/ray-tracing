@@ -6,8 +6,6 @@
 #include <Render/PerlinNoise.h>
 #include <UI/Image.h>
 
-// #include "rtw_stb_image.h"
-
 #include <memory>
 
 class Texture
@@ -107,7 +105,7 @@ public:
     Color3 Value(double u, double v, const Point3& p) const override
     {
         const auto s = m_Scale * p;
-        return Color3(1, 1, 1) * m_Noise.Turbulence(s);
+        return Color3(1, 1, 1) * m_Noise.Turbulence(s, 7);
     }
 
 private:
@@ -128,7 +126,7 @@ public:
     Color3 Value(double u, double v, const Point3& p) const override
     {
         const auto s = m_Scale * p;
-        return Color3(1, 1, 1) * 0.5 * (1 + sin(s.Z() + 10 * m_Noise.Turbulence(s)));
+        return Color3(1, 1, 1) * 0.5 * (1 + sin(s.Z() + 10 * m_Noise.Turbulence(s, 7)));
     }
 
 private:

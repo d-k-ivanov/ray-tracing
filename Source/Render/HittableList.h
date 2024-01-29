@@ -50,6 +50,23 @@ public:
 
     AABB BoundingBox() const override { return m_BoundingBox; }
 
+    double PDFValue(const Point3& o, const Vector3& v) const override
+    {
+        const auto weight = 1.0 / Objects.size();
+        auto       sum    = 0.0;
+
+        for(const auto& object : Objects)
+            sum += weight * object->PDFValue(o, v);
+
+        return sum;
+    }
+
+    Vector3 Random(const Vector3& o) const override
+    {
+        const auto intSize = static_cast<int>(Objects.size());
+        return Objects[Random::Int(0, intSize - 1)]->Random(o);
+    }
+
 private:
     AABB m_BoundingBox;
 };

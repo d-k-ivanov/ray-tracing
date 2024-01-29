@@ -36,13 +36,17 @@ public:
             "RTWeekNext: Simple Light",
             "RTWeekNext: Cornell Box",
             "RTWeekNext: Cornell Smoke",
-            "RTWeekNext: Final"};
+            "RTWeekNext: Final",
+            "RTWeekRest: Cornell Box (Simple)",
+            "RTWeekRest: Cornell Box (Mirror)",
+            "RTWeekRest: Cornell Box (Glass)"
+        };
         ImGui::Combo("Scene", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
         ImGui::InputInt("Depth", &m_SceneDepth);
 
         // ImGui::Text("Aspect Ratio: %.6f", m_AspectRatio);
-        ImGui::InputDouble("Aspect Ratio", &m_AspectRatio);
+        ImGui::InputDouble("Aspect Ratio", &m_AspectRatio, 0.0, 0.0, "%.2f");
         ImGui::InputInt("Width", &m_Width, 0, 1920);
         // ImGui::Text("Viewport Height: %d", m_ViewportHeight);
         // ImGui::Text("Image Width: %.2f", m_ImageWidth);
@@ -51,8 +55,9 @@ public:
         const char* rendererList[] = {
             "Random INT",
             "Hello World",
-            "Ray Tracer 1Core",
-            "Ray Tracer Parallel"};
+            "CPU Ray Tracer: One Core",
+            "CPU Ray Tracer: Multi Core",
+            "CPU Ray Tracer: Multi Core Stratified"};
         ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList));
 
         if(ImGui::Button("Render", ImVec2(-FLT_MIN, 0.0f)))
@@ -166,8 +171,15 @@ public:
             case 12:
                 scene = std::make_shared<RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
+            case 13:
+                scene = std::make_shared<RTWeekRestACornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 14:
+                scene = std::make_shared<RTWeekRestBCornellBoxMirrorScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 15:
             default:
-                scene = std::make_shared<RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                scene = std::make_shared<RTWeekRestBCornellBoxMirrorScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
         }
 
@@ -181,10 +193,13 @@ public:
                 m_Renderer.RenderHelloWorld();
                 break;
             case 2:
-                m_Renderer.RenderSingleCore(scene->GetCamera(), scene->GetWorld());
+                m_Renderer.CPUOneCore(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
                 break;
             case 3:
-                m_Renderer.RenderMultiCore(scene->GetCamera(), scene->GetWorld());
+                m_Renderer.CPUMultiCore(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                break;
+            case 4:
+                m_Renderer.CPUMultiCoreStratified(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
                 break;
             default:
                 m_Renderer.RenderRandom();
@@ -197,15 +212,15 @@ private:
     Renderer m_Renderer;
     // double   m_AspectRatio    = 16.0 / 9.0;
     double   m_AspectRatio    = 1.0;
-    int      m_Width          = 400;
+    int      m_Width          = 600;
     float    m_ImageWidth     = 0;
     float    m_ImageHeight    = 0;
-    uint32_t m_ViewportWidth  = 400;
+    uint32_t m_ViewportWidth  = 600;
     uint32_t m_ViewportHeight = 0;
     double   m_LastRenderTime = 0.0;
-    int      m_RendererId     = 3;
-    int      m_SceneId        = INT_MAX;
-    int      m_SceneSamples   = 10;
+    int      m_RendererId     = 4;
+    int      m_SceneId        = 13;
+    int      m_SceneSamples   = 64;
     int      m_SceneDepth     = 50;
 
     // ImGui Stuff

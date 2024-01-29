@@ -2,6 +2,7 @@
 
 #include <Render/Color.h>
 #include <Render/Hittable.h>
+#include <Render/PDF.h>
 #include <Render/Ray.h>
 #include <Render/Texture.h>
 
@@ -9,16 +10,41 @@
 
 class HitRecord;
 
+class ScatterRecord
+{
+public:
+    Color3               Attenuation;
+    std::shared_ptr<PDF> PDFPtr;
+    bool                 SkipPDF;
+    Ray                  SkipPDFRay;
+};
+
 class Material
 {
 public:
     virtual ~Material() = default;
+
     virtual Color3 Emitted(double u, double v, const Point3& p) const
     {
         return {0, 0, 0};
     }
 
+    virtual Color3 Emitted(const Ray& rIn, const HitRecord& rec, double u, double v, const Point3& p) const
+    {
+        return {0, 0, 0};
+    }
+
     virtual bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const = 0;
+
+    virtual bool Scatter(const Ray& rIn, const HitRecord& rec, ScatterRecord& srec) const
+    {
+        return false;
+    }
+
+    virtual double ScatteringPDF(const Ray& rIn, const HitRecord& rec, const Ray& scattered) const
+    {
+        return 0;
+    }
 };
 
 class Lambertian final : public Material
@@ -48,6 +74,20 @@ public:
         return true;
     }
 
+    bool Scatter(const Ray& rIn, const HitRecord& rec, ScatterRecord& srec) const override
+    {
+        srec.Attenuation = m_Albedo->Value(rec.U, rec.V, rec.P);
+        srec.PDFPtr      = std::make_shared<CosinePDF>(rec.Normal);
+        srec.SkipPDF     = false;
+        return true;
+    }
+
+    double ScatteringPDF(const Ray& rIn, const HitRecord& rec, const Ray& scattered) const override
+    {
+        const auto cosTheta = DotProduct(rec.Normal, UnitVector(scattered.Direction()));
+        return cosTheta < 0 ? 0 : cosTheta / Pi;
+    }
+
 private:
     std::shared_ptr<Texture> m_Albedo;
 };
@@ -67,6 +107,16 @@ public:
         scattered               = Ray(rec.P, reflected + m_Fuzz * RandomUnitVector(), rIn.Time());
         attenuation             = m_Albedo;
         return (DotProduct(scattered.Direction(), rec.Normal) > 0);
+    }
+
+    bool Scatter(const Ray& rIn, const HitRecord& rec, ScatterRecord& srec) const override
+    {
+        srec.Attenuation        = m_Albedo;
+        srec.PDFPtr             = nullptr;
+        srec.SkipPDF            = true;
+        const Vector3 reflected = Reflect(UnitVector(rIn.Direction()), rec.Normal);
+        srec.SkipPDFRay         = Ray(rec.P, reflected + m_Fuzz * RandomUnitVector(), rIn.Time());
+        return true;
     }
 
 private:
@@ -109,6 +159,36 @@ public:
         return true;
     }
 
+    bool Scatter(const Ray& rIn, const HitRecord& rec, ScatterRecord& srec) const override
+    {
+        srec.Attenuation = Color3(1.0, 1.0, 1.0);
+        srec.PDFPtr      = nullptr;
+        srec.SkipPDF     = true;
+
+        const double refractionRatio = rec.FrontFace ? (1.0 / m_Ir) : m_Ir;
+
+        const Vector3 unitDirection = UnitVector(rIn.Direction());
+
+        const double cosTheta = fmin(DotProduct(-unitDirection, rec.Normal), 1.0);
+        const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+
+        const bool cannotRefract = refractionRatio * sinTheta > 1.0;
+        Vector3    direction;
+
+        if(cannotRefract || Reflectance(cosTheta, refractionRatio) > Random::Double())
+        {
+            direction = Reflect(unitDirection, rec.Normal);
+        }
+        else
+        {
+            direction = Refract(unitDirection, rec.Normal, refractionRatio);
+        }
+
+        srec.SkipPDFRay = Ray(rec.P, direction, rIn.Time());
+
+        return true;
+    }
+
 private:
     double m_Ir;    // Index of Refraction
 
@@ -144,6 +224,15 @@ public:
         return m_Emit->Value(u, v, p);
     }
 
+    Color3 Emitted(const Ray& rIn, const HitRecord& rec, const double u, const double v, const Point3& p) const override
+    {
+        if(!rec.FrontFace)
+        {
+            return {0, 0, 0};
+        }
+        return m_Emit->Value(u, v, p);
+    }
+
 private:
     std::shared_ptr<Texture> m_Emit;
 };
@@ -166,6 +255,19 @@ public:
         scattered   = Ray(rec.P, RandomUnitVector(), rIn.Time());
         attenuation = m_Albedo->Value(rec.U, rec.V, rec.P);
         return true;
+    }
+
+    bool Scatter(const Ray& rIn, const HitRecord& rec, ScatterRecord& srec) const override
+    {
+        srec.Attenuation = m_Albedo->Value(rec.U, rec.V, rec.P);
+        srec.PDFPtr      = std::make_shared<SpherePDF>();
+        srec.SkipPDF     = false;
+        return true;
+    }
+
+    double ScatteringPDF(const Ray& rIn, const HitRecord& rec, const Ray& scattered) const override
+    {
+        return 1 / (4 * Pi);
     }
 
 private:

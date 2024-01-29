@@ -16,11 +16,18 @@ public:
 
     BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects, size_t start, size_t end)
     {
+        m_BoundingBox = AABB::Empty;
+        for(size_t objectIndex = start; objectIndex < end; objectIndex++)
+        {
+            m_BoundingBox = AABB(m_BoundingBox, srcObjects[objectIndex]->BoundingBox());
+        }
+
+        // const int  axis       = Random::Int(0, 2);
+        const int  axis       = m_BoundingBox.LongestAxis();
+        const auto comparator = (axis == 0) ? BoxXCompare : ((axis == 1) ? BoxYCompare : BoxZCompare);
+
         // Create a modifiable array of the source scene objects
         auto objects = srcObjects;
-
-        const int  axis       = Random::Int(0, 2);
-        const auto comparator = (axis == 0) ? BoxXCompare : ((axis == 1) ? BoxYCompare : BoxZCompare);
 
         const size_t objectSpan = end - start;
 
@@ -50,7 +57,7 @@ public:
             m_Right  = std::make_shared<BVHNode>(objects, mid, end);
         }
 
-        m_BoundingBox = AABB(m_Left->BoundingBox(), m_Right->BoundingBox());
+        // m_BoundingBox = AABB(m_Left->BoundingBox(), m_Right->BoundingBox());
     }
 
     bool Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const override

@@ -67,7 +67,7 @@ void Renderer::RenderHelloWorld() const
     m_Image->SetData(m_ImageData);
 }
 
-void Renderer::RenderSingleCore(Camera& camera, const Hittable& world) const
+void Renderer::CPUOneCore(Camera& camera, const Hittable& world, const Hittable& lights) const
 {
     camera.Initialize();
     for(uint32_t y = 0; y < m_Image->GetHeight(); y++)
@@ -76,10 +76,10 @@ void Renderer::RenderSingleCore(Camera& camera, const Hittable& world) const
         for(uint32_t x = 0; x < m_Image->GetWidth(); x++)
         {
             Color3 pixelColor(0, 0, 0);
-            for(int sample = 0; sample < camera.SamplesPerPixel; ++sample)
+            for(int sample = 0; sample < camera.SamplesPerPixel; sample++)
             {
                 Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y));
-                pixelColor += camera.RayColor(r, camera.MaxDepth, world);
+                pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
             }
             m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SamplesPerPixel);
         }
@@ -89,23 +89,46 @@ void Renderer::RenderSingleCore(Camera& camera, const Hittable& world) const
     m_Image->SetData(m_ImageData);
 }
 
-void Renderer::RenderMultiCore(Camera& camera, const Hittable& world) const
+void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const Hittable& lights) const
 {
     camera.Initialize();
-    std::for_each(std::execution::par, m_ImageHeightIterator.begin(), m_ImageHeightIterator.end(), [this, &camera, &world](uint32_t y)
+    std::for_each(std::execution::par, m_ImageHeightIterator.begin(), m_ImageHeightIterator.end(), [this, &camera, &world, &lights](uint32_t y)
                   {
         std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
-    	std::for_each(std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
-    		[this, y, &camera, &world](const uint32_t x)
-    		{
-    			Color3 pixelColor(0, 0, 0);
-                for(int sample = 0; sample < camera.SamplesPerPixel; ++sample)
+        std::for_each(std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
+            [this, y, &camera, &world, &lights](const uint32_t x)
+            {
+                Color3 pixelColor(0, 0, 0);
+                for(int sample = 0; sample < camera.SamplesPerPixel; sample++)
                 {
                     Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y));
-                    pixelColor += camera.RayColor(r, camera.MaxDepth, world);
+                    pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
                 }
                 m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SamplesPerPixel);
-    		}); });
+            }); });
+    std::clog << "\rDone.                 \n";
+
+    m_Image->SetData(m_ImageData);
+}
+
+void Renderer::CPUMultiCoreStratified(Camera& camera, const Hittable& world, const Hittable& lights) const
+{
+    camera.Initialize();
+    std::for_each(std::execution::par, m_ImageHeightIterator.begin(), m_ImageHeightIterator.end(), [this, &camera, &world, &lights](uint32_t y)
+                  {
+        std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
+        std::for_each(std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
+            [this, y, &camera, &world, &lights](const uint32_t x)
+            {
+                Color3 pixelColor(0, 0, 0);
+                for (int yS = 0; yS < camera.SqrtSpp; yS++) {
+                    for (int xS = 0; xS < camera.SqrtSpp; xS++) {
+                        Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y), xS, yS);
+                        pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
+                    }
+                }
+                m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SamplesPerPixel);
+            }); });
     std::clog << "\rDone.                 \n";
 
     m_Image->SetData(m_ImageData);

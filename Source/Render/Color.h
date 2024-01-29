@@ -9,7 +9,11 @@ using Color3 = Vector3;
 
 inline double LinearToGamma(const double linearComponent)
 {
-    return sqrt(linearComponent);
+    if(linearComponent > 0)
+    {
+        return sqrt(linearComponent);
+    }
+    return 0.0;
 }
 
 // Write the translated [0,255] value of each color component.
