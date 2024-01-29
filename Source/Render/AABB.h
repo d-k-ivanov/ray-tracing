@@ -15,11 +15,12 @@ public:
     // The default AABB is empty, since Intervals are empty by default.
     AABB() = default;
 
-    AABB(const Interval& ix, const Interval& iy, const Interval& iz)
-        : X(ix)
-        , Y(iy)
-        , Z(iz)
+    AABB(const Interval& x, const Interval& y, const Interval& z)
+        : X(x)
+        , Y(y)
+        , Z(z)
     {
+        PadToMinimums();
     }
 
     // Treat the two points a and b as extrema for the bounding box, so we don't require a particular minimum/maximum coordinate order.
@@ -28,6 +29,8 @@ public:
         X = Interval(fmin(a[0], b[0]), fmax(a[0], b[0]));
         Y = Interval(fmin(a[1], b[1]), fmax(a[1], b[1]));
         Z = Interval(fmin(a[2], b[2]), fmax(a[2], b[2]));
+
+        PadToMinimums();
     }
 
     AABB(const AABB& box0, const AABB& box1)
@@ -104,17 +107,33 @@ public:
     }
 
     // Returns the index of the longest axis of the bounding box.
-    int LongestAxis() const {
-        if (X.Size() > Y.Size()){
+    int LongestAxis() const
+    {
+        if(X.Size() > Y.Size())
+        {
             return X.Size() > Y.Size() ? 0 : 2;
         }
-        else {
+        else
+        {
             return Y.Size() > Z.Size() ? 1 : 2;
         }
     }
 
     static const AABB Empty;
     static const AABB Universe;
+
+private:
+    // Adjust the AABB so that no side is narrower than some delta, padding if necessary.
+    void PadToMinimums()
+    {
+        constexpr double delta = 0.0001;
+        if(X.Size() < delta)
+            X = X.Expand(delta);
+        if(Y.Size() < delta)
+            Y = Y.Expand(delta);
+        if(Z.Size() < delta)
+            Z = Z.Expand(delta);
+    }
 };
 
 inline AABB operator+(const AABB& bbox, const Vector3& offset)

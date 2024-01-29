@@ -148,7 +148,7 @@ inline Vector3 operator*(const double t, const Vector3& v)
             t * v.E[2]};
 }
 
-inline Vector3 operator*(const Vector3& v, double t)
+inline Vector3 operator*(const Vector3& v, const double t)
 {
     return t * v;
 }

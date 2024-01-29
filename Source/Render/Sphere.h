@@ -9,6 +9,7 @@
 class Sphere final : public Hittable
 {
 public:
+    // Stationary Sphere
     Sphere(const Point3& center, const double radius, const std::shared_ptr<Material>& material)
         : m_Center(center)
         , m_Radius(radius)
@@ -19,6 +20,7 @@ public:
         m_BoundingBox   = AABB(center - rvec, center + rvec);
     }
 
+    // Moving Sphere
     Sphere(const Point3& center, const Point3& center2, const double radius, const std::shared_ptr<Material>& material)
         : m_Center(center)
         , m_Radius(radius)

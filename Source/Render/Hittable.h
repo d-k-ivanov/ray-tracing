@@ -39,12 +39,12 @@ public:
     virtual bool Hit(const Ray& r, Interval rayT, HitRecord& rec) const = 0;
     virtual AABB BoundingBox() const                                    = 0;
 
-    virtual double PDFValue(const Vector3& o, const Vector3& v) const
+    virtual double PDFValue(const Vector3& origin, const Vector3& direction) const
     {
         return 0.0;
     }
 
-    virtual Vector3 Random(const Vector3& o) const
+    virtual Vector3 Random(const Vector3& origin) const
     {
         return {1, 0, 0};
     }
@@ -53,17 +53,17 @@ public:
 class Translate final : public Hittable
 {
 public:
-    Translate(const std::shared_ptr<Hittable>& p, const Vector3& displacement)
-        : m_Object(p)
+    Translate(const std::shared_ptr<Hittable>& object, const Vector3& displacement)
+        : m_Object(object)
         , m_Offset(displacement)
     {
         m_BoundingBox = m_Object->BoundingBox() + m_Offset;
     }
 
-    bool Hit(const Ray& r, const Interval rayT, HitRecord& rec) const override
+    bool Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const override
     {
         // Move the ray backwards by the offset
-        const Ray offsetRay(r.Origin() - m_Offset, r.Direction(), r.Time());
+        const Ray offsetRay(ray.Origin() - m_Offset, ray.Direction(), ray.Time());
 
         // Determine whether an intersection exists along the offset ray (and if so, where)
         if(!m_Object->Hit(offsetRay, rayT, rec))
@@ -86,8 +86,8 @@ private:
 class RotateY final : public Hittable
 {
 public:
-    RotateY(const std::shared_ptr<Hittable>& p, const double angle)
-        : m_Object(p)
+    RotateY(const std::shared_ptr<Hittable>& object, const double angle)
+        : m_Object(object)
     {
         const auto radians = DegreesToRadians(angle);
         m_SinTheta         = std::sin(radians);

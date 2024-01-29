@@ -48,7 +48,7 @@ public:
     {
     }
 
-    CheckerTexture(const double scale, Color3 color1, Color3 color2)
+    CheckerTexture(const double scale, const Color3& color1, const Color3& color2)
         : m_InvertedScale(1.0 / scale)
         , m_Even(std::make_shared<SolidColor>(color1))
         , m_Odd(std::make_shared<SolidColor>(color2))

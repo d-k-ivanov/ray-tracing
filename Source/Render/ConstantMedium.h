@@ -8,17 +8,17 @@
 class ConstantMedium final : public Hittable
 {
 public:
-    ConstantMedium(const std::shared_ptr<Hittable>& b, const double d, const std::shared_ptr<Texture>& a)
-        : m_Boundary(b)
-        , m_NegativeInvertedDensity(-1 / d)
-        , m_PhaseFunction(std::make_shared<Isotropic>(a))
+    ConstantMedium(const std::shared_ptr<Hittable>& boundary, const double density, const std::shared_ptr<Texture>& texture)
+        : m_Boundary(boundary)
+        , m_NegativeInvertedDensity(-1 / density)
+        , m_PhaseFunction(std::make_shared<Isotropic>(texture))
     {
     }
 
-    ConstantMedium(const std::shared_ptr<Hittable>& b, const double d, Color3 c)
-        : m_Boundary(b)
-        , m_NegativeInvertedDensity(-1 / d)
-        , m_PhaseFunction(std::make_shared<Isotropic>(c))
+    ConstantMedium(const std::shared_ptr<Hittable>& boundary, const double density, const Color3& color)
+        : m_Boundary(boundary)
+        , m_NegativeInvertedDensity(-1 / density)
+        , m_PhaseFunction(std::make_shared<Isotropic>(color))
     {
     }
 

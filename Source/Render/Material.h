@@ -209,7 +209,7 @@ public:
     {
     }
 
-    explicit DiffuseLight(Color3 color)
+    explicit DiffuseLight(const Color3& color)
         : m_Emit(std::make_shared<SolidColor>(color))
     {
     }
@@ -240,7 +240,7 @@ private:
 class Isotropic final : public Material
 {
 public:
-    explicit Isotropic(Color3 color)
+    explicit Isotropic(const Color3& color)
         : m_Albedo(std::make_shared<SolidColor>(color))
     {
     }

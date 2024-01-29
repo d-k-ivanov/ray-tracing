@@ -96,7 +96,7 @@ private:
         }
     }
 
-    static double PerlinInterp(Vector3 c[2][2][2], const double u, const double v, const double w)
+    static double PerlinInterp(const Vector3 c[2][2][2], const double u, const double v, const double w)
     {
         const auto uu = u * u * (3 - 2 * u);
         const auto vv = v * v * (3 - 2 * v);

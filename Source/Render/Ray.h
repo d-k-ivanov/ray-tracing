@@ -21,12 +21,12 @@ public:
     {
     }
 
-    Point3 Origin() const
+    const Point3& Origin() const
     {
         return m_Origin;
     }
 
-    Vector3 Direction() const
+    const Vector3& Direction() const
     {
         return m_Direction;
     }

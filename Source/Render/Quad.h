@@ -25,7 +25,7 @@ public:
 
     void SetBoundingBox()
     {
-        m_BoundingBox = AABB(m_Q, m_Q + m_U + m_V).Pad();
+        m_BoundingBox = AABB(m_Q, m_Q + m_U + m_V);
     }
 
     AABB BoundingBox() const override { return m_BoundingBox; }
