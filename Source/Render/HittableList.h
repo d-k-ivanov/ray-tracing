@@ -52,7 +52,7 @@ public:
 
     double PDFValue(const Point3& o, const Vector3& v) const override
     {
-        const auto weight = 1.0 / Objects.size();
+        const auto weight = 1.0 / static_cast<double>(Objects.size());
         auto       sum    = 0.0;
 
         for(const auto& object : Objects)
