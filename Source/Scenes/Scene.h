@@ -3,6 +3,8 @@
 #include <Render/Camera.h>
 #include <Render/HittableList.h>
 
+#include <optional>
+
 class Scene
 {
 public:
@@ -15,9 +17,9 @@ public:
     }
     virtual ~Scene() = default;
 
-    virtual Camera&   GetCamera() { return m_Camera; }
-    virtual Hittable& GetWorld() { return m_World; }
-    virtual Hittable& GetLights() { return m_Lights; }
+    virtual Camera&       GetCamera() { return m_Camera; }
+    virtual Hittable&     GetWorld() { return m_World; }
+    virtual HittableList& GetLights() { return m_Lights; }
 
 protected:
     Camera       m_Camera;

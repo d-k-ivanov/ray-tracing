@@ -37,7 +37,8 @@ public:
     // old:
     // virtual bool hit(const Ray &r, double ray_tmin, double ray_tmax, HitRecord &rec) const = 0;
     virtual bool Hit(const Ray& r, Interval rayT, HitRecord& rec) const = 0;
-    virtual AABB BoundingBox() const                                    = 0;
+
+    virtual AABB BoundingBox() const = 0;
 
     virtual double PDFValue(const Vector3& origin, const Vector3& direction) const
     {
