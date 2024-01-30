@@ -87,14 +87,14 @@ Image::Image(const std::string_view path, const bool storeImageData)
 
     AllocateMemory(static_cast<int64_t>(m_Width) * m_Height * Impl::BytesPerPixel(m_Format));
     SetData(data);
-    if (storeImageData)
+    if(storeImageData)
     {
         m_Data = data;
-    } else
+    }
+    else
     {
         stbi_image_free(data);
     }
-
 }
 
 Image::Image(const uint32_t width, const uint32_t height, const ImageFormat format, const void* data)
@@ -194,8 +194,7 @@ void Image::Release()
             vkFreeMemory(device, memory, nullptr);
             vkDestroyBuffer(device, stagingBuffer, nullptr);
             vkFreeMemory(device, stagingBufferMemory, nullptr);
-        }
-    );
+        });
 
     m_Sampler             = nullptr;
     m_ImageView           = nullptr;
@@ -310,7 +309,7 @@ const uint8_t* Image::PixelData(uint32_t x, uint32_t y) const
     x = Impl::Clamp(x, 0, m_Width);
     y = Impl::Clamp(y, 0, m_Height);
 
-    const auto verticalOffset = y * m_Width * Impl::BytesPerPixel(m_Format);
+    const auto verticalOffset   = y * m_Width * Impl::BytesPerPixel(m_Format);
     const auto horisontalOffset = x * Impl::BytesPerPixel(m_Format);
 
     return m_Data + verticalOffset + horisontalOffset;

@@ -17,7 +17,6 @@
 #include <cstdlib>
 #include <iostream>
 
-
 extern bool g_ApplicationRunning;
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
@@ -542,11 +541,11 @@ void Application::Init()
 
     ImFontConfig fontConfig;
     fontConfig.FontDataOwnedByAtlas = false;
-    auto    robotoFontPath          = ThisExecutableLocation() + "/Resources/Fonts/Roboto-Regular.ttf";
+    auto robotoFontPath             = ThisExecutableLocation() + "/Resources/Fonts/Roboto-Regular.ttf";
     io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 10.0f);
     io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 11.0f);
     io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 12.0f);
-    ImFont* robotoFont              = io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 14.0f);
+    ImFont* robotoFont = io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 14.0f);
     io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 16.0f);
     io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 18.0f);
     io.Fonts->AddFontFromFileTTF(robotoFontPath.c_str(), 20.0f);

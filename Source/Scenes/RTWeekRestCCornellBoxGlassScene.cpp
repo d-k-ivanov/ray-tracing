@@ -31,7 +31,7 @@ RTWeekRestCCornellBoxGlassScene::RTWeekRestCCornellBoxGlassScene(const double as
     box1                           = std::make_shared<Translate>(box1, Vector3(265, 0, 295));
     m_World.Add(box1);
 
-    //Glass Sphere
+    // Glass Sphere
     auto glass = std::make_shared<Dielectric>(1.5);
     m_World.Add(std::make_shared<Sphere>(Point3(190, 90, 190), 90, glass));
 

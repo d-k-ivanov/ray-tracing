@@ -15,7 +15,7 @@ RTWeekNextSimpleLightScene::RTWeekNextSimpleLightScene(const double aspectRatio,
     m_World.Add(std::make_shared<Sphere>(Point3(0, 2, 0), 2, std::make_shared<Lambertian>(perlinTexture)));
 
     auto diffuseLight = std::make_shared<DiffuseLight>(Color3(4, 4, 4));
-    m_World.Add(std::make_shared<Sphere>(Point3(0,7,0), 2, diffuseLight));
+    m_World.Add(std::make_shared<Sphere>(Point3(0, 7, 0), 2, diffuseLight));
     m_World.Add(std::make_shared<Quad>(Point3(3, 1, -2), Vector3(2, 0, 0), Vector3(0, 2, 0), diffuseLight));
 
     m_Camera.AspectRatio     = m_AspectRatio;

@@ -76,7 +76,7 @@ std::ostream& operator<<(std::ostream& out, const CodeLocation& loc)
 
 VulkanException::VulkanException(const CodeLocation& errorLocation, std::string message)
     : m_Msg(std::move(message))
-    , m_CodeLocation{errorLocation}
+    , m_CodeLocation(errorLocation)
 {
     std::ostringstream oss;
     oss << "Exception raised from " << m_CodeLocation << ": ";
@@ -87,7 +87,7 @@ VulkanException::VulkanException(const CodeLocation& errorLocation, std::string 
 
 VulkanException::VulkanException(const CodeLocation& errorLocation, const char* condition, std::string message)
     : m_Msg(std::move(message))
-    , m_CodeLocation{errorLocation}
+    , m_CodeLocation(errorLocation)
 {
     std::ostringstream oss;
     oss << "Exception raised from " << m_CodeLocation << ": ";

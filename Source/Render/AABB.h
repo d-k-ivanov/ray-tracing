@@ -66,12 +66,10 @@ public:
         {
             const auto t0 = fmin(
                 (Axis(a).Min - ray.Origin()[a]) / ray.Direction()[a],
-                (Axis(a).Max - ray.Origin()[a]) / ray.Direction()[a]
-            );
+                (Axis(a).Max - ray.Origin()[a]) / ray.Direction()[a]);
             const auto t1 = fmax(
                 (Axis(a).Min - ray.Origin()[a]) / ray.Direction()[a],
-                (Axis(a).Max - ray.Origin()[a]) / ray.Direction()[a]
-            );
+                (Axis(a).Max - ray.Origin()[a]) / ray.Direction()[a]);
 
             rayT.Min = fmax(t0, rayT.Min);
             rayT.Max = fmin(t1, rayT.Max);

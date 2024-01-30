@@ -71,12 +71,12 @@ public:
         else
         {
             m_SceneSamples = static_cast<int>(m_Renderer.GetFrameCounter());
-            if(ImGui::Button("Render", ImVec2(ImGui::GetWindowSize().x*0.45f, 0.0f)))
+            if(ImGui::Button("Render", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
             {
                 Render();
             }
             ImGui::SameLine();
-            if(ImGui::Button("Reset", ImVec2(ImGui::GetWindowSize().x*0.45f, 0.0f)))
+            if(ImGui::Button("Reset", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
             {
                 m_Renderer.ResetFrameCounter();
             }

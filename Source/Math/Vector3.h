@@ -12,11 +12,12 @@ public:
     double E[3];
 
     Vector3()
-        : E{0, 0, 0}
+        : E {0, 0, 0}
     {
     }
+
     Vector3(const double e0, const double e1, const double e2)
-        : E{e0, e1, e2}
+        : E {e0, e1, e2}
     {
     }
 
