@@ -64,21 +64,20 @@ public:
         const char* rendererList[] = {
             "Random INT",
             "Hello World",
-            "CPU Ray Tracer: One Core",
-            "CPU Ray Tracer: One Core (Accum)",
-            "CPU Ray Tracer: Multi Core",
-            "CPU Ray Tracer: Multi Core (Accum)",
-            "CPU Ray Tracer: Multi Core Stratified"};
-        ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList));
-
-        if((m_RendererId != 3) && (m_RendererId != 5))
+            "CPU: One Core",
+            "CPU: One Core Accumulating",
+            "CPU: One Core Stratified",
+            "CPU: Multi Core",
+            "CPU: Multi Core Accumulating",
+            "CPU: Multi Core Stratified"};
+        if(ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList)))
         {
-            if(ImGui::Button("Render", ImVec2(-FLT_MIN, 0.0f)))
-            {
-                Render();
-            }
-        }
-        else
+            SetScene();
+        };
+
+        // TBA
+        // if(m_Renderer.IsAccumulating())
+        if(m_RendererId == 3 || m_RendererId == 6)
         {
             m_SceneSamples = static_cast<int>(m_Renderer.GetFrameCounter());
             if(ImGui::Button("Render", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
@@ -89,6 +88,13 @@ public:
             if(ImGui::Button("Reset", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
             {
                 m_Renderer.ResetFrameCounter();
+            }
+        }
+        else
+        {
+            if(ImGui::Button("Render", ImVec2(-FLT_MIN, 0.0f)))
+            {
+                Render();
             }
         }
 
@@ -170,15 +176,18 @@ public:
                 m_Renderer.CPUOneCore(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             case 3:
-                m_Renderer.CPUOneCoreAccumSamples(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+                m_Renderer.CPUOneCoreAccumulating(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             case 4:
-                m_Renderer.CPUMultiCore(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+                m_Renderer.CPUOneCoreStratified(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             case 5:
-                m_Renderer.CPUMultiCoreAccumSamples(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+                m_Renderer.CPUMultiCore(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             case 6:
+                m_Renderer.CPUMultiCoreAccumulating(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+                break;
+            case 7:
                 m_Renderer.CPUMultiCoreStratified(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             default:
@@ -254,7 +263,7 @@ private:
     uint32_t               m_ViewportWidth  = 600;
     uint32_t               m_ViewportHeight = 0;
     double                 m_LastRenderTime = 0.0;
-    int                    m_RendererId     = 6;
+    int                    m_RendererId     = 7;
     int                    m_SceneId        = 13;
     std::shared_ptr<Scene> m_Scene          = nullptr;
     int                    m_SceneSamples   = 64;
