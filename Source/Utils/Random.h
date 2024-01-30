@@ -1,5 +1,14 @@
 #pragma once
 
+// Random numbers are SLOW!!!!
+// mt19937 device is slow like hell. Stick to rand().
+// TODO: Investigate usage of:
+// https://www.pcg-random.org/
+// https://github.com/Reputeless/Xoshiro-cpp
+// https://prng.di.unimi.it/
+// #include <pcg_random.hpp>
+// #include <XoshiroCpp.hpp>
+
 #include <random>
 
 class Random
@@ -20,18 +29,21 @@ public:
         return min + (s_RandomDistributionInt(s_RandomEngine) % (max - min + 1));
     }
 
+    // Returns a random float in [0,1).
     static float Float()
     {
-        return static_cast<float>(s_RandomDistributionInt(s_RandomEngine)) / static_cast<float>(std::numeric_limits<uint32_t>::max());
+        return static_cast<float>(rand()) / (RAND_MAX + 1.0f);
+    }
+
+    static float Float(const float min, const float max)
+    {
+        return min + (max - min) * Float();
     }
 
     // Returns a random double in [0,1).
     static double Double()
     {
-        std::random_device               randDevice;
-        std::mt19937                     generator(randDevice());
-        std::uniform_real_distribution<> distribution(0.0, 1.0);
-        return distribution(generator);
+        return std::rand() / (RAND_MAX + 1.0);
     }
 
     static double Double(const double min, const double max)
@@ -46,6 +58,6 @@ public:
     }
 
 private:
-    static std::mt19937                                             s_RandomEngine;
+    static thread_local std::mt19937                                s_RandomEngine;
     static std::uniform_int_distribution<std::mt19937::result_type> s_RandomDistributionInt;
 };

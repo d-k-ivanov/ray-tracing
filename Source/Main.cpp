@@ -39,8 +39,7 @@ public:
             "RTWeekNext: Final",
             "RTWeekRest: Cornell Box (Simple)",
             "RTWeekRest: Cornell Box (Mirror)",
-            "RTWeekRest: Cornell Box (Glass)"
-        };
+            "RTWeekRest: Cornell Box (Glass)"};
         ImGui::Combo("Scene", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
         ImGui::InputInt("Samples ", &m_SceneSamples);
         ImGui::InputInt("Depth", &m_SceneDepth);
@@ -56,13 +55,31 @@ public:
             "Random INT",
             "Hello World",
             "CPU Ray Tracer: One Core",
+            "CPU Ray Tracer: One Core (Accum)",
             "CPU Ray Tracer: Multi Core",
+            "CPU Ray Tracer: Multi Core (Accum)",
             "CPU Ray Tracer: Multi Core Stratified"};
         ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList));
 
-        if(ImGui::Button("Render", ImVec2(-FLT_MIN, 0.0f)))
+        if((m_RendererId != 3) && (m_RendererId != 5))
         {
-            Render();
+            if(ImGui::Button("Render", ImVec2(-FLT_MIN, 0.0f)))
+            {
+                Render();
+            }
+        }
+        else
+        {
+            m_SceneSamples = static_cast<int>(m_Renderer.GetFrameCounter());
+            if(ImGui::Button("Render", ImVec2(ImGui::GetWindowSize().x*0.45f, 0.0f)))
+            {
+                Render();
+            }
+            ImGui::SameLine();
+            if(ImGui::Button("Reset", ImVec2(ImGui::GetWindowSize().x*0.45f, 0.0f)))
+            {
+                m_Renderer.ResetFrameCounter();
+            }
         }
 
         static bool loopRendering = false;
@@ -179,7 +196,7 @@ public:
                 break;
             case 15:
             default:
-                scene = std::make_shared<RTWeekRestBCornellBoxMirrorScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                scene = std::make_shared<RTWeekRestCCornellBoxGlassScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
         }
 
@@ -196,9 +213,15 @@ public:
                 m_Renderer.CPUOneCore(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
                 break;
             case 3:
-                m_Renderer.CPUMultiCore(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                m_Renderer.CPUOneCoreAccumSamples(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
                 break;
             case 4:
+                m_Renderer.CPUMultiCore(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                break;
+            case 5:
+                m_Renderer.CPUMultiCoreAccumSamples(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                break;
+            case 6:
                 m_Renderer.CPUMultiCoreStratified(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
                 break;
             default:
@@ -218,7 +241,7 @@ private:
     uint32_t m_ViewportWidth  = 600;
     uint32_t m_ViewportHeight = 0;
     double   m_LastRenderTime = 0.0;
-    int      m_RendererId     = 4;
+    int      m_RendererId     = 6;
     int      m_SceneId        = 13;
     int      m_SceneSamples   = 64;
     int      m_SceneDepth     = 50;

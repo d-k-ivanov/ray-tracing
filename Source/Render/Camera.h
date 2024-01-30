@@ -24,7 +24,7 @@ public:
     double DefocusAngle = 0;     // Variation angle of rays through each pixel
     double FocusDist    = 10;    // Distance from camera lookfrom point to plane of perfect focus
 
-    // TODO: Original Renderer. Need to move my custom rendering functions here.
+    // TODO: Original Renderer. Need to take PPM code from here.
     // void Render(const Hittable& world, const hittable& lights)
     // {
     //     Initialize();

@@ -15,6 +15,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 
 include(InitVCPKG)
 include(Functions)
+include(ToolchainPostUpdates)
 
 project(${PROJECT_NAME})
 
@@ -119,6 +120,15 @@ find_package(Vulkan REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 add_dependencies(${PROJECT_NAME} always_run_target)
+
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
+    target_compile_options(${PROJECT_NAME} PUBLIC "$<$<CONFIG:Release>:/Zi>")
+    target_link_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:Release>:/DEBUG:FASTLINK>")
+    target_link_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:Release>:/OPT:REF>")
+    target_link_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:Release>:/OPT:ICF>")
+    target_compile_options(${PROJECT_NAME} PUBLIC "/MP")
+endif()
 
 target_link_libraries(
     ${PROJECT_NAME}
