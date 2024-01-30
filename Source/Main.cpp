@@ -15,7 +15,12 @@ bool g_ApplicationRunning = true;
 class RayTracinUILayer final : public Layer
 {
 public:
-    virtual void OnUIRender() override
+    void OnAttach() override
+    {
+        SetScene();
+    }
+
+    void OnUIRender() override
     {
         ImGui::Begin("Settings");
         ImGui::SeparatorText("Style");
@@ -40,7 +45,12 @@ public:
             "RTWeekRest: Cornell Box (Simple)",
             "RTWeekRest: Cornell Box (Mirror)",
             "RTWeekRest: Cornell Box (Glass)"};
-        ImGui::Combo("Scene", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList));
+        if(ImGui::Combo("Scene", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList)))
+        {
+            SetScene();
+            m_Renderer.ResetFrameCounter();
+        }
+
         ImGui::InputInt("Samples ", &m_SceneSamples);
         ImGui::InputInt("Depth", &m_SceneDepth);
 
@@ -145,62 +155,9 @@ public:
 
     void Render()
     {
-        const Timer            timer;
-        std::shared_ptr<Scene> scene;
-        switch(m_SceneId)
-        {
-            case 0:
-                scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 1:
-                scene = std::make_shared<RTWeekOneTestScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 2:
-                scene = std::make_shared<RTWeekOneFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 3:
-                scene = std::make_shared<RTWeekNextDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 4:
-                scene = std::make_shared<RTWeekNextRandomSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 5:
-                scene = std::make_shared<RTWeekNextTwoSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 6:
-                scene = std::make_shared<RTWeekNextEarthScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 7:
-                scene = std::make_shared<RTWeekNextTwoPerlinSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 8:
-                scene = std::make_shared<RTWeekNextQuadsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 9:
-                scene = std::make_shared<RTWeekNextSimpleLightScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 10:
-                scene = std::make_shared<RTWeekNextCornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 11:
-                scene = std::make_shared<RTWeekNextCornellSmokeScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 12:
-                scene = std::make_shared<RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 13:
-                scene = std::make_shared<RTWeekRestACornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 14:
-                scene = std::make_shared<RTWeekRestBCornellBoxMirrorScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-            case 15:
-            default:
-                scene = std::make_shared<RTWeekRestCCornellBoxGlassScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
-                break;
-        }
+        const Timer timer;
 
-        m_Renderer.SetSize(m_ViewportWidth, m_ViewportHeight);
+        m_Renderer.SetImageSize(m_ViewportWidth, m_ViewportHeight);
         switch(m_RendererId)
         {
             case 0:
@@ -210,19 +167,19 @@ public:
                 m_Renderer.RenderHelloWorld();
                 break;
             case 2:
-                m_Renderer.CPUOneCore(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                m_Renderer.CPUOneCore(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             case 3:
-                m_Renderer.CPUOneCoreAccumSamples(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                m_Renderer.CPUOneCoreAccumSamples(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             case 4:
-                m_Renderer.CPUMultiCore(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                m_Renderer.CPUMultiCore(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             case 5:
-                m_Renderer.CPUMultiCoreAccumSamples(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                m_Renderer.CPUMultiCoreAccumSamples(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             case 6:
-                m_Renderer.CPUMultiCoreStratified(scene->GetCamera(), scene->GetWorld(), scene->GetLights());
+                m_Renderer.CPUMultiCoreStratified(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             default:
                 m_Renderer.RenderRandom();
@@ -231,20 +188,77 @@ public:
         m_LastRenderTime = timer.ElapsedMilliseconds();
     }
 
+    void SetScene()
+    {
+        switch(m_SceneId)
+        {
+            case 0:
+                m_Scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 1:
+                m_Scene = std::make_shared<RTWeekOneTestScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 2:
+                m_Scene = std::make_shared<RTWeekOneFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 3:
+                m_Scene = std::make_shared<RTWeekNextDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 4:
+                m_Scene = std::make_shared<RTWeekNextRandomSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 5:
+                m_Scene = std::make_shared<RTWeekNextTwoSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 6:
+                m_Scene = std::make_shared<RTWeekNextEarthScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 7:
+                m_Scene = std::make_shared<RTWeekNextTwoPerlinSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 8:
+                m_Scene = std::make_shared<RTWeekNextQuadsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 9:
+                m_Scene = std::make_shared<RTWeekNextSimpleLightScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 10:
+                m_Scene = std::make_shared<RTWeekNextCornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 11:
+                m_Scene = std::make_shared<RTWeekNextCornellSmokeScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 12:
+                m_Scene = std::make_shared<RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 13:
+                m_Scene = std::make_shared<RTWeekRestACornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 14:
+                m_Scene = std::make_shared<RTWeekRestBCornellBoxMirrorScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 15:
+            default:
+                m_Scene = std::make_shared<RTWeekRestCCornellBoxGlassScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+        }
+    }
+
 private:
     Renderer m_Renderer;
     // double   m_AspectRatio    = 16.0 / 9.0;
-    double   m_AspectRatio    = 1.0;
-    int      m_Width          = 600;
-    float    m_ImageWidth     = 0;
-    float    m_ImageHeight    = 0;
-    uint32_t m_ViewportWidth  = 600;
-    uint32_t m_ViewportHeight = 0;
-    double   m_LastRenderTime = 0.0;
-    int      m_RendererId     = 6;
-    int      m_SceneId        = 13;
-    int      m_SceneSamples   = 64;
-    int      m_SceneDepth     = 50;
+    double                 m_AspectRatio    = 1.0;
+    int                    m_Width          = 600;
+    float                  m_ImageWidth     = 0;
+    float                  m_ImageHeight    = 0;
+    uint32_t               m_ViewportWidth  = 600;
+    uint32_t               m_ViewportHeight = 0;
+    double                 m_LastRenderTime = 0.0;
+    int                    m_RendererId     = 6;
+    int                    m_SceneId        = 13;
+    std::shared_ptr<Scene> m_Scene          = nullptr;
+    int                    m_SceneSamples   = 64;
+    int                    m_SceneDepth     = 50;
 
     // ImGui Stuff
     ImVec2 m_InvertedX = {0, 1};

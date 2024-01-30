@@ -12,18 +12,12 @@ class Renderer
 public:
     Renderer() = default;
 
-    void ResetFrameCounter()
-    {
-        memset(m_PixelColorsAccum, 0, static_cast<uint64_t>(m_Image->GetWidth()) * m_Image->GetHeight() * sizeof(Color3));
-        m_FrameCounter = 1;
-    }
+    uint32_t GetFrameCounter() const { return m_FrameCounter; }
+    void     ResetFrameCounter() { m_FrameCounter = 1; }
 
-    uint32_t GetFrameCounter() const
-    {
-        return m_FrameCounter;
-    }
+    void ResetPixelColorsAccumulator() const;
 
-    void SetSize(uint32_t width, uint32_t height);
+    void SetImageSize(uint32_t width, uint32_t height);
     void RenderRandom() const;
     void RenderHelloWorld() const;
     void CPUOneCore(Camera& camera, const Hittable& world, const HittableList& lights) const;

@@ -5,7 +5,12 @@
 
 #include <execution>
 
-void Renderer::SetSize(uint32_t width, uint32_t height)
+void Renderer::ResetPixelColorsAccumulator() const
+{
+    memset(m_PixelColorsAccum, 0, static_cast<uint64_t>(m_Image->GetWidth()) * m_Image->GetHeight() * sizeof(Color3));
+}
+
+void Renderer::SetImageSize(uint32_t width, uint32_t height)
 {
     if(m_Image)
     {
@@ -42,14 +47,11 @@ void Renderer::RenderRandom() const
 {
     for(uint32_t y = 0; y < m_Image->GetHeight(); y++)
     {
-        // std::clog << "\rScanlines remaining: " << (height - j) << ' ' << std::flush;
         for(uint32_t x = 0; x < m_Image->GetWidth(); x++)
         {
             m_ImageData[y * m_Image->GetWidth() + x] = GetRandomColorRGBA();
         }
     }
-    // std::clog << "\rDone.                 \n";
-
     m_Image->SetData(m_ImageData);
 }
 
@@ -57,7 +59,6 @@ void Renderer::RenderHelloWorld() const
 {
     for(uint32_t y = 0; y < m_Image->GetHeight(); y++)
     {
-        // std::clog << "\rScanlines remaining: " << (height - j) << ' ' << std::flush;
         for(uint32_t x = 0; x < m_Image->GetWidth(); x++)
         {
             auto pixelColor = Color3(static_cast<double>(x) / (m_Image->GetWidth() - 1), static_cast<double>(y) / (m_Image->GetHeight() - 1), 0);
@@ -65,8 +66,6 @@ void Renderer::RenderHelloWorld() const
             m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, 1);
         }
     }
-    // std::clog << "\rDone.                 \n";
-
     m_Image->SetData(m_ImageData);
 }
 
@@ -95,13 +94,17 @@ void Renderer::CPUOneCore(Camera& camera, const Hittable& world, const HittableL
         }
     }
     std::clog << "\rDone.                 \n";
-
     m_Image->SetData(m_ImageData);
 }
 
 void Renderer::CPUOneCoreAccumSamples(Camera& camera, const Hittable& world, const HittableList& lights)
 {
     camera.Initialize();
+    if(m_FrameCounter == 1)
+    {
+        ResetPixelColorsAccumulator();
+    }
+
     for(uint32_t y = 0; y < m_Image->GetHeight(); y++)
     {
         for(uint32_t x = 0; x < m_Image->GetWidth(); x++)
@@ -152,13 +155,16 @@ void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const Hittabl
                 });
         });
     std::clog << "\rDone.                 \n";
-
     m_Image->SetData(m_ImageData);
 }
 
 void Renderer::CPUMultiCoreAccumSamples(Camera& camera, const Hittable& world, const HittableList& lights)
 {
     camera.Initialize();
+    if(m_FrameCounter == 1)
+    {
+        ResetPixelColorsAccumulator();
+    }
     std::for_each(
         std::execution::par, m_ImageHeightIterator.begin(), m_ImageHeightIterator.end(),
         [this, &camera, &world, &lights](uint32_t y)
@@ -216,6 +222,5 @@ void Renderer::CPUMultiCoreStratified(Camera& camera, const Hittable& world, con
                 });
         });
     std::clog << "\rDone.                 \n";
-
     m_Image->SetData(m_ImageData);
 }
