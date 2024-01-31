@@ -4,6 +4,7 @@
 #include <Render/Color.h>
 #include <Render/Hittable.h>
 #include <Render/Material.h>
+#include <Utils/Log.h>
 #include <Utils/Random.h>
 
 class Camera
@@ -15,6 +16,9 @@ public:
     int    SqrtSpp         = 1;      // Square root of number of samples per pixel
     int    MaxDepth        = 10;     // Maximum number of ray bounces into scene
     Color3 Background;               // Scene background color
+
+    bool UsePDF                 = true;
+    bool UseUnidirectionalLight = true;
 
     double  Vfov     = 90;                  // Vertical view angle (field of view)
     Point3  LookFrom = Point3(0, 0, 0);     // Point camera is looking from
@@ -94,6 +98,7 @@ public:
         const auto defocusRadius = FocusDist * tan(DegreesToRadians(DefocusAngle / 2));
         m_DefocusDiskU           = m_U * defocusRadius;
         m_DefocusDiskV           = m_V * defocusRadius;
+        // LOG_INFO("Camera. PDF={}, ULight={}, SqrtSpp={}, RecipSqrtSpp={}, Samples={}", UsePDF, UseUnidirectionalLight,SqrtSpp, m_RecipSqrtSpp, SamplesPerPixel);
     }
 
     // Get a randomly-sampled camera ray for the pixel at location i,j, originating from the camera defocus disk.
@@ -125,34 +130,6 @@ public:
         return {rayOrigin, rayDirection, rayTime};
     }
 
-    Color3 RayColor(const Ray& r, const int depth, const Hittable& world) const
-    {
-        // If we've exceeded the ray bounce limit, no more light is gathered.
-        if(depth <= 0)
-        {
-            return {0, 0, 0};
-        }
-
-        HitRecord rec;
-
-        // If the ray hits nothing, return the background color.
-        if(!world.Hit(r, Interval(0.001, Infinity), rec))
-        {
-            return Background;
-        }
-
-        Ray          scattered;
-        Color3       attenuation;
-        const Color3 colorFromEmission = rec.Material->Emitted(rec.U, rec.V, rec.P);
-
-        if(!rec.Material->Scatter(r, rec, attenuation, scattered))
-            return colorFromEmission;
-
-        const Color3 colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);
-
-        return colorFromEmission + colorFromScatter;
-    }
-
     Color3 RayColorGradientBackground(const Ray& r, const int depth, const Hittable& world) const
     {
         // If we've exceeded the ray bounce limit, no more light is gathered.
@@ -180,6 +157,77 @@ public:
         // return (1.0 - a) * Color3(1.0, 1.0, 1.0) + a * Color3(1.0, 0.0, 0.0);
     }
 
+    Color3 RayColor(const Ray& r, const int depth, const Hittable& world) const
+    {
+        // If we've exceeded the ray bounce limit, no more light is gathered.
+        if(depth <= 0)
+        {
+            return {0, 0, 0};
+        }
+
+        HitRecord rec;
+
+        // If the ray hits nothing, return the background color.
+        if(!world.Hit(r, Interval(0.001, Infinity), rec))
+        {
+            return Background;
+        }
+
+        Color3 colorFromEmission;
+        Color3 colorFromScatter;
+
+        if(UseUnidirectionalLight)
+        {
+            colorFromEmission = rec.Material->Emitted(r, rec, rec.U, rec.V, rec.P);
+        }
+        else
+        {
+            colorFromEmission = rec.Material->Emitted(rec.U, rec.V, rec.P);
+        }
+
+        if(UsePDF)
+        {
+            ScatterRecord srec;
+
+            if(!rec.Material->Scatter(r, rec, srec))
+            {
+                return colorFromEmission;
+            }
+
+            if(srec.SkipPDF)
+            {
+                return srec.Attenuation * RayColor(srec.SkipPDFRay, depth - 1, world);
+            }
+
+            // const CosinePDF surfacePDF(rec.Normal);
+            // const Ray       scattered = Ray(rec.P, surfacePDF.Generate(), r.Time());
+            // const auto      pdfVal    = surfacePDF.Value(scattered.Direction());
+
+            const auto       pdfPtr = std::make_shared<CosinePDF>(rec.Normal);
+            const MixturePDF mixedPDF(pdfPtr, srec.PDFPtr);
+
+            const Ray  scattered = Ray(rec.P, mixedPDF.Generate(), r.Time());
+            const auto pdfVal    = mixedPDF.Value(scattered.Direction());
+
+            const double scatteringPDF = rec.Material->ScatteringPDF(r, rec, scattered);
+
+            const Color3 sampleColor = RayColor(scattered, depth - 1, world);
+            colorFromScatter         = (srec.Attenuation * scatteringPDF * sampleColor) / pdfVal;
+        }
+        else
+        {
+            Ray    scattered;
+            Color3 attenuation;
+
+            if(!rec.Material->Scatter(r, rec, attenuation, scattered))
+                return colorFromEmission;
+
+            colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);
+        }
+
+        return colorFromEmission + colorFromScatter;
+    }
+
     Color3 RayColor(const Ray& r, const int depth, const Hittable& world, const Hittable& lights) const
     {
         // If we've exceeded the ray bounce limit, no more light is gathered.
@@ -196,30 +244,53 @@ public:
             return Background;
         }
 
-        ScatterRecord srec;
+        Color3 colorFromEmission;
+        Color3 colorFromScatter;
 
-        const Color3 colorFromEmission = rec.Material->Emitted(r, rec, rec.U, rec.V, rec.P);
-
-        if(!rec.Material->Scatter(r, rec, srec))
+        if(UseUnidirectionalLight)
         {
-            return colorFromEmission;
+            colorFromEmission = rec.Material->Emitted(r, rec, rec.U, rec.V, rec.P);
+        }
+        else
+        {
+            colorFromEmission = rec.Material->Emitted(rec.U, rec.V, rec.P);
         }
 
-        if(srec.SkipPDF)
+        if(UsePDF)
         {
-            return srec.Attenuation * RayColor(srec.SkipPDFRay, depth - 1, world, lights);
+            ScatterRecord srec;
+
+            if(!rec.Material->Scatter(r, rec, srec))
+            {
+                return colorFromEmission;
+            }
+
+            if(srec.SkipPDF)
+            {
+                return srec.Attenuation * RayColor(srec.SkipPDFRay, depth - 1, world, lights);
+            }
+
+            const auto       lightPtr = std::make_shared<HittablePDF>(lights, rec.P);
+            const MixturePDF mixedPDF(lightPtr, srec.PDFPtr);
+
+            const Ray  scattered = Ray(rec.P, mixedPDF.Generate(), r.Time());
+            const auto pdfVal    = mixedPDF.Value(scattered.Direction());
+
+            const double scatteringPDF = rec.Material->ScatteringPDF(r, rec, scattered);
+
+            const Color3 sampleColor = RayColor(scattered, depth - 1, world, lights);
+            colorFromScatter         = (srec.Attenuation * scatteringPDF * sampleColor) / pdfVal;
         }
+        else
+        {
+            Ray    scattered;
+            Color3 attenuation;
 
-        const auto       lightPtr = std::make_shared<HittablePDF>(lights, rec.P);
-        const MixturePDF p(lightPtr, srec.PDFPtr);
+            if(!rec.Material->Scatter(r, rec, attenuation, scattered))
+                return colorFromEmission;
 
-        const Ray  scattered = Ray(rec.P, p.Generate(), r.Time());
-        const auto pdfVal    = p.Value(scattered.Direction());
-
-        const double scatteringPDF = rec.Material->ScatteringPDF(r, rec, scattered);
-
-        const Color3 sampleColor      = RayColor(scattered, depth - 1, world, lights);
-        const Color3 colorFromScatter = (srec.Attenuation * scatteringPDF * sampleColor) / pdfVal;
+            colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);
+        }
 
         return colorFromEmission + colorFromScatter;
     }

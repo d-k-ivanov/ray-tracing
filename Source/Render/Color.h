@@ -26,6 +26,7 @@ inline uint32_t GetColorRGBA(const Color3& color, const int samplesPerPixel)
     constexpr auto alpha = 1.0;
 
     // Replace NaN components with zero.
+    // This seems to be not working...
     if(std::isnan(red))
     {
         red = 0.0;

@@ -23,7 +23,7 @@ RTWeekNextCornellSmokeScene::RTWeekNextCornellSmokeScene(const double aspectRati
 
     // Lights
     m_World.Add(std::make_shared<Quad>(Point3(113, 554, 127), Vector3(330, 0, 0), Vector3(0, 0, 305), light));
-    m_Lights.Add(std::make_shared<Quad>(Point3(113, 554, 127), Vector3(330, 0, 0), Vector3(0, 0, 305), light));
+    m_Lights.Add(std::make_shared<Quad>(Point3(113, 554, 127), Vector3(329, 0, 0), Vector3(0, 0, 304), light));
 
     std::shared_ptr<Hittable> box1 = Box(Point3(0, 0, 0), Point3(165, 330, 165), white);
     box1                           = std::make_shared<RotateY>(box1, 15);

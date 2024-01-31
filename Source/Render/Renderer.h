@@ -27,11 +27,14 @@ public:
     void CPUMultiCore(Camera& camera, const Hittable& world, const HittableList& lights);
     void CPUMultiCoreAccumulating(Camera& camera, const Hittable& world, const HittableList& lights);
     void CPUMultiCoreStratified(Camera& camera, const Hittable& world, const HittableList& lights);
+    void CPUMultiCoreStratifiedAccumulating(Camera& camera, const Hittable& world, const HittableList& lights);
 
     std::shared_ptr<Image> GetImage() const { return m_Image; }
 
 private:
-    uint32_t               m_FrameCounter     = 1;
+    int                    m_FrameCounter     = 1;
+    int                    m_Xs               = 0;
+    int                    m_Ys               = 0;
     bool                   m_IsAccumulating   = false;
     uint32_t*              m_ImageData        = nullptr;
     Color3*                m_PixelColorsAccum = nullptr;

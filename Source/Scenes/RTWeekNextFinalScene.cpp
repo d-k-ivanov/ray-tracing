@@ -38,7 +38,7 @@ RTWeekNextFinalScene::RTWeekNextFinalScene(const double aspectRatio, const int w
     // Lights
     auto light = std::make_shared<DiffuseLight>(Color3(7, 7, 7));
     m_World.Add(std::make_shared<Quad>(Point3(123, 554, 147), Vector3(300, 0, 0), Vector3(0, 0, 265), light));
-    m_Lights.Add(std::make_shared<Quad>(Point3(123, 554, 147), Vector3(300, 0, 0), Vector3(0, 0, 265), light));
+    m_Lights.Add(std::make_shared<Quad>(Point3(123, 554, 147), Vector3(299, 0, 0), Vector3(0, 0, 264), light));
 
     auto center1        = Point3(400, 400, 200);
     auto center2        = center1 + Vector3(30, 0, 0);

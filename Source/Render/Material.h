@@ -34,7 +34,8 @@ public:
         return {0, 0, 0};
     }
 
-    virtual bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const = 0;
+    virtual bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const              = 0;
+    virtual bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered, double& pdf) const = 0;
 
     virtual bool Scatter(const Ray& rIn, const HitRecord& rec, ScatterRecord& srec) const
     {
@@ -74,6 +75,17 @@ public:
         return true;
     }
 
+    bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered, double& pdf) const override
+    {
+        ONB uvw;
+        uvw.BuildFromW(rec.Normal);
+        const auto scatterDirection = uvw.Local(RandomCosineDirection());
+        scattered                   = Ray(rec.P, UnitVector(scatterDirection), rIn.Time());
+        attenuation                 = m_Albedo->Value(rec.U, rec.V, rec.P);
+        pdf                         = DotProduct(uvw.W(), scattered.Direction()) / Pi;
+        return true;
+    }
+
     bool Scatter(const Ray& rIn, const HitRecord& rec, ScatterRecord& srec) const override
     {
         srec.Attenuation = m_Albedo->Value(rec.U, rec.V, rec.P);
@@ -106,6 +118,16 @@ public:
         const Vector3 reflected = Reflect(UnitVector(rIn.Direction()), rec.Normal);
         scattered               = Ray(rec.P, reflected + m_Fuzz * RandomUnitVector(), rIn.Time());
         attenuation             = m_Albedo;
+        return (DotProduct(scattered.Direction(), rec.Normal) > 0);
+    }
+
+    // Produces black objects
+    bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered, double& pdf) const override
+    {
+        const Vector3 reflected = Reflect(UnitVector(rIn.Direction()), rec.Normal);
+        scattered               = Ray(rec.P, reflected + m_Fuzz * RandomUnitVector(), rIn.Time());
+        attenuation             = m_Albedo;
+        pdf                     = 1.0;
         return (DotProduct(scattered.Direction(), rec.Normal) > 0);
     }
 
@@ -155,6 +177,35 @@ public:
         }
 
         scattered = Ray(rec.P, direction, rIn.Time());
+
+        return true;
+    }
+
+    // Produces black objects
+    bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered, double& pdf) const override
+    {
+        attenuation                  = Color3(1.0, 1.0, 1.0);
+        const double refractionRatio = rec.FrontFace ? (1.0 / m_Ir) : m_Ir;
+
+        const Vector3 unitDirection = UnitVector(rIn.Direction());
+
+        const double cosTheta = fmin(DotProduct(-unitDirection, rec.Normal), 1.0);
+        const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+
+        const bool cannotRefract = refractionRatio * sinTheta > 1.0;
+        Vector3    direction;
+
+        if(cannotRefract || Reflectance(cosTheta, refractionRatio) > Random::Double())
+        {
+            direction = Reflect(unitDirection, rec.Normal);
+        }
+        else
+        {
+            direction = Refract(unitDirection, rec.Normal, refractionRatio);
+        }
+
+        scattered = Ray(rec.P, direction, rIn.Time());
+        pdf       = 1.0;
 
         return true;
     }
@@ -219,6 +270,11 @@ public:
         return false;
     }
 
+    bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered, double& pdf) const override
+    {
+        return false;
+    }
+
     Color3 Emitted(const double u, const double v, const Point3& p) const override
     {
         return m_Emit->Value(u, v, p);
@@ -254,6 +310,14 @@ public:
     {
         scattered   = Ray(rec.P, RandomUnitVector(), rIn.Time());
         attenuation = m_Albedo->Value(rec.U, rec.V, rec.P);
+        return true;
+    }
+
+    bool Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered, double& pdf) const override
+    {
+        scattered   = Ray(rec.P, RandomUnitVector(), rIn.Time());
+        attenuation = m_Albedo->Value(rec.U, rec.V, rec.P);
+        pdf         = 1 / (4 * Pi);
         return true;
     }
 

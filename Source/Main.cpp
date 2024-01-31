@@ -47,11 +47,14 @@ public:
             "RTWeekRest: Cornell Box (Glass)"};
         if(ImGui::Combo("Scene", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList)))
         {
-            SetScene();
             m_Renderer.ResetFrameCounter();
+            SetScene();
         }
 
-        ImGui::InputInt("Samples ", &m_SceneSamples);
+        if(ImGui::InputInt("Samples ", &m_SceneSamples))
+        {
+            SetScene();
+        }
         ImGui::InputInt("Depth", &m_SceneDepth);
 
         // ImGui::Text("Aspect Ratio: %.6f", m_AspectRatio);
@@ -69,15 +72,19 @@ public:
             "CPU: One Core Stratified",
             "CPU: Multi Core",
             "CPU: Multi Core Accumulating",
-            "CPU: Multi Core Stratified"};
+            "CPU: Multi Core Stratified",
+            "CPU: Multi Core Stratified (WIP)"};
         if(ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList)))
         {
             SetScene();
-        };
+        }
+
+        ImGui::Checkbox("Use PDF", &m_UsePDF);
+        ImGui::Checkbox("Use Unidirectional Light", &m_UseUnidirectionalLight);
 
         // TBA
         // if(m_Renderer.IsAccumulating())
-        if(m_RendererId == 3 || m_RendererId == 6)
+        if(m_RendererId == 3 || m_RendererId == 6 || m_RendererId == 8)
         {
             m_SceneSamples = static_cast<int>(m_Renderer.GetFrameCounter());
             if(ImGui::Button("Render", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
@@ -167,32 +174,84 @@ public:
         switch(m_RendererId)
         {
             case 0:
+            {
                 m_Renderer.RenderRandom();
                 break;
+            }
             case 1:
+            {
+
                 m_Renderer.RenderHelloWorld();
                 break;
+            }
             case 2:
-                m_Renderer.CPUOneCore(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+            {
+                SetScene();
+                Camera camera                 = m_Scene->GetCamera();
+                camera.UsePDF                 = m_UsePDF;
+                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
+                m_Renderer.CPUOneCore(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
+            }
             case 3:
-                m_Renderer.CPUOneCoreAccumulating(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+            {
+                Camera camera                 = m_Scene->GetCamera();
+                camera.UsePDF                 = m_UsePDF;
+                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
+                m_Renderer.CPUOneCoreAccumulating(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
+            }
             case 4:
-                m_Renderer.CPUOneCoreStratified(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+            {
+
+                SetScene();
+                Camera camera                 = m_Scene->GetCamera();
+                camera.UsePDF                 = m_UsePDF;
+                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
+                m_Renderer.CPUOneCoreStratified(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
+            }
             case 5:
-                m_Renderer.CPUMultiCore(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+            {
+                SetScene();
+                Camera camera                 = m_Scene->GetCamera();
+                camera.UsePDF                 = m_UsePDF;
+                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
+                m_Renderer.CPUMultiCore(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
+            }
             case 6:
-                m_Renderer.CPUMultiCoreAccumulating(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+            {
+                Camera camera                 = m_Scene->GetCamera();
+                camera.UsePDF                 = m_UsePDF;
+                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
+                m_Renderer.CPUMultiCoreAccumulating(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
+            }
             case 7:
-                m_Renderer.CPUMultiCoreStratified(m_Scene->GetCamera(), m_Scene->GetWorld(), m_Scene->GetLights());
+            {
+                SetScene();
+                Camera camera                 = m_Scene->GetCamera();
+                camera.UsePDF                 = m_UsePDF;
+                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
+                m_Renderer.CPUMultiCoreStratified(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
+            }
+            case 8:
+            {
+
+                Camera camera                 = m_Scene->GetCamera();
+                camera.UsePDF                 = m_UsePDF;
+                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
+                m_Renderer.CPUMultiCoreStratifiedAccumulating(camera, m_Scene->GetWorld(), m_Scene->GetLights());
+                break;
+            }
             default:
+            {
+
                 m_Renderer.RenderRandom();
                 break;
+            }
         }
         m_LastRenderTime = timer.ElapsedMilliseconds();
     }
@@ -254,20 +313,27 @@ public:
     }
 
 private:
+    // Rendering
     Renderer m_Renderer;
+    int      m_RendererId             = 7;
+    double   m_LastRenderTime         = 0.0;
+    bool     m_UsePDF                 = true;
+    bool     m_UseUnidirectionalLight = true;
+
+    // Scene
+    std::shared_ptr<Scene> m_Scene        = nullptr;
+    int                    m_SceneId      = 13;
+    int                    m_SceneDepth   = 50;
+    int                    m_SceneSamples = 64;
+
+    // Output
     // double   m_AspectRatio    = 16.0 / 9.0;
-    double                 m_AspectRatio    = 1.0;
-    int                    m_Width          = 600;
-    float                  m_ImageWidth     = 0;
-    float                  m_ImageHeight    = 0;
-    uint32_t               m_ViewportWidth  = 600;
-    uint32_t               m_ViewportHeight = 0;
-    double                 m_LastRenderTime = 0.0;
-    int                    m_RendererId     = 7;
-    int                    m_SceneId        = 13;
-    std::shared_ptr<Scene> m_Scene          = nullptr;
-    int                    m_SceneSamples   = 64;
-    int                    m_SceneDepth     = 50;
+    double   m_AspectRatio    = 1.0;
+    float    m_ImageHeight    = 0;
+    float    m_ImageWidth     = 0;
+    uint32_t m_ViewportHeight = 0;
+    uint32_t m_ViewportWidth  = 600;
+    int      m_Width          = 600;
 
     // ImGui Stuff
     ImVec2 m_InvertedX = {0, 1};

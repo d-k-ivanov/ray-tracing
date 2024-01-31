@@ -22,7 +22,7 @@ RTWeekNextCornellBoxScene::RTWeekNextCornellBoxScene(const double aspectRatio, c
 
     // Lights
     m_World.Add(std::make_shared<Quad>(Point3(343, 554, 332), Vector3(-130, 0, 0), Vector3(0, 0, -105), light));
-    m_Lights.Add(std::make_shared<Quad>(Point3(343, 554, 332), Vector3(-130, 0, 0), Vector3(0, 0, -105), light));
+    // m_Lights.Add(std::make_shared<Quad>(Point3(343, 554, 332), Vector3(-130, 0, 0), Vector3(0, 0, -105), light));
 
     // Before rotation and translation
     // m_World.Add(Box(Point3(130, 0, 65), Point3(295, 165, 230), white));

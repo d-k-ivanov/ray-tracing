@@ -18,6 +18,10 @@ RTWeekNextSimpleLightScene::RTWeekNextSimpleLightScene(const double aspectRatio,
     m_World.Add(std::make_shared<Sphere>(Point3(0, 7, 0), 2, diffuseLight));
     m_World.Add(std::make_shared<Quad>(Point3(3, 1, -2), Vector3(2, 0, 0), Vector3(0, 2, 0), diffuseLight));
 
+    auto lightMaterial = std::shared_ptr<Material>();
+    m_Lights.Add(std::make_shared<Sphere>(Point3(0, 7, 0), 2, lightMaterial));
+    m_Lights.Add(std::make_shared<Quad>(Point3(3, 1, -2), Vector3(2, 0, 0), Vector3(0, 2, 0), lightMaterial));
+
     m_Camera.AspectRatio     = m_AspectRatio;
     m_Camera.ImageWidth      = m_Width;
     m_Camera.SamplesPerPixel = m_SamplesPerPixel;

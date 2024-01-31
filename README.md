@@ -2,10 +2,14 @@
 
 Ray-Tracing Framework and Visualizer.
 
-This work heavily inspired by:
+## Acknowledgment
 
+My work is significantly inspired by [Dr. Carlos Ureña Almagro](https://lsi.ugr.es/informacion/directorio-personal/carlos-urena-almagro) from the University of Granada. I'm deeply grateful for his level of support and knowledge, which allowed me to build this project and opened me to the world of Ray Tracing.
+
+The initial application part is heavily inspired by:
+
+- [Peter Shirley](https://www.petershirley.com/), [Steve Hollasch](https://github.com/hollasch), [Trevor David Black](https://github.com/trevordblack) and [Ray Tracing in One Weekend series](https://raytracing.github.io/)
 - [Yan Chernikov](http://www.youtube.com/@TheCherno) and his [Walnut Application](https://github.com/StudioCherno/Walnut)
-- [Peter Shirley](https://www.petershirley.com/) and [Ray Tracing in One Weekend series](https://raytracing.github.io/)
 
 ## Compilation: Windows
 
