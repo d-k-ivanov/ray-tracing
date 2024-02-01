@@ -1,7 +1,7 @@
 #pragma once
 
 // Random numbers are SLOW!!!!
-// mt19937 device is slow like hell. Stick to rand().
+// Mersenne Twister (mt19937) is slow like hell. Stick to rand().
 // TODO: Investigate usage of:
 // https://www.pcg-random.org/
 // https://github.com/Reputeless/Xoshiro-cpp
@@ -21,18 +21,18 @@ public:
 
     static uint32_t UInt()
     {
-        return s_RandomDistributionInt(s_RandomEngine);
+        return s_RandomDistribution(s_RandomEngine);
     }
 
     static uint32_t UInt(const uint32_t min, const uint32_t max)
     {
-        return min + (s_RandomDistributionInt(s_RandomEngine) % (max - min + 1));
+        return min + (s_RandomDistribution(s_RandomEngine) % (max - min + 1));
     }
 
     // Returns a random float in [0,1).
     static float Float()
     {
-        return static_cast<float>(rand()) / (RAND_MAX + 1.0f);
+        return static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) + 1.0f);
     }
 
     static float Float(const float min, const float max)
@@ -43,7 +43,7 @@ public:
     // Returns a random double in [0,1).
     static double Double()
     {
-        return std::rand() / (RAND_MAX + 1.0);
+        return rand() / (RAND_MAX + 1.0);
     }
 
     static double Double(const double min, const double max)
@@ -58,6 +58,6 @@ public:
     }
 
 private:
-    static thread_local std::mt19937                                s_RandomEngine;
-    static std::uniform_int_distribution<std::mt19937::result_type> s_RandomDistributionInt;
+    static thread_local std::minstd_rand                                             s_RandomEngine;
+    static thread_local std::uniform_int_distribution<std::minstd_rand::result_type> s_RandomDistribution;
 };

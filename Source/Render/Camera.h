@@ -209,6 +209,12 @@ public:
             const Ray  scattered = Ray(rec.P, mixedPDF.Generate(), r.Time());
             const auto pdfVal    = mixedPDF.Value(scattered.Direction());
 
+            // Scattering is impossible
+            if(DoubleUtils::isEqual(pdfVal, 0.0, DoubleUtils::DefaultTolerance()))
+            {
+                return colorFromEmission;
+            }
+
             const double scatteringPDF = rec.Material->ScatteringPDF(r, rec, scattered);
 
             const Color3 sampleColor = RayColor(scattered, depth - 1, world);
@@ -275,6 +281,12 @@ public:
 
             const Ray  scattered = Ray(rec.P, mixedPDF.Generate(), r.Time());
             const auto pdfVal    = mixedPDF.Value(scattered.Direction());
+
+            // Scattering is impossible
+            if(DoubleUtils::isEqual(pdfVal, 0.0, DoubleUtils::DefaultTolerance()))
+            {
+                return colorFromEmission;
+            }
 
             const double scatteringPDF = rec.Material->ScatteringPDF(r, rec, scattered);
 
