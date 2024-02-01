@@ -21,97 +21,27 @@ public:
     {
     }
 
-    double X() const
-    {
-        return E[0];
-    }
+    double X() const;
+    double Y() const;
+    double Z() const;
 
-    double Y() const
-    {
-        return E[1];
-    }
+    Vector3  operator-(const Vector3& other) const;
+    void     operator-=(const Vector3& other);
+    Vector3  operator-() const;
+    double   operator[](int i) const;
+    double&  operator[](int i);
+    Vector3& operator+=(const Vector3& v);
+    Vector3& operator*=(double t);
+    Vector3& operator/=(double t);
 
-    double Z() const
-    {
-        return E[2];
-    }
-
-    Vector3 operator-(const Vector3& other) const
-    {
-        return {E[0] - other.E[0],
-                E[1] - other.E[1],
-                E[2] - other.E[2]};
-    }
-
-    void operator-=(const Vector3& other)
-    {
-        E[0] -= other.E[0];
-        E[1] -= other.E[1];
-        E[2] -= other.E[2];
-    }
-
-    Vector3 operator-() const
-    {
-        return {-E[0], -E[1], -E[2]};
-    }
-
-    double operator[](const int i) const
-    {
-        return E[i];
-    }
-
-    double& operator[](const int i)
-    {
-        return E[i];
-    }
-
-    Vector3& operator+=(const Vector3& v)
-    {
-        E[0] += v.E[0];
-        E[1] += v.E[1];
-        E[2] += v.E[2];
-        return *this;
-    }
-
-    Vector3& operator*=(const double t)
-    {
-        E[0] *= t;
-        E[1] *= t;
-        E[2] *= t;
-        return *this;
-    }
-
-    Vector3& operator/=(const double t)
-    {
-        return *this *= 1 / t;
-    }
-
-    double Length() const
-    {
-        return sqrt(LengthSquared());
-    }
-
-    double LengthSquared() const
-    {
-        return E[0] * E[0] + E[1] * E[1] + E[2] * E[2];
-    }
+    double Length() const;
+    double LengthSquared() const;
 
     // Return true if the vector is close to zero in all dimensions.
-    bool NearZero() const
-    {
-        constexpr auto tolerance = 1e-8;
-        return (fabs(E[0]) < tolerance) && (fabs(E[1]) < tolerance) && (fabs(E[2]) < tolerance);
-    }
+    bool NearZero() const;
 
-    static Vector3 Random()
-    {
-        return {Random::Double(), Random::Double(), Random::Double()};
-    }
-
-    static Vector3 Random(const double min, const double max)
-    {
-        return {Random::Double(min, max), Random::Double(min, max), Random::Double(min, max)};
-    }
+    static Vector3 Random();
+    static Vector3 Random(double min, double max);
 };
 
 using Point3 = Vector3;

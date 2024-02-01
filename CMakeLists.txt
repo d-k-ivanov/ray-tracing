@@ -30,9 +30,11 @@ set(SOURCE_FILES
     Source/Main.cpp
 
     Source/Math/Constants.h
+    Source/Math/Converters.cpp
     Source/Math/Converters.h
     Source/Math/Interval.cpp
     Source/Math/Interval.h
+    Source/Math/Vector3.cpp
     Source/Math/Vector3.h
 
     Source/Render/AABB.cpp
