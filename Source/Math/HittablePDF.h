@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PDF.h"
+
 #include <Objects/Hittable.h>
 
 class HittablePDF final : public PDF

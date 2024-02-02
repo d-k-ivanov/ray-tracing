@@ -10,10 +10,10 @@ void HitRecord::SetFaceNormal(const Ray& r, const Vector3& outwardNormal)
 
 std::shared_ptr<Material>& HitRecord::GetMaterial()
 {
-
+    return m_Material;
 }
 
-bool HitRecord::SetMaterial(std::shared_ptr<Material> material)
+void HitRecord::SetMaterial(const std::shared_ptr<Material>& material)
 {
     m_Material = material;
 }
