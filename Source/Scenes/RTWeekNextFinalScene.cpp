@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include <Math/Vector3.h>
+#include <Objects/Box.h>
 #include <Objects/BVH.h>
 #include <Objects/ConstantMedium.h>
 #include <Render/Material.h>

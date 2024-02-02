@@ -2,6 +2,7 @@
 
 #include <Math/Vector3.h>
 #include <Render/Material.h>
+#include <Objects/Box.h>
 #include <Objects/Quad.h>
 #include <Objects/Sphere.h>
 

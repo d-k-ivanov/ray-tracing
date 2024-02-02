@@ -1,12 +1,6 @@
 #include "Hittable.h"
 
-#include <Math/AABB.h>
 #include <Math/Converters.h>
-#include <Math/Interval.h>
-#include <Math/Vector3.h>
-#include <Render/Ray.h>
-
-#include <memory>
 
 double Hittable::PDFValue(const Vector3& origin, const Vector3& direction) const
 {

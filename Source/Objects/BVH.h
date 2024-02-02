@@ -3,8 +3,6 @@
 #include "Hittable.h"
 #include "HittableList.h"
 
-#include <memory>
-
 class BVHNode final : public Hittable
 {
 public:

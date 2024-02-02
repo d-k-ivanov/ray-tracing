@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Math/Constants.h>
+#include "Constants.h"
+
 #include <Utils/Random.h>
 
 #include <cmath>
