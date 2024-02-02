@@ -5,13 +5,15 @@
 #include <Objects/BVH.h>
 #include <Objects/ConstantMedium.h>
 #include <Objects/Quad.h>
+#include <Objects/RotateY.h>
 #include <Objects/Sphere.h>
+#include <Objects/Translate.h>
 #include <Render/Dielectric.h>
 #include <Render/DiffuseLight.h>
-#include <Render/Lambertian.h>
-#include <Render/NoiseTexture.h>
 #include <Render/ImageTexture.h>
+#include <Render/Lambertian.h>
 #include <Render/Metal.h>
+#include <Render/NoiseTexture.h>
 #include <Utils/Filesystem.h>
 
 #include <memory>

@@ -1,5 +1,7 @@
 #include "HittableList.h"
 
+#include <Render/HitRecord.h>
+
 HittableList::HittableList(const std::shared_ptr<Hittable>& object)
 {
     Add(object);

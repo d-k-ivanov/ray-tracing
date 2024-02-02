@@ -1,6 +1,7 @@
 #include "Sphere.h"
 
 #include <Math/ONB.h>
+#include <Render/HitRecord.h>
 
 // Stationary Sphere
 Sphere::Sphere(const Point3& center, const double radius, const std::shared_ptr<Material>& material)

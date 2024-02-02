@@ -1,5 +1,7 @@
 #include "BVH.h"
 
+#include <Render/HitRecord.h>
+
 #include <algorithm>
 
 BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects, size_t start, size_t end)

@@ -1,5 +1,7 @@
 #include "Quad.h"
 
+#include <Render/HitRecord.h>
+
 Quad::Quad(const Point3& q, const Vector3& u, const Vector3& v, const std::shared_ptr<Material>& m)
     : m_Q(q)
     , m_U(u)

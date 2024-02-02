@@ -2,6 +2,10 @@
 
 #include "Hittable.h"
 
+#include <memory>
+
+class Material;
+
 class Sphere final : public Hittable
 {
 public:

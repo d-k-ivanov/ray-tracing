@@ -52,9 +52,9 @@ set(SOURCE_FILES
     Source/Math/SpherePDF.cpp
     Source/Math/SpherePDF.h
 
+    Source/Objects/Box.h
     Source/Objects/BVH.cpp
     Source/Objects/BVH.h
-    Source/Objects/Box.h
     Source/Objects/ConstantMedium.cpp
     Source/Objects/ConstantMedium.h
     Source/Objects/Hittable.cpp
@@ -63,8 +63,12 @@ set(SOURCE_FILES
     Source/Objects/HittableList.h
     Source/Objects/Quad.cpp
     Source/Objects/Quad.h
+    Source/Objects/RotateY.cpp
+    Source/Objects/RotateY.h
     Source/Objects/Sphere.cpp
     Source/Objects/Sphere.h
+    Source/Objects/Translate.cpp
+    Source/Objects/Translate.h
 
     Source/Render/Camera.cpp
     Source/Render/Camera.h

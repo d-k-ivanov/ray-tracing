@@ -3,7 +3,8 @@
 #include <Math/Vector3.h>
 #include <Objects/Box.h>
 #include <Objects/Quad.h>
-#include <Objects/Sphere.h>
+#include <Objects/RotateY.h>
+#include <Objects/Translate.h>
 #include <Render/DiffuseLight.h>
 #include <Render/Lambertian.h>
 #include <Render/Metal.h>

@@ -1,5 +1,6 @@
 #include "Camera.h"
 
+#include "HitRecord.h"
 #include "Material.h"
 #include "ScatterRecord.h"
 
