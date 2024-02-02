@@ -1,9 +1,6 @@
 #pragma once
 
-#include "ONB.h"
 #include "Vector3.h"
-
-#include <Objects/Hittable.h>
 
 class PDF
 {

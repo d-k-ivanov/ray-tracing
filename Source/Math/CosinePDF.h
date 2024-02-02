@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ONB.h"
 #include "PDF.h"
 
 class CosinePDF final : public PDF
