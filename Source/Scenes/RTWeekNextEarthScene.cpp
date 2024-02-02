@@ -3,7 +3,7 @@
 #include <Math/Vector3.h>
 #include <Objects/Sphere.h>
 #include <Render/Lambertian.h>
-#include <Render/Texture.h>
+#include <Render/ImageTexture.h>
 #include <Utils/Filesystem.h>
 
 #include <memory>

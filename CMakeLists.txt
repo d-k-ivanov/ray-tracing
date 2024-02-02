@@ -20,6 +20,7 @@ include(ToolchainPostUpdates)
 project(${PROJECT_NAME})
 
 set(EXE_PLATFORM_KEYWORD "")
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(EXE_PLATFORM_KEYWORD "")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
@@ -43,13 +44,13 @@ set(SOURCE_FILES
     Source/Math/PDF.h
     Source/Math/Vector3.cpp
     Source/Math/Vector3.h
-   Source/Math/CosinePDF.h
-   Source/Math/HittablePDF.cpp
-   Source/Math/HittablePDF.h
-   Source/Math/MixturePDF.cpp
-   Source/Math/MixturePDF.h
-   Source/Math/SpherePDF.cpp
-   Source/Math/SpherePDF.h
+    Source/Math/CosinePDF.h
+    Source/Math/HittablePDF.cpp
+    Source/Math/HittablePDF.h
+    Source/Math/MixturePDF.cpp
+    Source/Math/MixturePDF.h
+    Source/Math/SpherePDF.cpp
+    Source/Math/SpherePDF.h
 
     Source/Objects/BVH.cpp
     Source/Objects/BVH.h
@@ -67,6 +68,8 @@ set(SOURCE_FILES
 
     Source/Render/Camera.cpp
     Source/Render/Camera.h
+    Source/Render/CheckerTexture.cpp
+    Source/Render/CheckerTexture.h
     Source/Render/Color.h
     Source/Render/Dielectric.cpp
     Source/Render/Dielectric.h
@@ -74,6 +77,8 @@ set(SOURCE_FILES
     Source/Render/DiffuseLight.h
     Source/Render/HitRecord.cpp
     Source/Render/HitRecord.h
+    Source/Render/ImageTexture.cpp
+    Source/Render/ImageTexture.h
     Source/Render/Isotropic.cpp
     Source/Render/Isotropic.h
     Source/Render/Lambertian.cpp
@@ -82,6 +87,12 @@ set(SOURCE_FILES
     Source/Render/Material.h
     Source/Render/Metal.cpp
     Source/Render/Metal.h
+    Source/Render/NoiseTexture.cpp
+    Source/Render/NoiseTexture.h
+    Source/Render/NoiseTextureCamouflage.cpp
+    Source/Render/NoiseTextureCamouflage.h
+    Source/Render/NoiseTextureSmooth.cpp
+    Source/Render/NoiseTextureSmooth.h
     Source/Render/PerlinNoise.cpp
     Source/Render/PerlinNoise.h
     Source/Render/Ray.cpp
@@ -90,6 +101,8 @@ set(SOURCE_FILES
     Source/Render/Renderer.h
     Source/Render/ScatterRecord.cpp
     Source/Render/ScatterRecord.h
+    Source/Render/SolidColor.cpp
+    Source/Render/SolidColor.h
     Source/Render/Texture.cpp
     Source/Render/Texture.h
 
@@ -141,16 +154,16 @@ endif()
 add_custom_target(
     always_run_target ALL
     DEPENDS
-        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy" # fake! ensure we run!
+    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy" # fake! ensure we run!
 )
 
 add_custom_command(
     OUTPUT
-        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy" # fake! ensure we run!
-        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
+    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy" # fake! ensure we run!
+    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
-        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
+    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
 )
 
 find_package(glfw3 REQUIRED)
@@ -173,10 +186,10 @@ endif()
 
 target_link_libraries(
     ${PROJECT_NAME}
-        glfw
-        imgui::imgui
-        spdlog::spdlog
-        Vulkan::Vulkan
+    glfw
+    imgui::imgui
+    spdlog::spdlog
+    Vulkan::Vulkan
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE "Source" ${Stb_INCLUDE_DIR})

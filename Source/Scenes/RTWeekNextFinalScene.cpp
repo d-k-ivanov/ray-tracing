@@ -9,6 +9,8 @@
 #include <Render/Dielectric.h>
 #include <Render/DiffuseLight.h>
 #include <Render/Lambertian.h>
+#include <Render/NoiseTexture.h>
+#include <Render/ImageTexture.h>
 #include <Render/Metal.h>
 #include <Utils/Filesystem.h>
 

@@ -5,7 +5,7 @@
 #include <Objects/Sphere.h>
 #include <Render/DiffuseLight.h>
 #include <Render/Lambertian.h>
-#include <Render/Texture.h>
+#include <Render/NoiseTexture.h>
 
 #include <memory>
 

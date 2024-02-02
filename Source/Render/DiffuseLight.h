@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Material.h"
+#include "SolidColor.h"
 #include "Texture.h"
 
 class DiffuseLight final : public Material

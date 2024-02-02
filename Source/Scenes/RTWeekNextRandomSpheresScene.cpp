@@ -6,7 +6,7 @@
 #include <Render/Dielectric.h>
 #include <Render/Lambertian.h>
 #include <Render/Metal.h>
-#include <Render/Texture.h>
+#include <Render/CheckerTexture.h>
 #include <Utils/Random.h>
 
 #include <memory>
