@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Render/Camera.h>
 #include <Objects/HittableList.h>
+#include <Render/Camera.h>
 
 #include <optional>
 
@@ -17,9 +17,9 @@ public:
     }
     virtual ~Scene() = default;
 
-    virtual Camera&       GetCamera() { return m_Camera; }
-    virtual Hittable&     GetWorld() { return m_World; }
-    virtual HittableList& GetLights() { return m_Lights; }
+    virtual Camera&       GetCamera();
+    virtual Hittable&     GetWorld();
+    virtual HittableList& GetLights();
 
 protected:
     Camera       m_Camera;

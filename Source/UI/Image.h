@@ -18,16 +18,12 @@ public:
     Image(uint32_t width, uint32_t height, ImageFormat format, const void* data = nullptr);
     ~Image();
 
-    void SetData(const void* data);
-
-    VkDescriptorSet GetDescriptorSet() const { return m_DescriptorSet; }
-
-    void Resize(uint32_t width, uint32_t height);
-
-    uint32_t GetWidth() const { return m_Width; }
-    uint32_t GetHeight() const { return m_Height; }
-
-    const uint8_t* PixelData(uint32_t x, uint32_t y) const;
+    void            SetData(const void* data);
+    void            Resize(uint32_t width, uint32_t height);
+    VkDescriptorSet GetDescriptorSet() const;
+    uint32_t        GetWidth() const;
+    uint32_t        GetHeight() const;
+    const uint8_t*  PixelData(uint32_t x, uint32_t y) const;
 
 private:
     void AllocateMemory(uint64_t size);

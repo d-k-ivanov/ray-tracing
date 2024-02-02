@@ -11,7 +11,7 @@ public:
     static void Init();
     static void SetLogLevelWarn();
 
-    static std::shared_ptr<spdlog::logger>& GetLogger() { return s_Logger; }
+    static std::shared_ptr<spdlog::logger>& GetLogger();
 
 private:
     static std::shared_ptr<spdlog::logger> s_Logger;

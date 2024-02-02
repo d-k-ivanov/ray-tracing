@@ -449,6 +449,224 @@ Application& Application::Get()
     return *Impl::g_AppInstance;
 }
 
+void Application::Run()
+{
+    m_Running = true;
+
+    ImGui_ImplVulkanH_Window* window     = &Impl::g_MainWindowData;
+    constexpr ImVec4          clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    const ImGuiIO&            io         = ImGui::GetIO();
+
+    // Main loop
+    while(glfwWindowShouldClose(m_WindowHandle) == GLFW_FALSE && m_Running)
+    {
+        // Poll and handle events (inputs, window resize, etc.)
+        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
+        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
+        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        glfwPollEvents();
+
+        for(const auto& layer : m_LayerStack)
+            layer->OnUpdate(m_TimeStep);
+
+        // Resize swap chain?
+        if(Impl::g_SwapChainRebuild)
+        {
+            int width, height;
+            glfwGetFramebufferSize(m_WindowHandle, &width, &height);
+            if(width > 0 && height > 0)
+            {
+                ImGui_ImplVulkan_SetMinImageCount(Impl::g_MinImageCount);
+                ImGui_ImplVulkanH_CreateOrResizeWindow(Impl::g_Instance, Impl::g_PhysicalDevice, Impl::g_Device, &Impl::g_MainWindowData, Impl::g_QueueFamily, Impl::g_Allocator, width, height, Impl::g_MinImageCount);
+                Impl::g_MainWindowData.FrameIndex = 0;
+
+                // Clear allocated command buffers from here since entire pool is destroyed
+                Impl::g_AllocatedCommandBuffers.clear();
+                Impl::g_AllocatedCommandBuffers.resize(Impl::g_MainWindowData.ImageCount);
+
+                Impl::g_SwapChainRebuild = false;
+            }
+        }
+
+        // Start the Dear ImGui frame
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        {
+            static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+
+            // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+            // because it would be confusing to have two docking targets within each others.
+            ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking;
+            if(m_MenubarCallback != nullptr)
+                windowFlags |= ImGuiWindowFlags_MenuBar;
+
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+            // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+            // and handle the pass-thru hole, so we ask Begin() to not render a background.
+            if(dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
+                windowFlags |= ImGuiWindowFlags_NoBackground;
+
+            // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+            // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+            // all active windows docked into it will lose their parent and become undocked.
+            // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+            // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+            ImGui::Begin("DockSpace", nullptr, windowFlags);
+            ImGui::PopStyleVar();
+
+            ImGui::PopStyleVar(2);
+
+            // Submit the DockSpace
+            // ImGuiIO& io = ImGui::GetIO();
+            if(io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+            {
+                const ImGuiID dockspaceId = ImGui::GetID("ApplicationDockspace");
+                ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspaceFlags);
+            }
+
+            if(m_MenubarCallback != nullptr)
+            {
+                if(ImGui::BeginMenuBar())
+                {
+                    m_MenubarCallback();
+                    ImGui::EndMenuBar();
+                }
+            }
+
+            for(const auto& layer : m_LayerStack)
+                layer->OnUIRender();
+
+            ImGui::End();
+        }
+
+        // Rendering
+        ImGui::Render();
+        ImDrawData* mainDrawData            = ImGui::GetDrawData();
+        const bool  mainIsMinimized         = (mainDrawData->DisplaySize.x <= 0.0f || mainDrawData->DisplaySize.y <= 0.0f);
+        window->ClearValue.color.float32[0] = clearColor.x * clearColor.w;
+        window->ClearValue.color.float32[1] = clearColor.y * clearColor.w;
+        window->ClearValue.color.float32[2] = clearColor.z * clearColor.w;
+        window->ClearValue.color.float32[3] = clearColor.w;
+        if(!mainIsMinimized)
+            Impl::FrameRender(window, mainDrawData);
+
+        // Update and Render additional Platform Windows
+        if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+        }
+
+        // Present Main Platform Window
+        if(!mainIsMinimized)
+            Impl::FramePresent(window);
+
+        const double time = GetTime();
+        m_FrameTime       = time - m_LastFrameTime;
+        m_TimeStep        = std::min<double>(m_FrameTime, 0.0333);
+        m_LastFrameTime   = time;
+    }
+}
+
+void Application::PushLayer(const std::shared_ptr<Layer>& layer)
+{
+    m_LayerStack.emplace_back(layer);
+    layer->OnAttach();
+}
+
+void Application::Close()
+{
+    m_Running = false;
+}
+
+double Application::GetTime() const
+{
+    return glfwGetTime();
+}
+
+GLFWwindow* Application::GetWindowHandle() const
+{
+    return m_WindowHandle;
+}
+
+VkInstance Application::GetInstance()
+{
+    return Impl::g_Instance;
+}
+
+VkPhysicalDevice Application::GetPhysicalDevice()
+{
+    return Impl::g_PhysicalDevice;
+}
+
+VkDevice Application::GetDevice()
+{
+    return Impl::g_Device;
+}
+
+VkCommandBuffer Application::GetCommandBuffer(bool begin)
+{
+    const ImGui_ImplVulkanH_Window* window = &Impl::g_MainWindowData;
+
+    // Use any command queue
+    const VkCommandPool commandPool = window->Frames[window->FrameIndex].CommandPool;
+
+    VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
+    cmdBufAllocateInfo.sType                       = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    cmdBufAllocateInfo.commandPool                 = commandPool;
+    cmdBufAllocateInfo.level                       = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    cmdBufAllocateInfo.commandBufferCount          = 1;
+
+    VkCommandBuffer& commandBuffer = Impl::g_AllocatedCommandBuffers[window->FrameIndex].emplace_back();
+
+    VK_CHECK(vkAllocateCommandBuffers(Impl::g_Device, &cmdBufAllocateInfo, &commandBuffer));
+
+    VkCommandBufferBeginInfo beginInfo = {};
+    beginInfo.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+
+    return commandBuffer;
+}
+
+void Application::FlushCommandBuffer(const VkCommandBuffer commandBuffer)
+{
+    constexpr uint64_t defaultFenceTimeout = 100000000000;
+
+    VkSubmitInfo endInfo       = {};
+    endInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    endInfo.commandBufferCount = 1;
+    endInfo.pCommandBuffers    = &commandBuffer;
+    VK_CHECK(vkEndCommandBuffer(commandBuffer));
+
+    // Create fence to ensure that the command buffer has finished executing
+    VkFenceCreateInfo fenceCreateInfo = {};
+    fenceCreateInfo.sType             = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceCreateInfo.flags             = 0;
+    VkFence fence;
+    VK_CHECK(vkCreateFence(Impl::g_Device, &fenceCreateInfo, nullptr, &fence));
+    VK_CHECK(vkQueueSubmit(Impl::g_Queue, 1, &endInfo, fence));
+    VK_CHECK(vkWaitForFences(Impl::g_Device, 1, &fence, VK_TRUE, defaultFenceTimeout));
+    vkDestroyFence(Impl::g_Device, fence, nullptr);
+}
+
+void Application::SubmitResourceFree(std::function<void()>&& func)
+{
+    Impl::g_ResourceFreeQueue[Impl::g_CurrentFrameIndex].emplace_back(std::move(func));
+}
+
 void Application::Init()
 {
     // Setup GLFW window
@@ -606,211 +824,4 @@ void Application::Shutdown()
     glfwTerminate();
 
     g_ApplicationRunning = false;
-}
-
-void Application::Run()
-{
-    m_Running = true;
-
-    ImGui_ImplVulkanH_Window* window     = &Impl::g_MainWindowData;
-    constexpr ImVec4          clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    const ImGuiIO&            io         = ImGui::GetIO();
-
-    // Main loop
-    while(glfwWindowShouldClose(m_WindowHandle) == GLFW_FALSE && m_Running)
-    {
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-        glfwPollEvents();
-
-        for(const auto& layer : m_LayerStack)
-            layer->OnUpdate(m_TimeStep);
-
-        // Resize swap chain?
-        if(Impl::g_SwapChainRebuild)
-        {
-            int width, height;
-            glfwGetFramebufferSize(m_WindowHandle, &width, &height);
-            if(width > 0 && height > 0)
-            {
-                ImGui_ImplVulkan_SetMinImageCount(Impl::g_MinImageCount);
-                ImGui_ImplVulkanH_CreateOrResizeWindow(Impl::g_Instance, Impl::g_PhysicalDevice, Impl::g_Device, &Impl::g_MainWindowData, Impl::g_QueueFamily, Impl::g_Allocator, width, height, Impl::g_MinImageCount);
-                Impl::g_MainWindowData.FrameIndex = 0;
-
-                // Clear allocated command buffers from here since entire pool is destroyed
-                Impl::g_AllocatedCommandBuffers.clear();
-                Impl::g_AllocatedCommandBuffers.resize(Impl::g_MainWindowData.ImageCount);
-
-                Impl::g_SwapChainRebuild = false;
-            }
-        }
-
-        // Start the Dear ImGui frame
-        ImGui_ImplVulkan_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        {
-            static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
-
-            // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-            // because it would be confusing to have two docking targets within each others.
-            ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking;
-            if(m_MenubarCallback != nullptr)
-                windowFlags |= ImGuiWindowFlags_MenuBar;
-
-            const ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
-            ImGui::SetNextWindowViewport(viewport->ID);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-            windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-            windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-            // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-            // and handle the pass-thru hole, so we ask Begin() to not render a background.
-            if(dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
-                windowFlags |= ImGuiWindowFlags_NoBackground;
-
-            // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-            // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-            // all active windows docked into it will lose their parent and become undocked.
-            // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-            // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-            ImGui::Begin("DockSpace", nullptr, windowFlags);
-            ImGui::PopStyleVar();
-
-            ImGui::PopStyleVar(2);
-
-            // Submit the DockSpace
-            // ImGuiIO& io = ImGui::GetIO();
-            if(io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-            {
-                const ImGuiID dockspaceId = ImGui::GetID("ApplicationDockspace");
-                ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspaceFlags);
-            }
-
-            if(m_MenubarCallback != nullptr)
-            {
-                if(ImGui::BeginMenuBar())
-                {
-                    m_MenubarCallback();
-                    ImGui::EndMenuBar();
-                }
-            }
-
-            for(const auto& layer : m_LayerStack)
-                layer->OnUIRender();
-
-            ImGui::End();
-        }
-
-        // Rendering
-        ImGui::Render();
-        ImDrawData* mainDrawData            = ImGui::GetDrawData();
-        const bool  mainIsMinimized         = (mainDrawData->DisplaySize.x <= 0.0f || mainDrawData->DisplaySize.y <= 0.0f);
-        window->ClearValue.color.float32[0] = clearColor.x * clearColor.w;
-        window->ClearValue.color.float32[1] = clearColor.y * clearColor.w;
-        window->ClearValue.color.float32[2] = clearColor.z * clearColor.w;
-        window->ClearValue.color.float32[3] = clearColor.w;
-        if(!mainIsMinimized)
-            Impl::FrameRender(window, mainDrawData);
-
-        // Update and Render additional Platform Windows
-        if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-        }
-
-        // Present Main Platform Window
-        if(!mainIsMinimized)
-            Impl::FramePresent(window);
-
-        const double time = GetTime();
-        m_FrameTime       = time - m_LastFrameTime;
-        m_TimeStep        = std::min<double>(m_FrameTime, 0.0333);
-        m_LastFrameTime   = time;
-    }
-}
-
-void Application::Close()
-{
-    m_Running = false;
-}
-
-double Application::GetTime() const
-{
-    return glfwGetTime();
-}
-
-VkInstance Application::GetInstance()
-{
-    return Impl::g_Instance;
-}
-
-VkPhysicalDevice Application::GetPhysicalDevice()
-{
-    return Impl::g_PhysicalDevice;
-}
-
-VkDevice Application::GetDevice()
-{
-    return Impl::g_Device;
-}
-
-VkCommandBuffer Application::GetCommandBuffer(bool begin)
-{
-    const ImGui_ImplVulkanH_Window* window = &Impl::g_MainWindowData;
-
-    // Use any command queue
-    const VkCommandPool commandPool = window->Frames[window->FrameIndex].CommandPool;
-
-    VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
-    cmdBufAllocateInfo.sType                       = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    cmdBufAllocateInfo.commandPool                 = commandPool;
-    cmdBufAllocateInfo.level                       = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    cmdBufAllocateInfo.commandBufferCount          = 1;
-
-    VkCommandBuffer& commandBuffer = Impl::g_AllocatedCommandBuffers[window->FrameIndex].emplace_back();
-
-    VK_CHECK(vkAllocateCommandBuffers(Impl::g_Device, &cmdBufAllocateInfo, &commandBuffer));
-
-    VkCommandBufferBeginInfo beginInfo = {};
-    beginInfo.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
-
-    return commandBuffer;
-}
-
-void Application::FlushCommandBuffer(const VkCommandBuffer commandBuffer)
-{
-    constexpr uint64_t defaultFenceTimeout = 100000000000;
-
-    VkSubmitInfo endInfo       = {};
-    endInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    endInfo.commandBufferCount = 1;
-    endInfo.pCommandBuffers    = &commandBuffer;
-    VK_CHECK(vkEndCommandBuffer(commandBuffer));
-
-    // Create fence to ensure that the command buffer has finished executing
-    VkFenceCreateInfo fenceCreateInfo = {};
-    fenceCreateInfo.sType             = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceCreateInfo.flags             = 0;
-    VkFence fence;
-    VK_CHECK(vkCreateFence(Impl::g_Device, &fenceCreateInfo, nullptr, &fence));
-    VK_CHECK(vkQueueSubmit(Impl::g_Queue, 1, &endInfo, fence));
-    VK_CHECK(vkWaitForFences(Impl::g_Device, 1, &fence, VK_TRUE, defaultFenceTimeout));
-    vkDestroyFence(Impl::g_Device, fence, nullptr);
-}
-
-void Application::SubmitResourceFree(std::function<void()>&& func)
-{
-    Impl::g_ResourceFreeQueue[Impl::g_CurrentFrameIndex].emplace_back(std::move(func));
 }

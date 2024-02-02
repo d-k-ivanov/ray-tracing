@@ -7,6 +7,11 @@
 
 std::shared_ptr<spdlog::logger> Log::s_Logger;
 
+std::shared_ptr<spdlog::logger>& Log::GetLogger()
+{
+    return s_Logger;
+}
+
 void Log::Init()
 {
     std::vector<spdlog::sink_ptr> logSinks;

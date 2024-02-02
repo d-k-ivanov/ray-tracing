@@ -1,31 +1,16 @@
 #pragma once
 
 #include <chrono>
-#include <iostream>
 #include <string>
 
 class Timer
 {
 public:
-    Timer()
-    {
-        Reset();
-    }
+    Timer();
 
-    void Reset()
-    {
-        m_Start = std::chrono::high_resolution_clock::now();
-    }
-
-    double ElapsedSeconds() const
-    {
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - m_Start).count() * 0.001 * 0.001 * 0.001;
-    }
-
-    double ElapsedMilliseconds() const
-    {
-        return ElapsedSeconds() * 1000.0;
-    }
+    void   Reset();
+    double ElapsedSeconds() const;
+    double ElapsedMilliseconds() const;
 
 private:
     std::chrono::time_point<std::chrono::high_resolution_clock> m_Start;
@@ -38,11 +23,8 @@ public:
         : m_Name(std::move(name))
     {
     }
-    ~ScopedTimer()
-    {
-        const double time = m_Timer.ElapsedMilliseconds();
-        std::cout << "[TIMER] " << m_Name << " - " << time << "ms\n";
-    }
+
+    ~ScopedTimer();
 
 private:
     std::string m_Name;

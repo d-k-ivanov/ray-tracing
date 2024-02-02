@@ -96,3 +96,13 @@ VulkanException::VulkanException(const CodeLocation& errorLocation, const char* 
     m_ErrorString = oss.str();
     LOG_ERROR(m_ErrorString);
 }
+
+const std::string& VulkanException::msg() const
+{
+    return m_Msg;
+}
+
+const char* VulkanException::what() const noexcept
+{
+    return m_ErrorString.c_str();
+}

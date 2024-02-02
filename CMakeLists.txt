@@ -73,6 +73,7 @@ set(SOURCE_FILES
     Source/Render/Texture.cpp
     Source/Render/Texture.h
 
+    Source/Scenes/Scene.cpp
     Source/Scenes/Scene.h
     Source/Scenes/RTWeekOneDefaultScene.cpp
     Source/Scenes/RTWeekOneFinalScene.cpp
@@ -106,6 +107,7 @@ set(SOURCE_FILES
     Source/Utils/Random.cpp
     Source/Utils/Random.h
     Source/Utils/StringTools.h
+    Source/Utils/Timers.cpp
     Source/Utils/Timers.h
     Source/Utils/VulkanException.cpp
     Source/Utils/VulkanException.h

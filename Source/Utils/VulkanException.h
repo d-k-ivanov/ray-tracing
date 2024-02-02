@@ -72,13 +72,6 @@ private:
     std::string  m_ErrorString;
 
 public:
-    const std::string& msg() const
-    {
-        return m_Msg;
-    }
-
-    const char* what() const noexcept override
-    {
-        return m_ErrorString.c_str();
-    }
+    const std::string& msg() const;
+    const char*        what() const noexcept override;
 };

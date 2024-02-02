@@ -36,25 +36,17 @@ public:
         m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
     }
 
-    void PushLayer(const std::shared_ptr<Layer>& layer)
-    {
-        m_LayerStack.emplace_back(layer);
-        layer->OnAttach();
-    }
+    void PushLayer(const std::shared_ptr<Layer>& layer);
 
-    void Close();
-
-    double      GetTime() const;
-    GLFWwindow* GetWindowHandle() const { return m_WindowHandle; }
-
+    void                    Close();
+    double                  GetTime() const;
+    GLFWwindow*             GetWindowHandle() const;
     static VkInstance       GetInstance();
     static VkPhysicalDevice GetPhysicalDevice();
     static VkDevice         GetDevice();
-
-    static VkCommandBuffer GetCommandBuffer(bool begin);
-    static void            FlushCommandBuffer(VkCommandBuffer commandBuffer);
-
-    static void SubmitResourceFree(std::function<void()>&& func);
+    static VkCommandBuffer  GetCommandBuffer(bool begin);
+    static void             FlushCommandBuffer(VkCommandBuffer commandBuffer);
+    static void             SubmitResourceFree(std::function<void()>&& func);
 
 private:
     void Init();

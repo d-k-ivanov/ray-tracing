@@ -112,98 +112,6 @@ Image::~Image()
     Release();
 }
 
-void Image::AllocateMemory([[maybe_unused]] uint64_t size)
-{
-    VkDevice device       = Application::GetDevice();
-    VkFormat vulkanFormat = Impl::FormatToVulkanFormat(m_Format);
-
-    // Create the Image
-    {
-        VkImageCreateInfo info = {};
-        info.sType             = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-        info.imageType         = VK_IMAGE_TYPE_2D;
-        info.format            = vulkanFormat;
-        info.extent.width      = m_Width;
-        info.extent.height     = m_Height;
-        info.extent.depth      = 1;
-        info.mipLevels         = 1;
-        info.arrayLayers       = 1;
-        info.samples           = VK_SAMPLE_COUNT_1_BIT;
-        info.tiling            = VK_IMAGE_TILING_OPTIMAL;
-        info.usage             = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        info.sharingMode       = VK_SHARING_MODE_EXCLUSIVE;
-        info.initialLayout     = VK_IMAGE_LAYOUT_UNDEFINED;
-        VK_CHECK(vkCreateImage(device, &info, nullptr, &m_Image));
-        VkMemoryRequirements req;
-        vkGetImageMemoryRequirements(device, m_Image, &req);
-        VkMemoryAllocateInfo allocInfo = {};
-        allocInfo.sType                = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize       = req.size;
-        allocInfo.memoryTypeIndex      = Impl::GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits);
-        VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &m_Memory));
-        VK_CHECK(vkBindImageMemory(device, m_Image, m_Memory, 0));
-    }
-
-    // Create the Image View:
-    {
-        VkImageViewCreateInfo info       = {};
-        info.sType                       = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        info.image                       = m_Image;
-        info.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
-        info.format                      = vulkanFormat;
-        info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        info.subresourceRange.levelCount = 1;
-        info.subresourceRange.layerCount = 1;
-        VK_CHECK(vkCreateImageView(device, &info, nullptr, &m_ImageView));
-    }
-
-    // Create Sampler:
-    {
-        VkSamplerCreateInfo info = {};
-        info.sType               = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-        info.magFilter           = VK_FILTER_LINEAR;
-        info.minFilter           = VK_FILTER_LINEAR;
-        info.mipmapMode          = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-        info.addressModeU        = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        info.addressModeV        = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        info.addressModeW        = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        info.minLod              = -1000;
-        info.maxLod              = 1000;
-        info.maxAnisotropy       = 1.0f;
-        VK_CHECK(vkCreateSampler(device, &info, nullptr, &m_Sampler));
-    }
-
-    // Create the Descriptor Set:
-    m_DescriptorSet = ImGui_ImplVulkan_AddTexture(m_Sampler, m_ImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-}
-
-void Image::Release()
-{
-    Application::SubmitResourceFree(
-        [sampler             = m_Sampler,
-         imageView           = m_ImageView,
-         image               = m_Image,
-         memory              = m_Memory,
-         stagingBuffer       = m_StagingBuffer,
-         stagingBufferMemory = m_StagingBufferMemory]()
-        {
-            const VkDevice device = Application::GetDevice();
-            vkDestroySampler(device, sampler, nullptr);
-            vkDestroyImageView(device, imageView, nullptr);
-            vkDestroyImage(device, image, nullptr);
-            vkFreeMemory(device, memory, nullptr);
-            vkDestroyBuffer(device, stagingBuffer, nullptr);
-            vkFreeMemory(device, stagingBufferMemory, nullptr);
-        });
-
-    m_Sampler             = nullptr;
-    m_ImageView           = nullptr;
-    m_Image               = nullptr;
-    m_Memory              = nullptr;
-    m_StagingBuffer       = nullptr;
-    m_StagingBufferMemory = nullptr;
-}
-
 void Image::SetData(const void* data)
 {
     VkDevice device     = Application::GetDevice();
@@ -299,6 +207,21 @@ void Image::Resize(const uint32_t width, const uint32_t height)
     AllocateMemory(static_cast<uint64_t>(m_Width) * m_Height * Impl::BytesPerPixel(m_Format));
 }
 
+VkDescriptorSet Image::GetDescriptorSet() const
+{
+    return m_DescriptorSet;
+}
+
+uint32_t Image::GetWidth() const
+{
+    return m_Width;
+}
+
+uint32_t Image::GetHeight() const
+{
+    return m_Height;
+}
+
 // Return the address of the three bytes of the pixel at x,y (or magenta if no data).
 const uint8_t* Image::PixelData(uint32_t x, uint32_t y) const
 {
@@ -313,4 +236,96 @@ const uint8_t* Image::PixelData(uint32_t x, uint32_t y) const
     const auto horisontalOffset = x * Impl::BytesPerPixel(m_Format);
 
     return m_Data + verticalOffset + horisontalOffset;
+}
+
+void Image::AllocateMemory([[maybe_unused]] uint64_t size)
+{
+    VkDevice device       = Application::GetDevice();
+    VkFormat vulkanFormat = Impl::FormatToVulkanFormat(m_Format);
+
+    // Create the Image
+    {
+        VkImageCreateInfo info = {};
+        info.sType             = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        info.imageType         = VK_IMAGE_TYPE_2D;
+        info.format            = vulkanFormat;
+        info.extent.width      = m_Width;
+        info.extent.height     = m_Height;
+        info.extent.depth      = 1;
+        info.mipLevels         = 1;
+        info.arrayLayers       = 1;
+        info.samples           = VK_SAMPLE_COUNT_1_BIT;
+        info.tiling            = VK_IMAGE_TILING_OPTIMAL;
+        info.usage             = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        info.sharingMode       = VK_SHARING_MODE_EXCLUSIVE;
+        info.initialLayout     = VK_IMAGE_LAYOUT_UNDEFINED;
+        VK_CHECK(vkCreateImage(device, &info, nullptr, &m_Image));
+        VkMemoryRequirements req;
+        vkGetImageMemoryRequirements(device, m_Image, &req);
+        VkMemoryAllocateInfo allocInfo = {};
+        allocInfo.sType                = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize       = req.size;
+        allocInfo.memoryTypeIndex      = Impl::GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits);
+        VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &m_Memory));
+        VK_CHECK(vkBindImageMemory(device, m_Image, m_Memory, 0));
+    }
+
+    // Create the Image View:
+    {
+        VkImageViewCreateInfo info       = {};
+        info.sType                       = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        info.image                       = m_Image;
+        info.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
+        info.format                      = vulkanFormat;
+        info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        info.subresourceRange.levelCount = 1;
+        info.subresourceRange.layerCount = 1;
+        VK_CHECK(vkCreateImageView(device, &info, nullptr, &m_ImageView));
+    }
+
+    // Create Sampler:
+    {
+        VkSamplerCreateInfo info = {};
+        info.sType               = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        info.magFilter           = VK_FILTER_LINEAR;
+        info.minFilter           = VK_FILTER_LINEAR;
+        info.mipmapMode          = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        info.addressModeU        = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        info.addressModeV        = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        info.addressModeW        = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        info.minLod              = -1000;
+        info.maxLod              = 1000;
+        info.maxAnisotropy       = 1.0f;
+        VK_CHECK(vkCreateSampler(device, &info, nullptr, &m_Sampler));
+    }
+
+    // Create the Descriptor Set:
+    m_DescriptorSet = ImGui_ImplVulkan_AddTexture(m_Sampler, m_ImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+}
+
+void Image::Release()
+{
+    Application::SubmitResourceFree(
+        [sampler             = m_Sampler,
+         imageView           = m_ImageView,
+         image               = m_Image,
+         memory              = m_Memory,
+         stagingBuffer       = m_StagingBuffer,
+         stagingBufferMemory = m_StagingBufferMemory]()
+        {
+            const VkDevice device = Application::GetDevice();
+            vkDestroySampler(device, sampler, nullptr);
+            vkDestroyImageView(device, imageView, nullptr);
+            vkDestroyImage(device, image, nullptr);
+            vkFreeMemory(device, memory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+        });
+
+    m_Sampler             = nullptr;
+    m_ImageView           = nullptr;
+    m_Image               = nullptr;
+    m_Memory              = nullptr;
+    m_StagingBuffer       = nullptr;
+    m_StagingBufferMemory = nullptr;
 }
