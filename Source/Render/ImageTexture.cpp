@@ -1,5 +1,7 @@
 #include "ImageTexture.h"
 
+#include <Math/Interval.h>
+
 Color3 ImageTexture::Value(double u, double v, const Point3& p) const
 {
     // If we have no texture data, then return solid cyan as a debugging aid.

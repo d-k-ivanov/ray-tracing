@@ -32,25 +32,26 @@ set(SOURCE_FILES
 
     Source/Math/AABB.cpp
     Source/Math/AABB.h
+    Source/Math/Constants.cpp
     Source/Math/Constants.h
     Source/Math/Converters.cpp
     Source/Math/Converters.h
     Source/Math/CosinePDF.cpp
+    Source/Math/CosinePDF.h
+    Source/Math/HittablePDF.cpp
+    Source/Math/HittablePDF.h
     Source/Math/Interval.cpp
     Source/Math/Interval.h
+    Source/Math/MixturePDF.cpp
+    Source/Math/MixturePDF.h
     Source/Math/ONB.cpp
     Source/Math/ONB.h
     Source/Math/PDF.cpp
     Source/Math/PDF.h
-    Source/Math/Vector3.cpp
-    Source/Math/Vector3.h
-    Source/Math/CosinePDF.h
-    Source/Math/HittablePDF.cpp
-    Source/Math/HittablePDF.h
-    Source/Math/MixturePDF.cpp
-    Source/Math/MixturePDF.h
     Source/Math/SpherePDF.cpp
     Source/Math/SpherePDF.h
+    Source/Math/Vector3.cpp
+    Source/Math/Vector3.h
 
     Source/Objects/Box.h
     Source/Objects/BVH.cpp
@@ -74,6 +75,7 @@ set(SOURCE_FILES
     Source/Render/Camera.h
     Source/Render/CheckerTexture.cpp
     Source/Render/CheckerTexture.h
+    Source/Render/Color.cpp
     Source/Render/Color.h
     Source/Render/Dielectric.cpp
     Source/Render/Dielectric.h
@@ -135,6 +137,7 @@ set(SOURCE_FILES
     Source/UI/Image.h
     Source/UI/ImGuiHelper.cpp
     Source/UI/ImGuiHelper.h
+    Source/UI/Layer.cpp
     Source/UI/Layer.h
 
     Source/Utils/Filesystem.cpp
@@ -143,6 +146,7 @@ set(SOURCE_FILES
     Source/Utils/Log.h
     Source/Utils/Random.cpp
     Source/Utils/Random.h
+    Source/Utils/StringTools.cpp
     Source/Utils/StringTools.h
     Source/Utils/Timers.cpp
     Source/Utils/Timers.h
