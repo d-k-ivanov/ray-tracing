@@ -4,12 +4,12 @@
 #include "Ray.h"
 #include "Texture.h"
 
-#include <Math/PDF.h>
 #include <Objects/Hittable.h>
 
 #include <memory>
 
 class HitRecord;
+class PDF;
 
 class ScatterRecord
 {

@@ -3,6 +3,9 @@
 #include "Material.h"
 
 #include <Math/Converters.h>
+#include <Math/CosinePDF.h>
+#include <Math/HittablePDF.h>
+#include <Math/MixturePDF.h>
 #include <Utils/Log.h>
 #include <Utils/Random.h>
 

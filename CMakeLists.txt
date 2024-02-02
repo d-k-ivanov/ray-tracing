@@ -34,6 +34,7 @@ set(SOURCE_FILES
     Source/Math/Constants.h
     Source/Math/Converters.cpp
     Source/Math/Converters.h
+    Source/Math/CosinePDF.cpp
     Source/Math/Interval.cpp
     Source/Math/Interval.h
     Source/Math/ONB.cpp
@@ -42,6 +43,13 @@ set(SOURCE_FILES
     Source/Math/PDF.h
     Source/Math/Vector3.cpp
     Source/Math/Vector3.h
+   Source/Math/CosinePDF.h
+   Source/Math/HittablePDF.cpp
+   Source/Math/HittablePDF.h
+   Source/Math/MixturePDF.cpp
+   Source/Math/MixturePDF.h
+   Source/Math/SpherePDF.cpp
+   Source/Math/SpherePDF.h
 
     Source/Objects/BVH.cpp
     Source/Objects/BVH.h

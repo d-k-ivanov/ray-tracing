@@ -14,7 +14,7 @@ void Timer::Reset()
 
 double Timer::ElapsedSeconds() const
 {
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - m_Start).count() * 0.001 * 0.001 * 0.001;
+    return static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - m_Start).count()) * 0.001 * 0.001 * 0.001;
 }
 
 double Timer::ElapsedMilliseconds() const

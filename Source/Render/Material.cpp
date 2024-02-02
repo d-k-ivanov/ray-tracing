@@ -1,5 +1,8 @@
 #include "Material.h"
 
+#include <Math/CosinePDF.h>
+#include <Math/SpherePDF.h>
+
 Color3 Material::Emitted(double u, double v, const Point3& p) const
 {
     return {0, 0, 0};
