@@ -57,15 +57,20 @@ set(SOURCE_FILES
     Source/Objects/Sphere.cpp
     Source/Objects/Sphere.h
 
+    Source/Render/Camera.cpp
     Source/Render/Camera.h
     Source/Render/Color.h
     Source/Render/HitRecord.cpp
     Source/Render/HitRecord.h
+    Source/Render/Material.cpp
     Source/Render/Material.h
+    Source/Render/PerlinNoise.cpp
     Source/Render/PerlinNoise.h
+    Source/Render/Ray.cpp
     Source/Render/Ray.h
     Source/Render/Renderer.cpp
     Source/Render/Renderer.h
+    Source/Render/Texture.cpp
     Source/Render/Texture.h
 
     Source/Scenes/Scene.h

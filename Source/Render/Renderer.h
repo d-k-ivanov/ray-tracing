@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.h"
+#include "Color.h"
 
 #include <Objects/Hittable.h>
 #include <Objects/HittableList.h>

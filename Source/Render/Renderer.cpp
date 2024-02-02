@@ -1,9 +1,5 @@
 #include "Renderer.h"
 
-#include "Color.h"
-
-#include <Utils/Random.h>
-
 #include <execution>
 
 void Renderer::ResetPixelColorsAccumulator() const

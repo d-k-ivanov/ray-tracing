@@ -21,25 +21,10 @@ public:
     {
     }
 
-    const Point3& Origin() const
-    {
-        return m_Origin;
-    }
-
-    const Vector3& Direction() const
-    {
-        return m_Direction;
-    }
-
-    double Time() const
-    {
-        return m_Time;
-    }
-
-    Point3 At(const double t) const
-    {
-        return m_Origin + t * m_Direction;
-    }
+    const Point3&  Origin() const;
+    const Vector3& Direction() const;
+    double         Time() const;
+    Point3         At(double t) const;
 
 private:
     Point3  m_Origin;
