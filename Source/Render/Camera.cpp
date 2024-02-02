@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 #include "Material.h"
+#include "ScatterRecord.h"
 
 #include <Math/Converters.h>
 #include <Math/CosinePDF.h>

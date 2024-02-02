@@ -4,9 +4,12 @@
 #include <Objects/Box.h>
 #include <Objects/BVH.h>
 #include <Objects/ConstantMedium.h>
-#include <Render/Material.h>
 #include <Objects/Quad.h>
 #include <Objects/Sphere.h>
+#include <Render/Dielectric.h>
+#include <Render/DiffuseLight.h>
+#include <Render/Lambertian.h>
+#include <Render/Metal.h>
 #include <Utils/Filesystem.h>
 
 #include <memory>

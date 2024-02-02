@@ -2,7 +2,7 @@
 
 #include "Hittable.h"
 
-#include <Render/Material.h>
+#include <Render/Isotropic.h>
 
 class ConstantMedium final : public Hittable
 {

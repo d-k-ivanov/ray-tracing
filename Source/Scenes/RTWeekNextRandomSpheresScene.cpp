@@ -2,8 +2,10 @@
 
 #include <Math/Vector3.h>
 #include <Objects/BVH.h>
-#include <Render/Material.h>
 #include <Objects/Sphere.h>
+#include <Render/Dielectric.h>
+#include <Render/Lambertian.h>
+#include <Render/Metal.h>
 #include <Render/Texture.h>
 #include <Utils/Random.h>
 

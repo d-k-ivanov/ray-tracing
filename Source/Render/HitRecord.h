@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Ray.h"
-
 #include <Math/Vector3.h>
 
 #include <memory>
 
 class Material;
+class Ray;
 
 class HitRecord
 {

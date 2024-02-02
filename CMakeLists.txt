@@ -68,16 +68,28 @@ set(SOURCE_FILES
     Source/Render/Camera.cpp
     Source/Render/Camera.h
     Source/Render/Color.h
+    Source/Render/Dielectric.cpp
+    Source/Render/Dielectric.h
+    Source/Render/DiffuseLight.cpp
+    Source/Render/DiffuseLight.h
     Source/Render/HitRecord.cpp
     Source/Render/HitRecord.h
+    Source/Render/Isotropic.cpp
+    Source/Render/Isotropic.h
+    Source/Render/Lambertian.cpp
+    Source/Render/Lambertian.h
     Source/Render/Material.cpp
     Source/Render/Material.h
+    Source/Render/Metal.cpp
+    Source/Render/Metal.h
     Source/Render/PerlinNoise.cpp
     Source/Render/PerlinNoise.h
     Source/Render/Ray.cpp
     Source/Render/Ray.h
     Source/Render/Renderer.cpp
     Source/Render/Renderer.h
+    Source/Render/ScatterRecord.cpp
+    Source/Render/ScatterRecord.h
     Source/Render/Texture.cpp
     Source/Render/Texture.h
 

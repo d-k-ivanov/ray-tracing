@@ -4,7 +4,8 @@
 #include <Objects/Box.h>
 #include <Objects/ConstantMedium.h>
 #include <Objects/Quad.h>
-#include <Render/Material.h>
+#include <Render/DiffuseLight.h>
+#include <Render/Lambertian.h>
 
 #include <memory>
 

@@ -2,8 +2,10 @@
 
 #include <Math/Vector3.h>
 #include <Objects/BVH.h>
-#include <Render/Material.h>
 #include <Objects/Sphere.h>
+#include <Render/Dielectric.h>
+#include <Render/Lambertian.h>
+#include <Render/Metal.h>
 #include <Utils/Random.h>
 
 RTWeekOneFinalScene::RTWeekOneFinalScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)

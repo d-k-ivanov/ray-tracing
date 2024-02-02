@@ -3,8 +3,6 @@
 #include <Objects/HittableList.h>
 #include <Render/Camera.h>
 
-#include <optional>
-
 class Scene
 {
 public:

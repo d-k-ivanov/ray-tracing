@@ -1,7 +1,7 @@
 #include "Scene.h"
 
 #include <Math/Vector3.h>
-#include <Render/Material.h>
+#include <Render/Lambertian.h>
 #include <Objects/Quad.h>
 
 #include <memory>
