@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Hittable.h"
+
 #include <Math/Interval.h>
-#include <Render/Hittable.h>
 #include <Render/Material.h>
 #include <Render/Texture.h>
 

@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Color.h"
+#include "Material.h"
+
 #include <Math/Converters.h>
-#include <Render/Color.h>
-#include <Render/Hittable.h>
-#include <Render/Material.h>
+#include <Objects/Hittable.h>
 #include <Utils/Log.h>
 #include <Utils/Random.h>
 

@@ -1,8 +1,8 @@
 #include "Scene.h"
 
 #include <Math/Vector3.h>
+#include <Objects/Quad.h>
 #include <Render/Material.h>
-#include <Render/Quad.h>
 
 #include <memory>
 

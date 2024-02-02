@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Render/Camera.h>
-#include <Render/HittableList.h>
+#include <Objects/HittableList.h>
 
 #include <optional>
 

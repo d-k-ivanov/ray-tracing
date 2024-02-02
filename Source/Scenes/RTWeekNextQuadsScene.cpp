@@ -2,7 +2,7 @@
 
 #include <Math/Vector3.h>
 #include <Render/Material.h>
-#include <Render/Quad.h>
+#include <Objects/Quad.h>
 
 #include <memory>
 

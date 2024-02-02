@@ -2,7 +2,7 @@
 
 #include <Math/Vector3.h>
 #include <Render/Material.h>
-#include <Render/Sphere.h>
+#include <Objects/Sphere.h>
 #include <Render/Texture.h>
 #include <Utils/Filesystem.h>
 

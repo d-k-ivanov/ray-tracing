@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Math/Constants.h>
+#include "Constants.h"
 
 inline double DegreesToRadians(const double degrees)
 {

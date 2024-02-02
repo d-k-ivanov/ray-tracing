@@ -1,7 +1,9 @@
 #pragma once
 
-#include <Render/Camera.h>
-#include <Render/Hittable.h>
+#include "Camera.h"
+
+#include <Objects/Hittable.h>
+#include <Objects/HittableList.h>
 #include <UI/Image.h>
 
 #include <memory>

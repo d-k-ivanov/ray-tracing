@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Hittable.h"
+
 #include <Math/Vector3.h>
-#include <Render/Hittable.h>
-#include <Render/ONB.h>
+#include <Math/ONB.h>
 
 #include <memory>
 

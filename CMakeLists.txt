@@ -29,31 +29,38 @@ endif()
 set(SOURCE_FILES
     Source/Main.cpp
 
+    Source/Math/AABB.cpp
+    Source/Math/AABB.h
     Source/Math/Constants.h
     Source/Math/Converters.cpp
     Source/Math/Converters.h
     Source/Math/Interval.cpp
     Source/Math/Interval.h
+    Source/Math/ONB.cpp
+    Source/Math/ONB.h
+    Source/Math/PDF.cpp
+    Source/Math/PDF.h
     Source/Math/Vector3.cpp
     Source/Math/Vector3.h
 
-    Source/Render/AABB.cpp
-    Source/Render/AABB.h
-    Source/Render/BVH.h
+    Source/Objects/BVH.cpp
+    Source/Objects/BVH.h
+    Source/Objects/ConstantMedium.h
+    Source/Objects/Hittable.cpp
+    Source/Objects/Hittable.h
+    Source/Objects/HittableList.h
+    Source/Objects/Quad.h
+    Source/Objects/Sphere.h
+
     Source/Render/Camera.h
     Source/Render/Color.h
-    Source/Render/ConstantMedium.h
-    Source/Render/Hittable.h
-    Source/Render/HittableList.h
+    Source/Render/HitRecord.cpp
+    Source/Render/HitRecord.h
     Source/Render/Material.h
-    Source/Render/ONB.h
-    Source/Render/PDF.h
     Source/Render/PerlinNoise.h
-    Source/Render/Quad.h
     Source/Render/Ray.h
     Source/Render/Renderer.cpp
     Source/Render/Renderer.h
-    Source/Render/Sphere.h
     Source/Render/Texture.h
 
     Source/Scenes/Scene.h

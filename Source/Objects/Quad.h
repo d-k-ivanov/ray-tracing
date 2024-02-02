@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Render/Hittable.h>
-#include <Render/HittableList.h>
+#include "Hittable.h"
+#include "HittableList.h"
 
 #include <memory>
 

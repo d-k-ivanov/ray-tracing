@@ -1,11 +1,11 @@
 #include "Scene.h"
 
 #include <Math/Vector3.h>
-#include <Render/BVH.h>
-#include <Render/ConstantMedium.h>
+#include <Objects/BVH.h>
+#include <Objects/ConstantMedium.h>
 #include <Render/Material.h>
-#include <Render/Quad.h>
-#include <Render/Sphere.h>
+#include <Objects/Quad.h>
+#include <Objects/Sphere.h>
 #include <Utils/Filesystem.h>
 
 #include <memory>

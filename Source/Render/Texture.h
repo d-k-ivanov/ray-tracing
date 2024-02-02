@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Color.h"
+#include "PerlinNoise.h"
+
 #include <Math/Interval.h>
 #include <Math/Vector3.h>
-#include <Render/Color.h>
-#include <Render/PerlinNoise.h>
 #include <UI/Image.h>
 
 #include <memory>

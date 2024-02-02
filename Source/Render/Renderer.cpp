@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
-#include <Render/Color.h>
+#include "Color.h"
+
 #include <Utils/Random.h>
 
 #include <execution>

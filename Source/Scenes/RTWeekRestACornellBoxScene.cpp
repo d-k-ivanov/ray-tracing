@@ -2,8 +2,8 @@
 
 #include <Math/Vector3.h>
 #include <Render/Material.h>
-#include <Render/Quad.h>
-#include <Render/Sphere.h>
+#include <Objects/Quad.h>
+#include <Objects/Sphere.h>
 
 #include <memory>
 

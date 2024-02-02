@@ -1,10 +1,11 @@
 #pragma once
 
-#include <Render/Color.h>
-#include <Render/Hittable.h>
-#include <Render/PDF.h>
-#include <Render/Ray.h>
-#include <Render/Texture.h>
+#include "Color.h"
+#include "Ray.h"
+#include "Texture.h"
+
+#include <Math/PDF.h>
+#include <Objects/Hittable.h>
 
 #include <memory>
 

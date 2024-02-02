@@ -2,7 +2,7 @@
 
 #include <Math/Vector3.h>
 #include <Render/Material.h>
-#include <Render/Sphere.h>
+#include <Objects/Sphere.h>
 
 RTWeekOneTestScene::RTWeekOneTestScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
