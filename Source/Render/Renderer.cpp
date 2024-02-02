@@ -1,10 +1,16 @@
 #include "Renderer.h"
 
+#include "Camera.h"
+
+#include <Objects/Hittable.h>
+#include <Objects/HittableList.h>
+
+#include <cstring>
 #include <execution>
 
 void Renderer::ResetPixelColorsAccumulator() const
 {
-    memset(m_PixelColorsAccum, 0, static_cast<uint64_t>(m_Image->GetWidth()) * m_Image->GetHeight() * sizeof(Color3));
+    std::memset(m_PixelColorsAccum, 0, static_cast<uint64_t>(m_Image->GetWidth()) * m_Image->GetHeight() * sizeof(Color3));
 }
 
 void Renderer::SetImageSize(uint32_t width, uint32_t height)

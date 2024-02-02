@@ -2,6 +2,8 @@
 
 #include "SolidColor.h"
 
+#include <memory>
+
 class CheckerTexture final : public Texture
 {
 public:

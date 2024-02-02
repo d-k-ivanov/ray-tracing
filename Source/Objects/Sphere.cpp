@@ -60,7 +60,7 @@ bool Sphere::Hit(const Ray& r, const Interval rayT, HitRecord& rec) const
     rec.SetFaceNormal(r, outwardNormal);
     GetSphereUV(outwardNormal, rec.U, rec.V);
 
-    rec.Material = m_Material;
+    rec.SetMaterial(m_Material);
 
     return true;
 }

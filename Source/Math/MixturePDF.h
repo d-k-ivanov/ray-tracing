@@ -2,6 +2,8 @@
 
 #include "PDF.h"
 
+#include <memory>
+
 class MixturePDF final : public PDF
 {
 public:

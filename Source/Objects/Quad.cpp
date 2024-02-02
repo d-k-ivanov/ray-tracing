@@ -52,7 +52,7 @@ bool Quad::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
     // Ray hits the 2D shape; set the rest of the hit record and return true.
     rec.T        = t;
     rec.P        = intersection;
-    rec.Material = m_Material;
+    rec.SetMaterial(m_Material);
     rec.SetFaceNormal(ray, m_Normal);
 
     return true;

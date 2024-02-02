@@ -2,6 +2,8 @@
 
 #include "Hittable.h"
 
+#include <memory>
+
 class RotateY final : public Hittable
 {
 public:

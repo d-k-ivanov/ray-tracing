@@ -12,7 +12,6 @@ class HitRecord
 public:
     Point3                    P;
     Vector3                   Normal;
-    std::shared_ptr<Material> Material;
     double                    T;
     double                    U;
     double                    V;
@@ -21,4 +20,10 @@ public:
     // Sets the hit record normal vector.
     // NOTE: the parameter `outwardNormal` is assumed to have unit length.
     void SetFaceNormal(const Ray& r, const Vector3& outwardNormal);
+
+    std::shared_ptr<Material>& GetMaterial();
+    bool SetMaterial(std::shared_ptr<Material> material);
+
+private:
+    std::shared_ptr<Material> m_Material = nullptr;
 };

@@ -2,6 +2,8 @@
 
 #include "Hittable.h"
 
+#include <memory>
+
 class Translate final : public Hittable
 {
 public:

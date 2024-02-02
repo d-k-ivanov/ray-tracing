@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Camera.h"
 #include "Color.h"
 
-#include <Objects/Hittable.h>
-#include <Objects/HittableList.h>
 #include <UI/Image.h>
 
 #include <memory>
 #include <vector>
+
+class Camera;
+class Hittable;
+class HittableList;
 
 class Renderer
 {

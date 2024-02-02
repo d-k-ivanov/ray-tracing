@@ -66,7 +66,7 @@ bool ConstantMedium::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) co
 
     rec.Normal    = Vector3(1, 0, 0);    // arbitrary
     rec.FrontFace = true;                // also arbitrary
-    rec.Material  = m_PhaseFunction;
+    rec.SetMaterial(m_PhaseFunction);
 
     return true;
 }

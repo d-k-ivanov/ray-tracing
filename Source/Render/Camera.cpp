@@ -127,7 +127,7 @@ Color3 Camera::RayColorGradientBackground(const Ray& r, const int depth, const H
     {
         Ray    scattered;
         Color3 attenuation;
-        if(rec.Material->Scatter(r, rec, attenuation, scattered))
+        if(rec.GetMaterial()->Scatter(r, rec, attenuation, scattered))
         {
             return attenuation * RayColor(scattered, depth - 1, world);
         }
@@ -161,18 +161,18 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world) co
 
     if(UseUnidirectionalLight)
     {
-        colorFromEmission = rec.Material->Emitted(r, rec, rec.U, rec.V, rec.P);
+        colorFromEmission = rec.GetMaterial()->Emitted(r, rec, rec.U, rec.V, rec.P);
     }
     else
     {
-        colorFromEmission = rec.Material->Emitted(rec.U, rec.V, rec.P);
+        colorFromEmission = rec.GetMaterial()->Emitted(rec.U, rec.V, rec.P);
     }
 
     if(UsePDF)
     {
         ScatterRecord srec;
 
-        if(!rec.Material->Scatter(r, rec, srec))
+        if(!rec.GetMaterial()->Scatter(r, rec, srec))
         {
             return colorFromEmission;
         }
@@ -198,7 +198,7 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world) co
             return colorFromEmission;
         }
 
-        const double scatteringPDF = rec.Material->ScatteringPDF(r, rec, scattered);
+        const double scatteringPDF = rec.GetMaterial()->ScatteringPDF(r, rec, scattered);
 
         const Color3 sampleColor = RayColor(scattered, depth - 1, world);
         colorFromScatter         = (srec.Attenuation * scatteringPDF * sampleColor) / pdfVal;
@@ -208,7 +208,7 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world) co
         Ray    scattered;
         Color3 attenuation;
 
-        if(!rec.Material->Scatter(r, rec, attenuation, scattered))
+        if(!rec.GetMaterial()->Scatter(r, rec, attenuation, scattered))
             return colorFromEmission;
 
         colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);
@@ -238,18 +238,18 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
 
     if(UseUnidirectionalLight)
     {
-        colorFromEmission = rec.Material->Emitted(r, rec, rec.U, rec.V, rec.P);
+        colorFromEmission = rec.GetMaterial()->Emitted(r, rec, rec.U, rec.V, rec.P);
     }
     else
     {
-        colorFromEmission = rec.Material->Emitted(rec.U, rec.V, rec.P);
+        colorFromEmission = rec.GetMaterial()->Emitted(rec.U, rec.V, rec.P);
     }
 
     if(UsePDF)
     {
         ScatterRecord srec;
 
-        if(!rec.Material->Scatter(r, rec, srec))
+        if(!rec.GetMaterial()->Scatter(r, rec, srec))
         {
             return colorFromEmission;
         }
@@ -271,7 +271,7 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
             return colorFromEmission;
         }
 
-        const double scatteringPDF = rec.Material->ScatteringPDF(r, rec, scattered);
+        const double scatteringPDF = rec.GetMaterial()->ScatteringPDF(r, rec, scattered);
 
         const Color3 sampleColor = RayColor(scattered, depth - 1, world, lights);
         colorFromScatter         = (srec.Attenuation * scatteringPDF * sampleColor) / pdfVal;
@@ -281,7 +281,7 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
         Ray    scattered;
         Color3 attenuation;
 
-        if(!rec.Material->Scatter(r, rec, attenuation, scattered))
+        if(!rec.GetMaterial()->Scatter(r, rec, attenuation, scattered))
             return colorFromEmission;
 
         colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);

@@ -2,6 +2,8 @@
 
 #include "Hittable.h"
 
+#include <memory>
+
 class HittableList final : public Hittable
 {
 public:

@@ -2,6 +2,8 @@
 
 #include "Hittable.h"
 
+#include <memory>
+
 class Material;
 
 class Quad final : public Hittable
