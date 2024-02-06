@@ -124,3 +124,9 @@ class RTWeekRestCCornellBoxGlassScene final : public Scene
 public:
     RTWeekRestCCornellBoxGlassScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
+
+class CornellBoxLightsScene final : public Scene
+{
+public:
+    CornellBoxLightsScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};

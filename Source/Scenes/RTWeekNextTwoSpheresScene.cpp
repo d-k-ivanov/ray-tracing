@@ -10,7 +10,7 @@
 RTWeekNextTwoSpheresScene::RTWeekNextTwoSpheresScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
 {
-    auto checker = std::make_shared<CheckerTexture>(0.8, Color3(.2, .3, .1), Color3(.9, .9, .9));
+    auto checker = std::make_shared<CheckerTexture>(0.32, Color3(.2, .3, .1), Color3(.9, .9, .9));
 
     m_World.Add(std::make_shared<Sphere>(Point3(0, -10, 0), 10, std::make_shared<Lambertian>(checker)));
     m_World.Add(std::make_shared<Sphere>(Point3(0, 10, 0), 10, std::make_shared<Lambertian>(checker)));

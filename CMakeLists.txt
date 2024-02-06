@@ -114,6 +114,7 @@ set(SOURCE_FILES
 
     Source/Scenes/Scene.cpp
     Source/Scenes/Scene.h
+    Source/Scenes/CornellBoxLightsScene.cpp
     Source/Scenes/RTWeekOneDefaultScene.cpp
     Source/Scenes/RTWeekOneFinalScene.cpp
     Source/Scenes/RTWeekOneTestScene.cpp

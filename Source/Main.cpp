@@ -44,7 +44,9 @@ public:
             "RTWeekNext: Final",
             "RTWeekRest: Cornell Box (Simple)",
             "RTWeekRest: Cornell Box (Mirror)",
-            "RTWeekRest: Cornell Box (Glass)"};
+            "RTWeekRest: Cornell Box (Glass)",
+            "Cornell Box Lights"
+        };
         if(ImGui::Combo("Scene", &m_SceneId, sceneList, IM_ARRAYSIZE(sceneList)))
         {
             m_Renderer.ResetFrameCounter();
@@ -306,8 +308,11 @@ public:
                 m_Scene = std::make_shared<RTWeekRestBCornellBoxMirrorScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 15:
-            default:
                 m_Scene = std::make_shared<RTWeekRestCCornellBoxGlassScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                break;
+            case 16:
+            default:
+                m_Scene = std::make_shared<CornellBoxLightsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
         }
     }
@@ -322,7 +327,7 @@ private:
 
     // Scene
     std::shared_ptr<Scene> m_Scene        = nullptr;
-    int                    m_SceneId      = 13;
+    int                    m_SceneId      = 16;
     int                    m_SceneDepth   = 50;
     int                    m_SceneSamples = 64;
 
