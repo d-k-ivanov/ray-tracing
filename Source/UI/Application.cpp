@@ -1,5 +1,6 @@
 // Derived from https://github.com/ocornut/imgui/blob/docking/examples/example_glfw_vulkan/main.cpp
 #include "Application.h"
+#include "Image.h"
 
 #include <Utils/Filesystem.h>
 #include <Utils/Log.h>
@@ -793,6 +794,15 @@ void Application::Init()
         VK_CHECK(vkQueueSubmit(Impl::g_Queue, 1, &endInfo, VK_NULL_HANDLE));
         VK_CHECK(vkDeviceWaitIdle(Impl::g_Device));
     }
+
+    GLFWimage icons[1];
+    const auto iconPath = ThisExecutableLocation() + "/Resources/ray-tracing.jpg";
+    auto iconImg = Image(iconPath, true);
+    icons[0].width = static_cast<int>(iconImg.GetWidth());
+    icons[0].height = static_cast<int>(iconImg.GetHeight());
+    icons[0].pixels = iconImg.GetPixels();
+    glfwSetWindowIcon(m_WindowHandle, 1, icons);
+
 }
 
 void Application::Shutdown()

@@ -17,7 +17,7 @@ include(InitVCPKG)
 include(Functions)
 include(ToolchainPostUpdates)
 
-project(${PROJECT_NAME})
+project(${PROJECT_NAME} VERSION 1.0.0.0 LANGUAGES CXX)
 
 set(EXE_PLATFORM_KEYWORD "")
 
@@ -27,8 +27,11 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(EXE_PLATFORM_KEYWORD "MACOSX_BUNDLE")
 endif()
 
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Resources/ray-tracing.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/ray-tracing.rc")
+
 set(SOURCE_FILES
     Source/Main.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/ray-tracing.rc
 
     Source/Math/AABB.cpp
     Source/Math/AABB.h

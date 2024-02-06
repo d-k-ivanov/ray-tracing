@@ -76,7 +76,7 @@ public:
             "CPU: Multi Core Accumulating",
             "CPU: Multi Core Stratified",
             "CPU: Multi Core Stratified (WIP)"};
-        if(ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList)))
+        if(ImGui::ListBox("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList)))
         {
             SetScene();
         }

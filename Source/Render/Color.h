@@ -19,25 +19,34 @@ inline double LinearToGamma(const double linearComponent)
 // Write the translated [0,255] value of each color component.
 inline uint32_t GetColorRGBA(const Color3& color, const int samplesPerPixel)
 {
-    auto red   = color.X();
-    auto green = color.Y();
-    auto blue  = color.Z();
-
-    constexpr auto alpha = 1.0;
+    auto   red   = color.X();
+    auto   green = color.Y();
+    auto   blue  = color.Z();
+    double alpha = 1.0;
 
     // Replace NaN components with zero.
     // This seems to be not working...
     if(std::isnan(red))
     {
-        red = 0.0;
+        red   = 0.0;
+        alpha = 0.0;
     }
+
     if(std::isnan(green))
     {
         green = 0.0;
+        alpha = 0.0;
     }
+
     if(std::isnan(blue))
     {
-        blue = 0.0;
+        blue  = 0.0;
+        alpha = 0.0;
+    }
+
+    if(std::isnan(alpha))
+    {
+        alpha = 0.0;
     }
 
     // Divide the color by the number of samples.
@@ -63,24 +72,33 @@ inline uint32_t GetColorRGBA(const Color3& color, const int samplesPerPixel)
 
 inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const int samplesPerPixel)
 {
-    auto red   = color.X();
-    auto green = color.Y();
-    auto blue  = color.Z();
-
-    constexpr auto alpha = 1.0;
+    auto   red   = color.X();
+    auto   green = color.Y();
+    auto   blue  = color.Z();
+    double alpha = 1.0;
 
     // Replace NaN components with zero.
     if(std::isnan(red))
     {
-        red = 0.0;
+        red   = 0.0;
+        alpha = 0.0;
     }
+
     if(std::isnan(green))
     {
         green = 0.0;
+        alpha = 0.0;
     }
+
     if(std::isnan(blue))
     {
-        blue = 0.0;
+        blue  = 0.0;
+        alpha = 0.0;
+    }
+
+    if(std::isnan(alpha))
+    {
+        alpha = 0.0;
     }
 
     // Divide the color by the number of samples.

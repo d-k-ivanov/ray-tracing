@@ -10,6 +10,7 @@ double DoubleUtils::Epsilon()
 double DoubleUtils::DefaultTolerance()
 {
     return 1e-6;
+    // return 1e-5;
 }
 
 double DoubleUtils::BigTolerance()

@@ -22,13 +22,13 @@ CornellBoxLightsScene::CornellBoxLightsScene(const double aspectRatio, const int
     auto white = std::make_shared<Lambertian>(Color3(.73, .73, .73));
     auto green = std::make_shared<Lambertian>(Color3(.12, .45, .15));
 
-    auto lightR = std::make_shared<DiffuseLight>(Color3(20, 0.7, 0.7));
-    auto lightG = std::make_shared<DiffuseLight>(Color3(0.7, 20, 0.7));
-    auto lightB = std::make_shared<DiffuseLight>(Color3(0.7, 0.7, 20));
-    auto lightW = std::make_shared<DiffuseLight>(Color3(7, 7, 7));
-    auto glass  = std::make_shared<Dielectric>(1.5);
+    auto lightR   = std::make_shared<DiffuseLight>(Color3(20, 0.7, 0.7));
+    auto lightG   = std::make_shared<DiffuseLight>(Color3(0.7, 20, 0.7));
+    auto lightB   = std::make_shared<DiffuseLight>(Color3(0.7, 0.7, 20));
+    auto lightW   = std::make_shared<DiffuseLight>(Color3(15, 15, 15));
+    auto glass    = std::make_shared<Dielectric>(1.5);
     auto aluminum = std::make_shared<Metal>(Color3(0.8, 0.85, 0.88), 0.0);
-    auto nullMat = std::shared_ptr<Material>();
+    auto nullMat  = std::shared_ptr<Material>();
 
     // Cornell box sides
     m_World.Add(std::make_shared<Quad>(Point3(555, 0, 0), Vector3(0, 0, 555), Vector3(0, 555, 0), green));
@@ -37,8 +37,20 @@ CornellBoxLightsScene::CornellBoxLightsScene(const double aspectRatio, const int
     m_World.Add(std::make_shared<Quad>(Point3(0, 0, 555), Vector3(555, 0, 0), Vector3(0, 0, -555), white));
     m_World.Add(std::make_shared<Quad>(Point3(555, 0, 555), Vector3(-555, 0, 0), Vector3(0, 555, 0), white));
 
-
     // Lights
+
+    // m_World.Add(std::make_shared<Quad>(Point3(455, 50, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 100, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 150, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 200, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 250, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 300, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 350, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 400, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 450, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    m_World.Add(std::make_shared<Quad>(Point3(455, 500, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
+    // m_World.Add(std::make_shared<Quad>(Point3(555, 0, 555), Vector3(-555, 0, 0), Vector3(0, 555, 0), white));
+
     m_World.Add(std::make_shared<Sphere>(Point3(30, 530, 277), 50, lightR));
     m_Lights.Add(std::make_shared<Sphere>(Point3(30, 530, 277), 50, lightR));
     m_World.Add(std::make_shared<Sphere>(Point3(530, 530, 277), 50, lightG));
@@ -47,8 +59,11 @@ CornellBoxLightsScene::CornellBoxLightsScene(const double aspectRatio, const int
     m_Lights.Add(std::make_shared<Sphere>(Point3(277, 530, 277), 50, lightB));
     // m_World.Add(std::make_shared<Sphere>(Point3(277, 25, 277), 50, lightW));
 
-    m_World.Add(std::make_shared<Sphere>(Point3(277.5, 120, 277.5), 120, glass));
-    m_Lights.Add(std::make_shared<Sphere>(Point3(277.5, 120, 277.5), 120, nullMat));
+    m_World.Add(std::make_shared<Sphere>(Point3(405, 100, 277.5), 100, glass));
+    m_Lights.Add(std::make_shared<Sphere>(Point3(405, 100, 277.5), 100, nullMat));
+
+    m_World.Add(std::make_shared<Sphere>(Point3(150, 100, 277.5), 100, white));
+
     // m_World.Add(std::make_shared<Quad>(Point3(213, 1, 227), Vector3(0, 0, 105), Vector3(130, 0, 0), lightW));
     // m_Lights.Add(std::make_shared<Quad>(Point3(213, 2, 227), Vector3(0, 0, 105), Vector3(130, 0, 0), nullMat));
 

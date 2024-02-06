@@ -23,6 +23,7 @@ public:
     VkDescriptorSet GetDescriptorSet() const;
     uint32_t        GetWidth() const;
     uint32_t        GetHeight() const;
+    uint8_t*        GetPixels() const;
     const uint8_t*  PixelData(uint32_t x, uint32_t y) const;
 
 private:

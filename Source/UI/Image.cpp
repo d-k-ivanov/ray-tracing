@@ -222,6 +222,11 @@ uint32_t Image::GetHeight() const
     return m_Height;
 }
 
+ uint8_t* Image::GetPixels() const
+{
+    return m_Data;
+}
+
 // Return the address of the three bytes of the pixel at x,y (or magenta if no data).
 const uint8_t* Image::PixelData(uint32_t x, uint32_t y) const
 {
