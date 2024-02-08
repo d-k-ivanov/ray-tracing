@@ -193,7 +193,7 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world) co
         const auto pdfVal    = mixedPDF.Value(scattered.Direction());
 
         // Scattering is impossible
-        if(DoubleUtils::isEqual(pdfVal, 0.0, DoubleUtils::DefaultTolerance()))
+        if(isnan(pdfVal) || DoubleUtils::isEqual(pdfVal, 0.0, DoubleUtils::DefaultTolerance()))
         {
             return colorFromEmission;
         }
@@ -266,7 +266,7 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
         const auto pdfVal    = mixedPDF.Value(scattered.Direction());
 
         // Scattering is impossible
-        if(DoubleUtils::isEqual(pdfVal, 0.0, DoubleUtils::DefaultTolerance()))
+        if(isnan(pdfVal) || DoubleUtils::isEqual(pdfVal, 0.0, DoubleUtils::DefaultTolerance()))
         {
             return colorFromEmission;
         }

@@ -4,13 +4,14 @@
 
 double DoubleUtils::Epsilon()
 {
-    return std::numeric_limits<double>::epsilon();
+    // return std::numeric_limits<double>::epsilon();
+    return 1e-8;
 }
 
 double DoubleUtils::DefaultTolerance()
 {
-    return 1e-6;
-    // return 1e-5;
+    // return 1e-6;
+    return 1e-5;
 }
 
 double DoubleUtils::BigTolerance()

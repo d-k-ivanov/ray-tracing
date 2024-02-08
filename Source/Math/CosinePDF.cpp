@@ -2,7 +2,6 @@
 
 #include "Converters.h"
 
-
 CosinePDF::CosinePDF(const Vector3& w)
 {
     m_Uvw.BuildFromW(w);
@@ -11,7 +10,8 @@ CosinePDF::CosinePDF(const Vector3& w)
 double CosinePDF::Value(const Vector3& direction) const
 {
     const auto cosineTheta = DotProduct(UnitVector(direction), m_Uvw.W());
-    return fmax(DoubleUtils::DefaultTolerance(), cosineTheta / Pi);
+    // return 1 / (2 * Pi) * (1 + cosineTheta);
+    return fmax(0, cosineTheta / Pi);
 }
 
 Vector3 CosinePDF::Generate() const

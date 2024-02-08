@@ -29,24 +29,21 @@ inline uint32_t GetColorRGBA(const Color3& color, const int samplesPerPixel)
     if(std::isnan(red))
     {
         red   = 0.0;
-        alpha = 0.0;
     }
 
     if(std::isnan(green))
     {
         green = 0.0;
-        alpha = 0.0;
     }
 
     if(std::isnan(blue))
     {
         blue  = 0.0;
-        alpha = 0.0;
     }
 
     if(std::isnan(alpha))
     {
-        alpha = 0.0;
+        alpha = 1.0;
     }
 
     // Divide the color by the number of samples.
@@ -81,19 +78,16 @@ inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const int sam
     if(std::isnan(red))
     {
         red   = 0.0;
-        alpha = 0.0;
     }
 
     if(std::isnan(green))
     {
         green = 0.0;
-        alpha = 0.0;
     }
 
     if(std::isnan(blue))
     {
         blue  = 0.0;
-        alpha = 0.0;
     }
 
     if(std::isnan(alpha))

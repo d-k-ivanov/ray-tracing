@@ -51,12 +51,12 @@ CornellBoxLightsScene::CornellBoxLightsScene(const double aspectRatio, const int
     m_World.Add(std::make_shared<Quad>(Point3(455, 500, 554), Vector3(-355, 0, 0), Vector3(0, 10, 0), lightW));
     // m_World.Add(std::make_shared<Quad>(Point3(555, 0, 555), Vector3(-555, 0, 0), Vector3(0, 555, 0), white));
 
-    m_World.Add(std::make_shared<Sphere>(Point3(30, 530, 277), 50, lightR));
-    m_Lights.Add(std::make_shared<Sphere>(Point3(30, 530, 277), 50, lightR));
-    m_World.Add(std::make_shared<Sphere>(Point3(530, 530, 277), 50, lightG));
-    m_Lights.Add(std::make_shared<Sphere>(Point3(530, 530, 277), 50, lightG));
+    m_World.Add(std::make_shared<Sphere>(Point3(530, 530, 277), 50, lightR));
+    m_Lights.Add(std::make_shared<Sphere>(Point3(530, 530, 277), 50, lightR));
     m_World.Add(std::make_shared<Sphere>(Point3(277, 530, 277), 50, lightB));
     m_Lights.Add(std::make_shared<Sphere>(Point3(277, 530, 277), 50, lightB));
+    m_World.Add(std::make_shared<Sphere>(Point3(30, 530, 277), 50, lightG));
+    m_Lights.Add(std::make_shared<Sphere>(Point3(30, 530, 277), 50, lightG));
     // m_World.Add(std::make_shared<Sphere>(Point3(277, 25, 277), 50, lightW));
 
     m_World.Add(std::make_shared<Sphere>(Point3(405, 100, 277.5), 100, glass));
