@@ -17,7 +17,7 @@ inline double LinearToGamma(const double linearComponent)
 }
 
 // Write the translated [0,255] value of each color component.
-inline uint32_t GetColorRGBA(const Color3& color, const int samplesPerPixel)
+inline uint32_t GetColorRGBA(const Color3& color, const double colorScale)
 {
     auto   red   = color.X();
     auto   green = color.Y();
@@ -47,10 +47,9 @@ inline uint32_t GetColorRGBA(const Color3& color, const int samplesPerPixel)
     }
 
     // Divide the color by the number of samples.
-    const auto scale = 1.0 / samplesPerPixel;
-    red *= scale;
-    green *= scale;
-    blue *= scale;
+    red *= colorScale;
+    green *= colorScale;
+    blue *= colorScale;
 
     // Apply the linear to gamma transform (gamma correction).
     red   = LinearToGamma(red);
@@ -67,7 +66,7 @@ inline uint32_t GetColorRGBA(const Color3& color, const int samplesPerPixel)
     return (a << 24) | (b << 16) | (g << 8) | r;
 }
 
-inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const int samplesPerPixel)
+inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const double colorScale)
 {
     auto   red   = color.X();
     auto   green = color.Y();
@@ -96,10 +95,9 @@ inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const int sam
     }
 
     // Divide the color by the number of samples.
-    const auto scale = 1.0 / samplesPerPixel;
-    red *= scale;
-    green *= scale;
-    blue *= scale;
+    red *= colorScale;
+    green *= colorScale;
+    blue *= colorScale;
 
     static const Interval Intensity(0.000, 0.999);
 
