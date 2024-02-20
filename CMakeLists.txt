@@ -15,9 +15,16 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 
 include(InitVCPKG)
 include(Functions)
-include(ToolchainPostUpdates)
+include(ToolchainUpdate)
+include(GitVersion)
 
-project(${PROJECT_NAME} VERSION 1.0.0.0 LANGUAGES CXX)
+# Git Version implementation for CMake
+get_version_info("APP")
+
+# Initialize Date and Time variables
+init_time_and_date_variables()
+
+project(${PROJECT_NAME} VERSION ${APP_VERSION_MAJOR}.${APP_VERSION_MINOR}.${APP_VERSION_PATCH}.${APP_VERSION_TWEAK} LANGUAGES CXX)
 
 set(EXE_PLATFORM_KEYWORD "")
 
@@ -28,6 +35,10 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Resources/ray-tracing.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/ray-tracing.rc")
+
+set(SHADER_FILES
+    # Shaders will be here
+)
 
 set(SOURCE_FILES
     Source/Main.cpp
@@ -162,8 +173,18 @@ set(SOURCE_FILES
     # Custom scenes
     Source/Scenes/CornellBoxLightsScene.cpp
     Source/Scenes/WhiteSperesScene.cpp
+
+    # Shaders
+    ${SHADER_FILES}
 )
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES})
+
+# Find glslc executable
+find_program(GLSLC_EXECUTABLE NAMES glslc)
+
+if(NOT GLSLC_EXECUTABLE)
+    message(FATAL_ERROR "glslc not found. Please make sure Vulkan SDK is installed and available in your system's PATH.")
+endif()
 
 # Copy resources to the build directory.
 get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -188,6 +209,36 @@ if(isMultiConfig) # In Miti-Config mode, we need to copy to the correct configur
         "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
     )
 
+    foreach(SHADER_FILE ${SHADER_FILES})
+        # Dummy target to ensure that resources are up-to-date
+        if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy${SHADER_FILE_NAME}")
+            message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy${SHADER_FILE_NAME}\" exists, remove it!")
+        endif()
+
+        get_filename_component(SHADER_FILE_NAME ${SHADER_FILE} NAME)
+        set(SHADER_OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources/Shaders/${SHADER_FILE_NAME}.spv")
+        add_custom_command(
+            OUTPUT
+            "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy${SHADER_FILE_NAME}" # fake! ensure we run!
+            "${SHADER_OUTPUT_FILE}"
+            COMMAND ${GLSLC_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_FILE}" -o "${SHADER_OUTPUT_FILE}"
+            DEPENDS
+            "${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_FILE}"
+        )
+        list(APPEND SHADER_OUTPUT_FILES "${SHADER_OUTPUT_FILE}")
+    endforeach()
+
+    # Dummy target to ensure that resources are up-to-date
+    if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/DummyShaders")
+        message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/DummyShaders\" exists, remove it!")
+    endif()
+
+    add_custom_target(
+        always_run_shaders_target ALL
+        DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/DummyShaders" # fake! ensure we run!
+        ${SHADER_OUTPUT_FILES}
+    )
 else() # In single-config mode, we just copy to the build directory.
     if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/DummyResources")
         message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/DummyResources\" exists, remove it!")
@@ -207,6 +258,36 @@ else() # In single-config mode, we just copy to the build directory.
         "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
         "${CMAKE_CURRENT_BINARY_DIR}/Resources"
     )
+    foreach(SHADER_FILE ${SHADER_FILES})
+        # Dummy target to ensure that resources are up-to-date
+        if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Dummy${SHADER_FILE_NAME}")
+            message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/Dummy${SHADER_FILE_NAME}\" exists, remove it!")
+        endif()
+
+        get_filename_component(SHADER_FILE_NAME ${SHADER_FILE} NAME)
+        set(SHADER_OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/Resources/Shaders/${SHADER_FILE_NAME}.spv")
+        add_custom_command(
+            OUTPUT
+            "${CMAKE_CURRENT_BINARY_DIR}/Dummy${SHADER_FILE_NAME}" # fake! ensure we run!
+            "${SHADER_OUTPUT_FILE}"
+            COMMAND ${GLSLC_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_FILE}" -o "${SHADER_OUTPUT_FILE}"
+            DEPENDS
+            "${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_FILE}"
+        )
+        list(APPEND SHADER_OUTPUT_FILES "${SHADER_OUTPUT_FILE}")
+    endforeach()
+
+    # Dummy target to ensure that resources are up-to-date
+    if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/DummyShaders")
+        message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/DummyShaders\" exists, remove it!")
+    endif()
+
+    add_custom_target(
+        always_run_shaders_target ALL
+        DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/DummyShaders" # fake! ensure we run!
+        ${SHADER_OUTPUT_FILES}
+    )
 endif()
 
 find_package(glfw3 REQUIRED)
@@ -215,9 +296,10 @@ find_package(spdlog REQUIRED)
 find_package(Stb REQUIRED)
 find_package(Vulkan REQUIRED)
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${EXE_PLATFORM_KEYWORD} ${SOURCE_FILES})
 add_dependencies(${PROJECT_NAME} always_run_target)
 
+# Enable PDB files in the Release configuration and a couple of useful flags
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
     target_compile_options(${PROJECT_NAME} PUBLIC "$<$<CONFIG:Release>:/Zi>")

@@ -1,10 +1,10 @@
-################################################################################
+# ###############################################################################
 # VCPKG Initialization
-################################################################################
+# ###############################################################################
 
-################################################################################
+# ###############################################################################
 # Guard section
-################################################################################
+# ###############################################################################
 if(DEFINED VCPKG_INITIALIZED)
     return()
 endif()
@@ -13,9 +13,9 @@ message(STATUS "${CMAKE_CURRENT_LIST_FILE}: Setting up vcpkg toolchain")
 
 set(VCPKG_INITIALIZED 1)
 
-################################################################################
+# ###############################################################################
 # Toolchain settings
-################################################################################
+# ###############################################################################
 find_program(VCPKG_EXEC_PATH vcpkg)
 
 if(NOT EXISTS "${VCPKG_EXEC_PATH}")
@@ -63,8 +63,8 @@ elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     endif()
 else()
     message(WARNING "${CMAKE_CURRENT_LIST_FILE}: Cannot determine suitable "
-                    "platform for vcpkg. We expect Windows, Linux, or OS X. "
-                    "Got '${CMAKE_HOST_SYSTEM_NAME}'.")
+        "platform for vcpkg. We expect Windows, Linux, or OS X. "
+        "Got '${CMAKE_HOST_SYSTEM_NAME}'.")
 endif()
 
 if(CMAKE_TOOLCHAIN_FILE MATCHES ".*vcpkg\.cmake")
@@ -73,7 +73,7 @@ if(CMAKE_TOOLCHAIN_FILE MATCHES ".*vcpkg\.cmake")
 
     if(${VCPKG_TRIPLET_OPTION_INDEX} EQUAL -1)
         message(WARNING "Using vcpkg triplet: '${VCPKG_TARGET_TRIPLET}', "
-                        "expected values are: ${VCPKG_TARGET_TRIPLET_OPTIONS}")
+            "expected values are: ${VCPKG_TARGET_TRIPLET_OPTIONS}")
     endif()
 endif()
 
