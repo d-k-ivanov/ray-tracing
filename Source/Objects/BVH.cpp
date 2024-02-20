@@ -9,10 +9,10 @@
 BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects)
 {
     m_BoundingBox = AABB::Empty;
-    const size_t size = srcObjects.size();
-    for(size_t objectIndex = 0; objectIndex < size; objectIndex++)
+
+    for(const auto& object : srcObjects)
     {
-        m_BoundingBox = AABB(m_BoundingBox, srcObjects[objectIndex]->BoundingBox());
+        m_BoundingBox = AABB(m_BoundingBox, object->BoundingBox());
     }
 
     // const int  axis       = Random::Int(0, 2);
@@ -20,7 +20,8 @@ BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects)
     const auto comparator = (axis == 0) ? BoxXCompare : ((axis == 1) ? BoxYCompare : BoxZCompare);
 
     // Create a modifiable array of the source scene objects
-    auto objects = srcObjects;
+    auto         objects = srcObjects;
+    const size_t size    = srcObjects.size();
 
     if(size == 1)
     {
@@ -28,6 +29,15 @@ BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects)
     }
     else if(size == 2)
     {
+        // Technically, we can arbitrarily divide the objects into two groups, and everything will still work.
+        // However, an arbitrary partition will yield bounding volumes that will likely overlap quite a bit.
+        //
+        // With many objects, ordering them in one dimension will yield a tighter cluster, and thus smaller and
+        // minimally overlapping boxes for the two groups. With only two objects, though, dividing is trivial,
+        // and the two boxes will be as small as can be. Order doesn't matter, and the code should be simplified
+        // by keeping only the first branch to if-statement.
+        //
+        // I prefer to keep the code as it is because it's more universal and the performance gain is negligible.
         if(comparator(objects[0], objects[1]))
         {
             m_Left  = objects[0];
