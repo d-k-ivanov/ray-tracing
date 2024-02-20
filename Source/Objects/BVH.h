@@ -7,11 +7,11 @@ class BVHNode final : public Hittable
 {
 public:
     explicit BVHNode(const HittableList& list)
-        : BVHNode(list.Objects, 0, list.Objects.size())
+        : BVHNode(list.Objects)
     {
     }
 
-    BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects, size_t start, size_t end);
+    BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects);
     bool Hit(const Ray& ray, Interval rayT, HitRecord& rec) const override;
     AABB BoundingBox() const override;
 

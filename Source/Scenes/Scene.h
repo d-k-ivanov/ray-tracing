@@ -130,3 +130,9 @@ class CornellBoxLightsScene final : public Scene
 public:
     CornellBoxLightsScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
+
+class WhiteSperesScene final : public Scene
+{
+public:
+    WhiteSperesScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
+};

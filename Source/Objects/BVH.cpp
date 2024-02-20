@@ -1,13 +1,16 @@
+// ReSharper disable CppUseRangeAlgorithm
 #include "BVH.h"
 
 #include <Render/HitRecord.h>
 
 #include <algorithm>
+#include <execution>
 
-BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects, size_t start, size_t end)
+BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects)
 {
     m_BoundingBox = AABB::Empty;
-    for(size_t objectIndex = start; objectIndex < end; objectIndex++)
+    const size_t size = srcObjects.size();
+    for(size_t objectIndex = 0; objectIndex < size; objectIndex++)
     {
         m_BoundingBox = AABB(m_BoundingBox, srcObjects[objectIndex]->BoundingBox());
     }
@@ -19,32 +22,35 @@ BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects, size_
     // Create a modifiable array of the source scene objects
     auto objects = srcObjects;
 
-    const size_t objectSpan = end - start;
-
-    if(objectSpan == 1)
+    if(size == 1)
     {
-        m_Left = m_Right = objects[start];
+        m_Left = m_Right = objects[0];
     }
-    else if(objectSpan == 2)
+    else if(size == 2)
     {
-        if(comparator(objects[start], objects[start + 1]))
+        if(comparator(objects[0], objects[1]))
         {
-            m_Left  = objects[start];
-            m_Right = objects[start + 1];
+            m_Left  = objects[0];
+            m_Right = objects[1];
         }
         else
         {
-            m_Left  = objects[start + 1];
-            m_Right = objects[start];
+            m_Left  = objects[1];
+            m_Right = objects[0];
         }
     }
     else
     {
-        std::sort(objects.begin() + static_cast<long long>(start), objects.begin() + static_cast<long long>(end), comparator);
+        const auto mid = size / 2;
 
-        auto mid = start + objectSpan / 2;
-        m_Left   = std::make_shared<BVHNode>(objects, start, mid);
-        m_Right  = std::make_shared<BVHNode>(objects, mid, end);
+        // The fastest way to create BVH Trees: https://github.com/RayTracing/raytracing.github.io/issues/1388
+        std::nth_element(std::execution::par, objects.begin(), objects.begin() + static_cast<long long>(mid), objects.end(), comparator);
+
+        auto objectsLeft  = std::vector(objects.begin(), objects.begin() + static_cast<long long>(mid));
+        auto objectsRight = std::vector(objects.begin() + static_cast<long long>(mid), objects.end());
+
+        m_Left  = make_shared<BVHNode>(objectsLeft);
+        m_Right = make_shared<BVHNode>(objectsRight);
     }
 
     // m_BoundingBox = AABB(m_Left->BoundingBox(), m_Right->BoundingBox());

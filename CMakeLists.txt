@@ -115,26 +115,6 @@ set(SOURCE_FILES
     Source/Render/Texture.cpp
     Source/Render/Texture.h
 
-    Source/Scenes/Scene.cpp
-    Source/Scenes/Scene.h
-    Source/Scenes/CornellBoxLightsScene.cpp
-    Source/Scenes/RTWeekOneDefaultScene.cpp
-    Source/Scenes/RTWeekOneFinalScene.cpp
-    Source/Scenes/RTWeekOneTestScene.cpp
-    Source/Scenes/RTWeekNextDefaultScene.cpp
-    Source/Scenes/RTWeekNextRandomSpheresScene.cpp
-    Source/Scenes/RTWeekNextTwoSpheresScene.cpp
-    Source/Scenes/RTWeekNextEarthScene.cpp
-    Source/Scenes/RTWeekNextTwoPerlinSpheresScene.cpp
-    Source/Scenes/RTWeekNextQuadsScene.cpp
-    Source/Scenes/RTWeekNextSimpleLightScene.cpp
-    Source/Scenes/RTWeekNextCornellBoxScene.cpp
-    Source/Scenes/RTWeekNextCornellSmokeScene.cpp
-    Source/Scenes/RTWeekNextFinalScene.cpp
-    Source/Scenes/RTWeekRestACornellBoxScene.cpp
-    Source/Scenes/RTWeekRestBCornellBoxMirrorScene.cpp
-    Source/Scenes/RTWeekRestCCornellBoxGlassScene.cpp
-
     Source/UI/Application.cpp
     Source/UI/Application.h
     Source/UI/Image.cpp
@@ -156,27 +136,78 @@ set(SOURCE_FILES
     Source/Utils/Timers.h
     Source/Utils/VulkanException.cpp
     Source/Utils/VulkanException.h
+
+    # # Scenes
+    Source/Scenes/Scene.cpp
+    Source/Scenes/Scene.h
+
+    # Official scenes
+    Source/Scenes/RTWeekOneDefaultScene.cpp
+    Source/Scenes/RTWeekOneFinalScene.cpp
+    Source/Scenes/RTWeekOneTestScene.cpp
+    Source/Scenes/RTWeekNextCornellBoxScene.cpp
+    Source/Scenes/RTWeekNextCornellSmokeScene.cpp
+    Source/Scenes/RTWeekNextDefaultScene.cpp
+    Source/Scenes/RTWeekNextEarthScene.cpp
+    Source/Scenes/RTWeekNextFinalScene.cpp
+    Source/Scenes/RTWeekNextQuadsScene.cpp
+    Source/Scenes/RTWeekNextRandomSpheresScene.cpp
+    Source/Scenes/RTWeekNextSimpleLightScene.cpp
+    Source/Scenes/RTWeekNextTwoPerlinSpheresScene.cpp
+    Source/Scenes/RTWeekNextTwoSpheresScene.cpp
+    Source/Scenes/RTWeekRestACornellBoxScene.cpp
+    Source/Scenes/RTWeekRestBCornellBoxMirrorScene.cpp
+    Source/Scenes/RTWeekRestCCornellBoxGlassScene.cpp
+
+    # Custom scenes
+    Source/Scenes/CornellBoxLightsScene.cpp
+    Source/Scenes/WhiteSperesScene.cpp
 )
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES})
 
-if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy")
-    message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy\" exists, remove it!")
+# Copy resources to the build directory.
+get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+if(isMultiConfig) # In Miti-Config mode, we need to copy to the correct configuration directory.
+    if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/DummyResources")
+        message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/DummyResources\" exists, remove it!")
+    endif()
+
+    add_custom_target(
+        always_run_target ALL
+        DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/DummyResources" # fake! ensure we run!
+    )
+
+    add_custom_command(
+        OUTPUT
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/DummyResources" # fake! ensure we run!
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
+    )
+
+else() # In single-config mode, we just copy to the build directory.
+    if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/DummyResources")
+        message(FATAL_ERROR "\"${CMAKE_CURRENT_BINARY_DIR}/DummyResources\" exists, remove it!")
+    endif()
+
+    add_custom_target(
+        always_run_target ALL
+        DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/DummyResources" # fake! ensure we run!
+    )
+
+    add_custom_command(
+        OUTPUT
+        "${CMAKE_CURRENT_BINARY_DIR}/DummyResources" # fake! ensure we run!
+        "${CMAKE_CURRENT_BINARY_DIR}/Resources"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
+        "${CMAKE_CURRENT_BINARY_DIR}/Resources"
+    )
 endif()
-
-add_custom_target(
-    always_run_target ALL
-    DEPENDS
-    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy" # fake! ensure we run!
-)
-
-add_custom_command(
-    OUTPUT
-    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Dummy" # fake! ensure we run!
-    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
-    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Resources"
-)
 
 find_package(glfw3 REQUIRED)
 find_package(imgui REQUIRED)
