@@ -19,7 +19,9 @@ Quad::Quad(const Point3& q, const Vector3& u, const Vector3& v, const std::share
 
 void Quad::SetBoundingBox()
 {
-    m_BoundingBox = AABB(m_Q, m_Q + m_U + m_V);
+    const AABB bbox1 = AABB(m_Q, m_Q + m_U + m_V);
+    const AABB bbox2 = AABB(m_Q + m_U, m_Q + m_V);
+    m_BoundingBox    = AABB(bbox1, bbox2);
 }
 
 AABB Quad::BoundingBox() const
