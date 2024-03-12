@@ -13,29 +13,26 @@ public:
     static const Interval Universe;
 
     // Default interval is empty
-    Interval()
-        : Min(+Infinity)
-        , Max(-Infinity)
-    {
-    }
+    Interval();
+    Interval(const double min, const double max);
+    Interval(const Interval& a, const Interval& b);
 
-    Interval(const double min, const double max)
-        : Min(min)
-        , Max(max)
-    {
-    }
-
-    Interval(const Interval& a, const Interval& b)
-        : Min(std::fmin(a.Min, b.Min))
-        , Max(std::fmax(a.Max, b.Max))
-    {
-    }
+    /*
+    * @brief Returns false if the interval is empty(inside out), or if either bound is a floating-point NaN (not a number).
+    */
+    bool     IsEmpty() const;
 
     double   Size() const;
     Interval Expand(double delta) const;
+    Interval Intersect(const Interval& other) const;
     bool     Contains(double x) const;
     bool     Surrounds(double x) const;
     double   Clamp(double x) const;
+
+    /*
+     * @brief Return the non-empty interval between a and b, regardless of their order.
+     */
+    static Interval Span(double a, double b);
 };
 
 inline Interval operator+(const Interval& intervalValue, const double displacement)

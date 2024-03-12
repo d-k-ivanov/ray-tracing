@@ -84,7 +84,12 @@ AABB BVHNode::BoundingBox() const
 
 bool BVHNode::BoxCompare(const std::shared_ptr<Hittable>& a, const std::shared_ptr<Hittable>& b, const int axisIndex)
 {
-    return a->BoundingBox().Axis(axisIndex).Min < b->BoundingBox().Axis(axisIndex).Min;
+    return a->BoundingBox().AxisInterval(axisIndex).Min < b->BoundingBox().AxisInterval(axisIndex).Min;
+
+    // New approach: https://github.com/RayTracing/raytracing.github.io/pull/1422
+    // const auto aAxisInterval = a->BoundingBox().AxisInterval(axisIndex);
+    // const auto bAxisInterval = b->BoundingBox().AxisInterval(axisIndex);
+    // return aAxisInterval.Min < bAxisInterval.Min;
 }
 
 bool BVHNode::BoxXCompare(const std::shared_ptr<Hittable>& a, const std::shared_ptr<Hittable>& b)

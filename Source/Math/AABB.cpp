@@ -11,10 +11,16 @@ AABB::AABB(const Interval& x, const Interval& y, const Interval& z)
 
 // Treat the two points a and b as extrema for the bounding box, so we don't require a particular minimum/maximum coordinate order.
 AABB::AABB(const Point3& a, const Point3& b)
+
 {
     X = Interval(fmin(a[0], b[0]), fmax(a[0], b[0]));
     Y = Interval(fmin(a[1], b[1]), fmax(a[1], b[1]));
     Z = Interval(fmin(a[2], b[2]), fmax(a[2], b[2]));
+
+    // New approach: https://github.com/RayTracing/raytracing.github.io/pull/1422
+    // X = Interval::Span(a[0], b[0]);
+    // Y = Interval::Span(a[1], b[1]);
+    // Z = Interval::Span(a[2], b[2]);
 
     PadToMinimums();
 }
@@ -37,7 +43,7 @@ AABB AABB::Pad() const
     return {newX, newY, newZ};
 }
 
-const Interval& AABB::Axis(const int n) const
+const Interval& AABB::AxisInterval(const int n) const
 {
     if(n == 1)
         return Y;
@@ -48,14 +54,14 @@ const Interval& AABB::Axis(const int n) const
 
 bool AABB::HitNonOptimized(const Ray& ray, Interval rayT) const
 {
-    for(int a = 0; a < 3; a++)
+    for(int axis = 0; axis < 3; axis++)
     {
         const auto t0 = fmin(
-            (Axis(a).Min - ray.Origin()[a]) / ray.Direction()[a],
-            (Axis(a).Max - ray.Origin()[a]) / ray.Direction()[a]);
+            (AxisInterval(axis).Min - ray.Origin()[axis]) / ray.Direction()[axis],
+            (AxisInterval(axis).Max - ray.Origin()[axis]) / ray.Direction()[axis]);
         const auto t1 = fmax(
-            (Axis(a).Min - ray.Origin()[a]) / ray.Direction()[a],
-            (Axis(a).Max - ray.Origin()[a]) / ray.Direction()[a]);
+            (AxisInterval(axis).Min - ray.Origin()[axis]) / ray.Direction()[axis],
+            (AxisInterval(axis).Max - ray.Origin()[axis]) / ray.Direction()[axis]);
 
         rayT.Min = fmax(t0, rayT.Min);
         rayT.Max = fmin(t1, rayT.Max);
@@ -68,13 +74,13 @@ bool AABB::HitNonOptimized(const Ray& ray, Interval rayT) const
 
 bool AABB::Hit(const Ray& ray, Interval rayT) const
 {
-    for(int a = 0; a < 3; a++)
+    for(int axis = 0; axis < 3; axis++)
     {
-        const auto invD = 1 / ray.Direction()[a];
-        const auto orig = ray.Origin()[a];
+        const auto invD = 1 / ray.Direction()[axis];
+        const auto orig = ray.Origin()[axis];
 
-        auto t0 = (Axis(a).Min - orig) * invD;
-        auto t1 = (Axis(a).Max - orig) * invD;
+        auto t0 = (AxisInterval(axis).Min - orig) * invD;
+        auto t1 = (AxisInterval(axis).Max - orig) * invD;
 
         if(invD < 0)
             std::swap(t0, t1);
@@ -85,6 +91,28 @@ bool AABB::Hit(const Ray& ray, Interval rayT) const
             rayT.Max = t1;
 
         if(rayT.Max <= rayT.Min)
+            return false;
+    }
+    return true;
+}
+
+// New approach: https://github.com/RayTracing/raytracing.github.io/pull/1422
+bool AABB::HitNew(const Ray& ray, Interval rayT) const
+{
+    const Point3&  rayOrig = ray.Origin();
+    const Vector3& rayDir  = ray.Direction();
+
+    for(int axis = 0; axis < 3; axis++)
+    {
+        const Interval& ax    = AxisInterval(axis);
+        const double    adinv = 1.0 / rayDir[axis];
+
+        const auto s = (ax.Min - rayOrig[axis]) * adinv;
+        const auto t = (ax.Max - rayOrig[axis]) * adinv;
+
+        rayT = rayT.Intersect(Interval::Span(s, t));
+
+        if(rayT.IsEmpty())
             return false;
     }
     return true;

@@ -23,9 +23,10 @@ public:
 
     // Return an AABB that has no side narrower than some delta, padding if necessary.
     AABB            Pad() const;
-    const Interval& Axis(const int n) const;
+    const Interval& AxisInterval(int n) const;
     bool            HitNonOptimized(const Ray& ray, Interval rayT) const;
     bool            Hit(const Ray& ray, Interval rayT) const;
+    bool            HitNew(const Ray& ray, Interval rayT) const;
 
     // Returns the index of the longest axis of the bounding box.
     int LongestAxis() const;
