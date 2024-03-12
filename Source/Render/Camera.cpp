@@ -57,10 +57,10 @@ void Camera::Initialize()
     const auto viewportHeight = 2 * h * FocusDist;
     const auto viewportWidth  = viewportHeight * (static_cast<double>(ImageWidth) / m_ImageHeight);
 
-    SamplesPerPixelScale = 1.0 / SamplesPerPixel;
-    SqrtSpp              = static_cast<int>(sqrt(SamplesPerPixel));
-    SqrtSppScale         = 1.0 / (SqrtSpp * SqrtSpp);
-    m_RecipSqrtSpp       = 1.0 / SqrtSpp;
+    PixelSampleScale = 1.0 / SamplesPerPixel;
+    SqrtSpp          = static_cast<int>(sqrt(SamplesPerPixel));
+    SqrtSppScale     = 1.0 / (SqrtSpp * SqrtSpp);
+    m_RecipSqrtSpp   = 1.0 / SqrtSpp;
 
     // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
     m_W = UnitVector(LookFrom - LookAt);

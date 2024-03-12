@@ -94,7 +94,7 @@ void Renderer::CPUOneCore(Camera& camera, const Hittable& world, const HittableL
                     pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
                 }
             }
-            m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SamplesPerPixelScale);
+            m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.PixelSampleScale);
         }
     }
     std::clog << "\rDone.                 \n";
@@ -190,7 +190,7 @@ void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const Hittabl
                             pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
                         }
                     }
-                    m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SamplesPerPixelScale);
+                    m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.PixelSampleScale);
                 });
         });
     std::clog << "\rDone.                 \n";

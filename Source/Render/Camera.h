@@ -12,7 +12,7 @@ public:
     double AspectRatio     = 1.0;    // Ratio of image width over height
     int    ImageWidth      = 100;    // Rendered image width in pixel count
     int    SamplesPerPixel = 10;     // Count of random samples for each pixel
-    double SamplesPerPixelScale;     // Count of random samples for each pixel
+    double PixelSampleScale;         // Count of random samples for each pixel
     int    SqrtSpp = 3;              // Square root of number of samples per pixel
     double SqrtSppScale;             // 1.0 / SamplesPerPixel or 1.0 / SqrtSpp * SqrtSpp:
     int    MaxDepth = 10;            // Maximum number of ray bounces into scene
