@@ -2,7 +2,6 @@
 
 #include "HitRecord.h"
 
-
 bool DiffuseLight::Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const
 {
     return false;
@@ -26,4 +25,3 @@ Color3 DiffuseLight::Emitted(const Ray& rIn, const HitRecord& rec, const double 
     }
     return m_Emit->Value(u, v, p);
 }
-

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Texture.h"
 #include "PerlinNoise.h"
+#include "Texture.h"
 
 class NoiseTexture final : public Texture
 {

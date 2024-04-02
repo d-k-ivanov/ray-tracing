@@ -18,9 +18,9 @@ public:
     Interval(const Interval& a, const Interval& b);
 
     /*
-    * @brief Returns false if the interval is empty(inside out), or if either bound is a floating-point NaN (not a number).
-    */
-    bool     IsEmpty() const;
+     * @brief Returns false if the interval is empty(inside out), or if either bound is a floating-point NaN (not a number).
+     */
+    bool IsEmpty() const;
 
     double   Size() const;
     Interval Expand(double delta) const;

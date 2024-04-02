@@ -14,4 +14,3 @@ public:
 private:
     ONB m_Uvw;
 };
-

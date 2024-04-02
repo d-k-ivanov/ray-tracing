@@ -795,14 +795,13 @@ void Application::Init()
         VK_CHECK(vkDeviceWaitIdle(Impl::g_Device));
     }
 
-    GLFWimage icons[1];
+    GLFWimage  icons[1];
     const auto iconPath = ThisExecutableLocation() + "/Resources/ray-tracing.jpg";
-    auto iconImg = Image(iconPath, true);
-    icons[0].width = static_cast<int>(iconImg.GetWidth());
-    icons[0].height = static_cast<int>(iconImg.GetHeight());
-    icons[0].pixels = iconImg.GetPixels();
+    auto       iconImg  = Image(iconPath, true);
+    icons[0].width      = static_cast<int>(iconImg.GetWidth());
+    icons[0].height     = static_cast<int>(iconImg.GetHeight());
+    icons[0].pixels     = iconImg.GetPixels();
     glfwSetWindowIcon(m_WindowHandle, 1, icons);
-
 }
 
 void Application::Shutdown()

@@ -1,8 +1,8 @@
 #include "Scene.h"
 
 #include <Math/Vector3.h>
-#include <Render/Lambertian.h>
 #include <Objects/Sphere.h>
+#include <Render/Lambertian.h>
 
 RTWeekOneDefaultScene::RTWeekOneDefaultScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)

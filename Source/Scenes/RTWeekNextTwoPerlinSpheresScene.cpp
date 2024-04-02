@@ -3,9 +3,9 @@
 #include <Math/Vector3.h>
 #include <Objects/Sphere.h>
 #include <Render/Lambertian.h>
-#include <Render/NoiseTextureSmooth.h>
-#include <Render/NoiseTextureCamouflage.h>
 #include <Render/NoiseTexture.h>
+#include <Render/NoiseTextureCamouflage.h>
+#include <Render/NoiseTextureSmooth.h>
 
 #include <memory>
 
@@ -13,8 +13,8 @@ RTWeekNextTwoPerlinSpheresScene::RTWeekNextTwoPerlinSpheresScene(const double as
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
 {
     auto pertextSmooth = std::make_shared<NoiseTextureSmooth>(4);
-    auto pertextCamou = std::make_shared<NoiseTextureCamouflage>(4);
-    auto pertextNoise = std::make_shared<NoiseTexture>(4);
+    auto pertextCamou  = std::make_shared<NoiseTextureCamouflage>(4);
+    auto pertextNoise  = std::make_shared<NoiseTexture>(4);
     m_World.Add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, std::make_shared<Lambertian>(pertextCamou)));
     m_World.Add(std::make_shared<Sphere>(Point3(0, 2, 0), 2, std::make_shared<Lambertian>(pertextNoise)));
 

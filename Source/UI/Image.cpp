@@ -222,7 +222,7 @@ uint32_t Image::GetHeight() const
     return m_Height;
 }
 
- uint8_t* Image::GetPixels() const
+uint8_t* Image::GetPixels() const
 {
     return m_Data;
 }

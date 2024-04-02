@@ -28,7 +28,7 @@ inline uint32_t GetColorRGBA(const Color3& color, const double colorScale)
     // This seems to be not working...
     if(std::isnan(red))
     {
-        red   = 0.0;
+        red = 0.0;
     }
 
     if(std::isnan(green))
@@ -38,7 +38,7 @@ inline uint32_t GetColorRGBA(const Color3& color, const double colorScale)
 
     if(std::isnan(blue))
     {
-        blue  = 0.0;
+        blue = 0.0;
     }
 
     if(std::isnan(alpha))
@@ -76,7 +76,7 @@ inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const double 
     // Replace NaN components with zero.
     if(std::isnan(red))
     {
-        red   = 0.0;
+        red = 0.0;
     }
 
     if(std::isnan(green))
@@ -86,7 +86,7 @@ inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const double 
 
     if(std::isnan(blue))
     {
-        blue  = 0.0;
+        blue = 0.0;
     }
 
     if(std::isnan(alpha))

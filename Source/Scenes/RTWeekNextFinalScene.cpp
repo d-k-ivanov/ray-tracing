@@ -1,8 +1,8 @@
 #include "Scene.h"
 
 #include <Math/Vector3.h>
-#include <Objects/Box.h>
 #include <Objects/BVH.h>
+#include <Objects/Box.h>
 #include <Objects/ConstantMedium.h>
 #include <Objects/Quad.h>
 #include <Objects/RotateY.h>

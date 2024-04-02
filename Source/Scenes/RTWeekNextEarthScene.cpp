@@ -2,8 +2,8 @@
 
 #include <Math/Vector3.h>
 #include <Objects/Sphere.h>
-#include <Render/Lambertian.h>
 #include <Render/ImageTexture.h>
+#include <Render/Lambertian.h>
 #include <Utils/Filesystem.h>
 
 #include <memory>

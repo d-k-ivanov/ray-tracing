@@ -2,8 +2,8 @@
 
 #include "Color.h"
 #include "HitRecord.h"
-#include "ScatterRecord.h"
 #include "Ray.h"
+#include "ScatterRecord.h"
 
 #include <Math/SpherePDF.h>
 

@@ -21,7 +21,7 @@
 WhiteSperesScene::WhiteSperesScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
 {
-    //Materials
+    // Materials
     auto white   = std::make_shared<Lambertian>(Color3(.73, .73, .73));
     auto light   = std::make_shared<DiffuseLight>(Color3(7, 7, 7));
     auto nothing = std::shared_ptr<Material>();
@@ -31,7 +31,7 @@ WhiteSperesScene::WhiteSperesScene(const double aspectRatio, const int width, co
     m_Lights.Add(std::make_shared<Quad>(Point3(400, 554, 100), Vector3(-300, 0, 0), Vector3(0, 0, -100), nothing));
 
     HittableList  boxOfSpheres;
-    constexpr int ns    = 20000;
+    constexpr int ns = 20000;
     for(int j = 0; j < ns; j++)
     {
         boxOfSpheres.Add(std::make_shared<Sphere>(Point3::Random(0, 500), 10, white));
