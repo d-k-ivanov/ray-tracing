@@ -2,23 +2,14 @@
 
 Perlin::Perlin()
 {
-    m_RandomVector = new Vector3[PointCount];
     for(int i = 0; i < PointCount; i++)
     {
         m_RandomVector[i] = UnitVector(Vector3::Random(-1, 1));
     }
 
-    m_PermX = PerlinGeneratePerm();
-    m_PermY = PerlinGeneratePerm();
-    m_PermZ = PerlinGeneratePerm();
-}
-
-Perlin::~Perlin()
-{
-    delete[] m_RandomVector;
-    delete[] m_PermX;
-    delete[] m_PermY;
-    delete[] m_PermZ;
+    PerlinGeneratePerm(m_PermX);
+    PerlinGeneratePerm(m_PermY);
+    PerlinGeneratePerm(m_PermZ);
 }
 
 double Perlin::Noise(const Point3& p) const
@@ -61,16 +52,12 @@ double Perlin::Turbulence(const Point3& p, const int depth) const
     return fabs(accum);
 }
 
-int* Perlin::PerlinGeneratePerm()
+void Perlin::PerlinGeneratePerm(int* p)
 {
-    const auto p = new int[PointCount];
-
     for(int i = 0; i < PointCount; i++)
         p[i] = i;
 
     Permute(p, PointCount);
-
-    return p;
 }
 
 void Perlin::Permute(int* p, const int n)
