@@ -2,7 +2,7 @@
 
 Ray-Tracing Framework and Visualizer.
 
-## Acknowledgment
+## Acknowledgments
 
 My work is significantly inspired by [Dr. Carlos Ureña Almagro](https://lsi.ugr.es/informacion/directorio-personal/carlos-urena-almagro) from the University of Granada. I'm deeply grateful for his level of support and knowledge, which allowed me to build this project and opened me to the world of Ray Tracing.
 
