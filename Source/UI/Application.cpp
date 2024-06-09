@@ -750,13 +750,14 @@ void Application::Init()
     initInfo.Queue                     = Impl::g_Queue;
     initInfo.PipelineCache             = Impl::g_PipelineCache;
     initInfo.DescriptorPool            = Impl::g_DescriptorPool;
+    initInfo.RenderPass                = wd->RenderPass;
     initInfo.Subpass                   = 0;
     initInfo.MinImageCount             = Impl::g_MinImageCount;
     initInfo.ImageCount                = wd->ImageCount;
     initInfo.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
     initInfo.Allocator                 = Impl::g_Allocator;
     initInfo.CheckVkResultFn           = Impl::VkCheckResultCallback;
-    ImGui_ImplVulkan_Init(&initInfo, wd->RenderPass);
+    ImGui_ImplVulkan_Init(&initInfo);
 
     ImFontConfig fontConfig;
     fontConfig.FontDataOwnedByAtlas = false;
