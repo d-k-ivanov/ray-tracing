@@ -53,10 +53,10 @@ bool RotateY::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
     direction[0] = m_CosTheta * ray.Direction()[0] - m_SinTheta * ray.Direction()[2];
     direction[2] = m_SinTheta * ray.Direction()[0] + m_CosTheta * ray.Direction()[2];
 
-    const Ray rotatedRray(origin, direction, ray.Time());
+    const Ray rotatedRay(origin, direction, ray.Time());
 
     // Determine whether an intersection exists in object space (and if so, where)
-    if(!m_Object->Hit(rotatedRray, rayT, rec))
+    if(!m_Object->Hit(rotatedRay, rayT, rec))
         return false;
 
     // Change the intersection point from object space to world space
