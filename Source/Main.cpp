@@ -66,16 +66,14 @@ public:
         // ImGui::Text("Image Width: %.2f", m_ImageWidth);
         // ImGui::Text("Image Height: %.2f", m_ImageHeight);
 
-        const char* rendererList[] = {
+        const char* renderersList[] = {
             "Ray Tracer",
             "Random INT",
             "Hello World",
             "CPU: One Core Accumulating",
-            "CPU: One Core Stratified",
             "CPU: Multi Core Accumulating",
-            "CPU: Multi Core Stratified",
             "CPU: Multi Core Stratified (WIP)"};
-        if(ImGui::Combo("Renderer", &m_RendererId, rendererList, IM_ARRAYSIZE(rendererList)))
+        if(ImGui::Combo("Renderer", &m_RendererId, renderersList, IM_ARRAYSIZE(renderersList)))
         {
             SetScene();
         }
@@ -86,7 +84,8 @@ public:
         ImGui::SameLine();
         ImGui::RadioButton("GPU", &m_RendererType, 2);
 
-        ImGui::Checkbox("Use PDF", &m_UsePDF);
+        ImGui::Checkbox("Stratified Sampling", &m_StratifiedSampling);
+        ImGui::Checkbox("Use Probability Density Functions (PDF)", &m_UsePDF);
         ImGui::Checkbox("Use Unidirectional Light", &m_UseUnidirectionalLight);
 
         // TBA
@@ -185,6 +184,7 @@ public:
                 SetScene();
                 Camera camera                 = m_Scene->GetCamera();
                 camera.RenderingType          = static_cast<Camera::RenderType>(m_RendererType);
+                camera.StratifiedSampling     = m_StratifiedSampling;
                 camera.UsePDF                 = m_UsePDF;
                 camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
                 m_Renderer.Render(camera, m_Scene->GetWorld(), m_Scene->GetLights());
@@ -211,32 +211,13 @@ public:
             }
             case 4:
             {
-
-                SetScene();
-                Camera camera                 = m_Scene->GetCamera();
-                camera.UsePDF                 = m_UsePDF;
-                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
-                m_Renderer.CPUOneCoreStratified(camera, m_Scene->GetWorld(), m_Scene->GetLights());
-                break;
-            }
-            case 5:
-            {
                 Camera camera                 = m_Scene->GetCamera();
                 camera.UsePDF                 = m_UsePDF;
                 camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
                 m_Renderer.CPUMultiCoreAccumulating(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             }
-            case 6:
-            {
-                SetScene();
-                Camera camera                 = m_Scene->GetCamera();
-                camera.UsePDF                 = m_UsePDF;
-                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
-                m_Renderer.CPUMultiCoreStratified(camera, m_Scene->GetWorld(), m_Scene->GetLights());
-                break;
-            }
-            case 7:
+            case 5:
             {
 
                 Camera camera                 = m_Scene->GetCamera();
@@ -323,6 +304,7 @@ private:
     int      m_RendererId             = 0;
     int      m_RendererType           = 1;
     double   m_LastRenderTime         = 0.0;
+    bool     m_StratifiedSampling     = true;
     bool     m_UsePDF                 = true;
     bool     m_UseUnidirectionalLight = true;
 

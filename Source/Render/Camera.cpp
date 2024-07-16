@@ -88,27 +88,61 @@ void Camera::Initialize()
     // LOG_INFO("Camera. PDF={}, ULight={}, SqrtSpp={}, RecipSqrtSpp={}, Samples={}", UsePDF, UseUnidirectionalLight,SqrtSpp, m_RecipSqrtSpp, SamplesPerPixel);
 }
 
-// Get a randomly-sampled camera ray for the pixel at location i,j, originating from the camera defocus disk.
-Ray Camera::GetRay(const int i, const int j) const
+uint32_t Camera::GetPixel(const uint32_t x, const uint32_t y, const Hittable& world, const HittableList& lights) const
 {
-    const auto pixelCenter = m_Pixel00Loc + (i * m_PixelDeltaU) + (j * m_PixelDeltaV);
-    const auto pixelSample = pixelCenter + PixelSampleSquare();
-    // const auto pixelSample = pixelCenter + RandomInUnitDisk();
-
-    auto       rayOrigin    = (DefocusAngle <= 0) ? m_Center : DefocusDiskSample();
-    const auto rayDirection = pixelSample - rayOrigin;
-    const auto rayTime      = Random::Double();
-
-    return {rayOrigin, rayDirection, rayTime};
+    Color3 pixelColor(0, 0, 0);
+    if(StratifiedSampling)
+    {
+        for(int yS = 0; yS < this->SqrtSpp; yS++)
+        {
+            for(int xS = 0; xS < this->SqrtSpp; xS++)
+            {
+                Ray r = this->GetRay(static_cast<int>(x), static_cast<int>(y), xS, yS);
+                if(lights.Objects.empty())
+                {
+                    pixelColor += this->RayColor(r, this->MaxDepth, world);
+                }
+                else
+                {
+                    pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
+                }
+            }
+        }
+    }
+    else
+    {
+        for(int sample = 0; sample < this->SamplesPerPixel; sample++)
+        {
+            Ray r = this->GetRay(static_cast<int>(x), static_cast<int>(y));
+            if(lights.Objects.empty())
+            {
+                pixelColor += this->RayColor(r, this->MaxDepth, world);
+            }
+            else
+            {
+                pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
+            }
+        }
+    }
+    return GetColorRGBA(pixelColor, this->PixelSampleScale);
 }
 
-// Get a randomly-sampled camera ray for the pixel at location i,j,
-// originating from the camera defocus disk, and randomly sampled around the pixel location.
-Ray Camera::GetRay(const int i, const int j, const int iS, const int jS) const
+// Get a randomly-sampled camera ray for the pixel at location x,y,
+// originating from the camera defocus disk, and
+Ray Camera::GetRay(const int x, const int y, const int xS, const int yS) const
 {
-    const auto pixelCenter = m_Pixel00Loc + (i * m_PixelDeltaU) + (j * m_PixelDeltaV);
-    const auto pixelSample = pixelCenter + PixelSampleSquare(iS, jS);
-    // const auto pixelSample = pixelCenter + RandomInUnitDisk();
+    Vector3    pixelSample;
+    const auto pixelCenter = m_Pixel00Loc + (x * m_PixelDeltaU) + (y * m_PixelDeltaV);
+    // if required to sample pixels randomly around the pixel location (stratified sampling)
+    if(StratifiedSampling)
+    {
+        pixelSample = pixelCenter + PixelSampleSquare(xS, yS);
+    }
+    else
+    {
+        pixelSample = pixelCenter + PixelSampleSquare();
+        // pixelSample = pixelCenter + RandomInUnitDisk();
+    }
 
     auto       rayOrigin    = (DefocusAngle <= 0) ? m_Center : DefocusDiskSample();
     const auto rayDirection = pixelSample - rayOrigin;
@@ -294,24 +328,6 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
     return colorFromEmission + colorFromScatter;
 }
 
-uint32_t Camera::GetPixel(const uint32_t x, const uint32_t y, const Hittable& world, const HittableList& lights) const
-{
-    Color3 pixelColor(0, 0, 0);
-    for(int sample = 0; sample < this->SamplesPerPixel; sample++)
-    {
-        Ray r = this->GetRay(static_cast<int>(x), static_cast<int>(y));
-        if(lights.Objects.empty())
-        {
-            pixelColor += this->RayColor(r, this->MaxDepth, world);
-        }
-        else
-        {
-            pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
-        }
-    }
-    return GetColorRGBA(pixelColor, this->PixelSampleScale);
-}
-
 // Returns a random point in the square surrounding a pixel at the origin.
 Vector3 Camera::PixelSampleSquare() const
 {
@@ -320,11 +336,12 @@ Vector3 Camera::PixelSampleSquare() const
     return (px * m_PixelDeltaU) + (py * m_PixelDeltaV);
 }
 
-// Returns a random point in the square surrounding a pixel at the origin, given the two subpixel indices.
-Vector3 Camera::PixelSampleSquare(const int iS, const int jS) const
+// Returns the vector to a random point in the square sub-pixel specified by grid
+// indices xS and yS, for an idealized unit square pixel [-0.5,-0.5] to [+0.5,+0.5]
+Vector3 Camera::PixelSampleSquare(const int xS, const int yS) const
 {
-    const auto px = -0.5 + m_RecipSqrtSpp * (iS + Random::Double());
-    const auto py = -0.5 + m_RecipSqrtSpp * (jS + Random::Double());
+    const auto px = -0.5 + m_RecipSqrtSpp * (xS + Random::Double());
+    const auto py = -0.5 + m_RecipSqrtSpp * (yS + Random::Double());
     return (px * m_PixelDeltaU) + (py * m_PixelDeltaV);
 }
 

@@ -12,6 +12,6 @@ class ScatterRecord
 public:
     Color3               Attenuation;
     std::shared_ptr<PDF> PDFPtr;
-    bool                 SkipPDF;
+    bool                 SkipPDF = false;
     Ray                  SkipPDFRay;
 };

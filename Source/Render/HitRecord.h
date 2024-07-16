@@ -12,9 +12,9 @@ class HitRecord
 public:
     Point3  P;
     Vector3 Normal;
-    double  T;
-    double  U;
-    double  V;
+    double  T = 0.0;
+    double  U = 0.0;
+    double  V = 0.0;
     bool    FrontFace;
 
     // Sets the hit record normal vector.

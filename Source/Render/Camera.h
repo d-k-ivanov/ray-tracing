@@ -18,17 +18,18 @@ public:
         GPU          = 2
     };
 
-    double AspectRatio     = 1.0;    // Ratio of image width over height
-    int    ImageWidth      = 100;    // Rendered image width in pixel count
-    int    SamplesPerPixel = 10;     // Count of random samples for each pixel
-    double PixelSampleScale;         // Count of random samples for each pixel
-    int    SqrtSpp = 3;              // Square root of number of samples per pixel
-    double SqrtSppScale;             // 1.0 / SamplesPerPixel or 1.0 / SqrtSpp * SqrtSpp:
-    int    MaxDepth = 10;            // Maximum number of ray bounces into scene
-    Color3 Background;               // Scene background color
+    double AspectRatio      = 1.0;    // Ratio of image width over height
+    int    ImageWidth       = 100;    // Rendered image width in pixel count
+    int    SamplesPerPixel  = 10;     // Count of random samples for each pixel
+    double PixelSampleScale = 1.0;    // Count of random samples for each pixel
+    int    SqrtSpp          = 3;      // Square root of number of samples per pixel
+    double SqrtSppScale     = 1.0;    // 1.0 / SamplesPerPixel or 1.0 / SqrtSpp * SqrtSpp:
+    int    MaxDepth         = 10;     // Maximum number of ray bounces into scene
+    Color3 Background;                // Scene background color
 
     RenderType RenderingType = RenderType::CPUMultiCore;
 
+    bool StratifiedSampling     = true;    // Use stratified sampling
     bool UsePDF                 = true;    // Use probability density function for sampling
     bool UseUnidirectionalLight = true;    // Use unidirectional light sampling
 
@@ -42,18 +43,15 @@ public:
 
     void Initialize();
 
-    // Get a randomly-sampled camera ray for the pixel at location i,j, originating from the camera defocus disk.
-    Ray GetRay(int i, int j) const;
+    // Get RGBA color value for the pixel at location x,y.
+    uint32_t GetPixel(uint32_t x, uint32_t y, const Hittable& world, const HittableList& lights) const;
 
-    // Get a randomly-sampled camera ray for the pixel at location i,j,
-    // originating from the camera defocus disk, and randomly sampled around the pixel location.
-    Ray GetRay(int i, int j, int iS, int jS) const;
+    // Get a randomly-sampled camera ray for the pixel at location x,y, originating from the camera defocus disk.
+    Ray GetRay(int x, int y, int xS = 0, int yS = 0) const;
 
     Color3 RayColorGradientBackground(const Ray& r, int depth, const Hittable& world) const;
     Color3 RayColor(const Ray& r, int depth, const Hittable& world) const;
     Color3 RayColor(const Ray& r, int depth, const Hittable& world, const Hittable& lights) const;
-
-    uint32_t GetPixel(uint32_t i, uint32_t j, const Hittable& world, const HittableList& lights) const;
 
 private:
     int     m_ImageHeight  = 0;    // Rendered image height
@@ -72,7 +70,7 @@ private:
     Vector3 PixelSampleSquare() const;
 
     // Returns a random point in the square surrounding a pixel at the origin, given the two subpixel indices.
-    Vector3 PixelSampleSquare(int iS, int jS) const;
+    Vector3 PixelSampleSquare(int xS, int yS) const;
 
     // Generate a sample from the disk of given radius around a pixel at the origin.
     Vector3 PixelSampleDisk(double radius) const;
