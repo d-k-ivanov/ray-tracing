@@ -4,11 +4,20 @@
 #include "Ray.h"
 
 #include <Math/Vector3.h>
-#include <Objects/Hittable.h>
+
+class Hittable;
+class HittableList;
 
 class Camera
 {
 public:
+    enum class RenderType : int
+    {
+        CPUOneCore   = 0,
+        CPUMultiCore = 1,
+        GPU          = 2
+    };
+
     double AspectRatio     = 1.0;    // Ratio of image width over height
     int    ImageWidth      = 100;    // Rendered image width in pixel count
     int    SamplesPerPixel = 10;     // Count of random samples for each pixel
@@ -18,8 +27,10 @@ public:
     int    MaxDepth = 10;            // Maximum number of ray bounces into scene
     Color3 Background;               // Scene background color
 
-    bool UsePDF                 = true;
-    bool UseUnidirectionalLight = true;
+    RenderType RenderingType = RenderType::CPUMultiCore;
+
+    bool UsePDF                 = true;    // Use probability density function for sampling
+    bool UseUnidirectionalLight = true;    // Use unidirectional light sampling
 
     double  Vfov     = 90;                  // Vertical view angle (field of view)
     Point3  LookFrom = Point3(0, 0, 0);     // Point camera is looking from
@@ -41,6 +52,8 @@ public:
     Color3 RayColorGradientBackground(const Ray& r, int depth, const Hittable& world) const;
     Color3 RayColor(const Ray& r, int depth, const Hittable& world) const;
     Color3 RayColor(const Ray& r, int depth, const Hittable& world, const Hittable& lights) const;
+
+    uint32_t GetPixel(uint32_t i, uint32_t j, const Hittable& world, const HittableList& lights) const;
 
 private:
     int     m_ImageHeight  = 0;    // Rendered image height

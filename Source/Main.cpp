@@ -67,12 +67,11 @@ public:
         // ImGui::Text("Image Height: %.2f", m_ImageHeight);
 
         const char* rendererList[] = {
+            "Ray Tracer",
             "Random INT",
             "Hello World",
-            "CPU: One Core",
             "CPU: One Core Accumulating",
             "CPU: One Core Stratified",
-            "CPU: Multi Core",
             "CPU: Multi Core Accumulating",
             "CPU: Multi Core Stratified",
             "CPU: Multi Core Stratified (WIP)"};
@@ -80,6 +79,12 @@ public:
         {
             SetScene();
         }
+
+        ImGui::RadioButton("CPU Single Core", &m_RendererType, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("CPU Multi Core", &m_RendererType, 1);
+        ImGui::SameLine();
+        ImGui::RadioButton("GPU", &m_RendererType, 2);
 
         ImGui::Checkbox("Use PDF", &m_UsePDF);
         ImGui::Checkbox("Use Unidirectional Light", &m_UseUnidirectionalLight);
@@ -177,22 +182,23 @@ public:
         {
             case 0:
             {
-                m_Renderer.RenderRandom();
+                SetScene();
+                Camera camera                 = m_Scene->GetCamera();
+                camera.RenderingType          = static_cast<Camera::RenderType>(m_RendererType);
+                camera.UsePDF                 = m_UsePDF;
+                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
+                m_Renderer.Render(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             }
             case 1:
             {
-
-                m_Renderer.RenderHelloWorld();
+                m_Renderer.RenderRandom();
                 break;
             }
             case 2:
             {
-                SetScene();
-                Camera camera                 = m_Scene->GetCamera();
-                camera.UsePDF                 = m_UsePDF;
-                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
-                m_Renderer.CPUOneCore(camera, m_Scene->GetWorld(), m_Scene->GetLights());
+
+                m_Renderer.RenderHelloWorld();
                 break;
             }
             case 3:
@@ -215,22 +221,13 @@ public:
             }
             case 5:
             {
-                SetScene();
-                Camera camera                 = m_Scene->GetCamera();
-                camera.UsePDF                 = m_UsePDF;
-                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
-                m_Renderer.CPUMultiCore(camera, m_Scene->GetWorld(), m_Scene->GetLights());
-                break;
-            }
-            case 6:
-            {
                 Camera camera                 = m_Scene->GetCamera();
                 camera.UsePDF                 = m_UsePDF;
                 camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
                 m_Renderer.CPUMultiCoreAccumulating(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             }
-            case 7:
+            case 6:
             {
                 SetScene();
                 Camera camera                 = m_Scene->GetCamera();
@@ -239,7 +236,7 @@ public:
                 m_Renderer.CPUMultiCoreStratified(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             }
-            case 8:
+            case 7:
             {
 
                 Camera camera                 = m_Scene->GetCamera();
@@ -323,16 +320,17 @@ public:
 private:
     // Rendering
     Renderer m_Renderer;
-    int      m_RendererId             = 7;
+    int      m_RendererId             = 0;
+    int      m_RendererType           = 1;
     double   m_LastRenderTime         = 0.0;
     bool     m_UsePDF                 = true;
     bool     m_UseUnidirectionalLight = true;
 
     // Scene
     std::shared_ptr<Scene> m_Scene        = nullptr;
-    int                    m_SceneId      = 17;
+    int                    m_SceneId      = 0;
     int                    m_SceneDepth   = 50;
-    int                    m_SceneSamples = 64;
+    int                    m_SceneSamples = 4;
 
     // Output
     // double   m_AspectRatio    = 16.0 / 9.0;
@@ -364,7 +362,7 @@ Application* CreateApplication(int argc, char** argv)
 
     Application* app = new Application(spec);
     app->PushLayer<RayTracinUILayer>();
-    // app->PushLayer<ImGuiDemoLayer>();
+    app->PushLayer<ImGuiDemoLayer>();
     app->SetMenubarCallback(
         [app]()
         {

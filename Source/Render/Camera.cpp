@@ -8,6 +8,8 @@
 #include <Math/CosinePDF.h>
 #include <Math/HittablePDF.h>
 #include <Math/MixturePDF.h>
+#include <Objects/Hittable.h>
+#include <Objects/HittableList.h>
 #include <Utils/Log.h>
 #include <Utils/Random.h>
 
@@ -290,6 +292,24 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
     }
 
     return colorFromEmission + colorFromScatter;
+}
+
+uint32_t Camera::GetPixel(const uint32_t x, const uint32_t y, const Hittable& world, const HittableList& lights) const
+{
+    Color3 pixelColor(0, 0, 0);
+    for(int sample = 0; sample < this->SamplesPerPixel; sample++)
+    {
+        Ray r = this->GetRay(static_cast<int>(x), static_cast<int>(y));
+        if(lights.Objects.empty())
+        {
+            pixelColor += this->RayColor(r, this->MaxDepth, world);
+        }
+        else
+        {
+            pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
+        }
+    }
+    return GetColorRGBA(pixelColor, this->PixelSampleScale);
 }
 
 // Returns a random point in the square surrounding a pixel at the origin.

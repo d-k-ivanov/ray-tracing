@@ -46,6 +46,28 @@ void Renderer::SetImageSize(uint32_t width, uint32_t height)
     }
 }
 
+void Renderer::Render(Camera& camera, const Hittable& world, const HittableList& lights)
+{
+    camera.Initialize();
+    m_IsAccumulating = false;
+
+    switch(camera.RenderingType)
+    {
+        case Camera::RenderType::CPUOneCore:
+            CPUOneCore(camera, world, lights);
+            break;
+        case Camera::RenderType::CPUMultiCore:
+            CPUMultiCore(camera, world, lights);
+            break;
+        case Camera::RenderType::GPU:
+            // TBA
+            break;
+    }
+
+    std::clog << "\rDone.                 \n";
+    m_Image->SetData(m_ImageData);
+}
+
 void Renderer::RenderRandom() const
 {
     for(uint32_t y = 0; y < m_Image->GetHeight(); y++)
@@ -72,33 +94,34 @@ void Renderer::RenderHelloWorld() const
     m_Image->SetData(m_ImageData);
 }
 
-void Renderer::CPUOneCore(Camera& camera, const Hittable& world, const HittableList& lights)
+void Renderer::CPUOneCore(const Camera& camera, const Hittable& world, const HittableList& lights) const
 {
-    camera.Initialize();
-    m_IsAccumulating = false;
     for(uint32_t y = 0; y < m_Image->GetHeight(); y++)
     {
         std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
         for(uint32_t x = 0; x < m_Image->GetWidth(); x++)
         {
-            Color3 pixelColor(0, 0, 0);
-            for(int sample = 0; sample < camera.SamplesPerPixel; sample++)
-            {
-                Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y));
-                if(lights.Objects.empty())
-                {
-                    pixelColor += camera.RayColor(r, camera.MaxDepth, world);
-                }
-                else
-                {
-                    pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
-                }
-            }
-            m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.PixelSampleScale);
+
+            m_ImageData[y * m_Image->GetWidth() + x] = camera.GetPixel(x, y, world, lights);
         }
     }
-    std::clog << "\rDone.                 \n";
-    m_Image->SetData(m_ImageData);
+
+}
+
+void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const HittableList& lights)
+{
+    std::for_each(
+        std::execution::par, m_ImageHeightIterator.begin(), m_ImageHeightIterator.end(),
+        [this, &camera, &world, &lights](uint32_t y)
+        {
+            std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
+            std::for_each(
+                std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
+                [this, y, &camera, &world, &lights](const uint32_t x)
+                {
+                    m_ImageData[y * m_Image->GetWidth() + x] = camera.GetPixel(x, y, world, lights);
+                });
+        });
 }
 
 void Renderer::CPUOneCoreAccumulating(Camera& camera, const Hittable& world, const HittableList& lights)
@@ -164,7 +187,7 @@ void Renderer::CPUOneCoreStratified(Camera& camera, const Hittable& world, const
     m_Image->SetData(m_ImageData);
 }
 
-void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const HittableList& lights)
+void Renderer::CPUMultiCoreStratified(Camera& camera, const Hittable& world, const HittableList& lights)
 {
     camera.Initialize();
     m_IsAccumulating = false;
@@ -178,19 +201,22 @@ void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const Hittabl
                 [this, y, &camera, &world, &lights](const uint32_t x)
                 {
                     Color3 pixelColor(0, 0, 0);
-                    for(int sample = 0; sample < camera.SamplesPerPixel; sample++)
+                    for(int yS = 0; yS < camera.SqrtSpp; yS++)
                     {
-                        Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y));
-                        if(lights.Objects.empty())
+                        for(int xS = 0; xS < camera.SqrtSpp; xS++)
                         {
-                            pixelColor += camera.RayColor(r, camera.MaxDepth, world);
-                        }
-                        else
-                        {
-                            pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
+                            Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y), xS, yS);
+                            if(lights.Objects.empty())
+                            {
+                                pixelColor += camera.RayColor(r, camera.MaxDepth, world);
+                            }
+                            else
+                            {
+                                pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
+                            }
                         }
                     }
-                    m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.PixelSampleScale);
+                    m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SqrtSppScale);
                 });
         });
     std::clog << "\rDone.                 \n";
@@ -229,42 +255,6 @@ void Renderer::CPUMultiCoreAccumulating(Camera& camera, const Hittable& world, c
         });
     m_Image->SetData(m_ImageData);
     m_FrameCounter++;
-}
-
-void Renderer::CPUMultiCoreStratified(Camera& camera, const Hittable& world, const HittableList& lights)
-{
-    camera.Initialize();
-    m_IsAccumulating = false;
-    std::for_each(
-        std::execution::par, m_ImageHeightIterator.begin(), m_ImageHeightIterator.end(),
-        [this, &camera, &world, &lights](uint32_t y)
-        {
-            std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
-            std::for_each(
-                std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
-                [this, y, &camera, &world, &lights](const uint32_t x)
-                {
-                    Color3 pixelColor(0, 0, 0);
-                    for(int yS = 0; yS < camera.SqrtSpp; yS++)
-                    {
-                        for(int xS = 0; xS < camera.SqrtSpp; xS++)
-                        {
-                            Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y), xS, yS);
-                            if(lights.Objects.empty())
-                            {
-                                pixelColor += camera.RayColor(r, camera.MaxDepth, world);
-                            }
-                            else
-                            {
-                                pixelColor += camera.RayColor(r, camera.MaxDepth, world, lights);
-                            }
-                        }
-                    }
-                    m_ImageData[y * m_Image->GetWidth() + x] = GetColorRGBA(pixelColor, camera.SqrtSppScale);
-                });
-        });
-    std::clog << "\rDone.                 \n";
-    m_Image->SetData(m_ImageData);
 }
 
 void Renderer::CPUMultiCoreStratifiedAccumulating(Camera& camera, const Hittable& world, const HittableList& lights)

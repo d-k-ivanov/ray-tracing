@@ -23,9 +23,10 @@ public:
     void ResetPixelColorsAccumulator() const;
 
     void SetImageSize(uint32_t width, uint32_t height);
+    void Render(Camera& camera, const Hittable& world, const HittableList& lights);
     void RenderRandom() const;
     void RenderHelloWorld() const;
-    void CPUOneCore(Camera& camera, const Hittable& world, const HittableList& lights);
+    void CPUOneCore(const Camera& camera, const Hittable& world, const HittableList& lights) const;
     void CPUOneCoreAccumulating(Camera& camera, const Hittable& world, const HittableList& lights);
     void CPUOneCoreStratified(Camera& camera, const Hittable& world, const HittableList& lights);
     void CPUMultiCore(Camera& camera, const Hittable& world, const HittableList& lights);
