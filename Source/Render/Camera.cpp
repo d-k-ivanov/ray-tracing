@@ -59,10 +59,10 @@ void Camera::Initialize()
     const auto viewportHeight = 2 * h * FocusDist;
     const auto viewportWidth  = viewportHeight * (static_cast<double>(ImageWidth) / m_ImageHeight);
 
-    PixelSampleScale = 1.0 / SamplesPerPixel;
-    SqrtSpp          = static_cast<int>(sqrt(SamplesPerPixel));
-    SqrtSppScale     = 1.0 / (SqrtSpp * SqrtSpp);
-    m_RecipSqrtSpp   = 1.0 / SqrtSpp;
+    PixelSamplesScale = 1.0 / SamplesPerPixel;
+    SqrtSpp           = static_cast<int>(sqrt(SamplesPerPixel));
+    SqrtSppScale      = 1.0 / (SqrtSpp * SqrtSpp);
+    m_RecipSqrtSpp    = 1.0 / SqrtSpp;
 
     // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
     m_W = UnitVector(LookFrom - LookAt);
@@ -110,25 +110,32 @@ uint32_t Camera::GetPixel(const uint32_t x, const uint32_t y, const Hittable& wo
             pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
         }
     }
-    return GetColorRGBA(pixelColor, this->PixelSampleScale);
+    return GetColorRGBA(pixelColor, this->PixelSamplesScale);
 }
 
-// Get a randomly-sampled camera ray for the pixel at location x,y,
-// originating from the camera defocus disk, and
+// Construct a camera ray originating from the defocus disk and directed at a randomly
+// sampled point around the pixel location x, y for stratified sample square xS, yS
 Ray Camera::GetRay(const int x, const int y, const int xS, const int yS) const
 {
-    Vector3    pixelSample;
-    const auto pixelCenter = m_Pixel00Loc + (x * m_PixelDeltaU) + (y * m_PixelDeltaV);
+    Vector3 pixelSampleOffset;
+
     // if required to sample pixels randomly around the pixel location (stratified sampling)
     if(SamplingType == SamplerType::Stratified)
     {
-        pixelSample = pixelCenter + PixelSampleSquare(xS, yS);
+        // pixelSampleOffset = SampleSquare(xS, yS);
+        pixelSampleOffset = SampleDisk(xS, yS);
     }
     else
     {
-        pixelSample = pixelCenter + PixelSampleSquare();
-        // pixelSample = pixelCenter + RandomInUnitDisk();
+        // pixelSampleOffset = SampleSquare();
+        pixelSampleOffset = SampleDisk();
     }
+
+    // const auto pixelSample = m_Pixel00Lkoc + (x * m_PixelDeltaU) + (y * m_PixelDeltaV);
+
+    const auto pixelSample = m_Pixel00Loc
+                             + ((x + pixelSampleOffset.X()) * m_PixelDeltaU)
+                             + ((y + pixelSampleOffset.Y()) * m_PixelDeltaV);
 
     auto       rayOrigin    = (DefocusAngle <= 0) ? m_Center : DefocusDiskSample();
     const auto rayDirection = pixelSample - rayOrigin;
@@ -159,7 +166,8 @@ Color3 Camera::RayColorGradientBackground(const Ray& r, const int depth, const H
     }
 
     const Vector3 unitDirection = UnitVector(r.Direction());
-    const auto    a             = 0.5 * (unitDirection.Y() + 1.0);
+
+    const auto a = 0.5 * (unitDirection.Y() + 1.0);
     return (1.0 - a) * Color3(1.0, 1.0, 1.0) + a * Color3(0.5, 0.7, 1.0);
     // return (1.0 - a) * Color3(1.0, 1.0, 1.0) + a * Color3(1.0, 0.0, 0.0);
 }
@@ -251,33 +259,39 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
     return colorFromEmission + colorFromScatter;
 }
 
-// Returns a random point in the square surrounding a pixel at the origin.
-Vector3 Camera::PixelSampleSquare() const
-{
-    const auto px = -0.5 + Random::Double();
-    const auto py = -0.5 + Random::Double();
-    return (px * m_PixelDeltaU) + (py * m_PixelDeltaV);
-}
-
-// Returns the vector to a random point in the square sub-pixel specified by grid
-// indices xS and yS, for an idealized unit square pixel [-0.5,-0.5] to [+0.5,+0.5]
-Vector3 Camera::PixelSampleSquare(const int xS, const int yS) const
-{
-    const auto px = -0.5 + m_RecipSqrtSpp * (xS + Random::Double());
-    const auto py = -0.5 + m_RecipSqrtSpp * (yS + Random::Double());
-    return (px * m_PixelDeltaU) + (py * m_PixelDeltaV);
-}
-
-// Generate a sample from the disk of given radius around a pixel at the origin.
-Vector3 Camera::PixelSampleDisk(const double radius) const
-{
-    auto p = radius * RandomInUnitDisk();
-    return (p[0] * m_PixelDeltaU) + (p[1] * m_PixelDeltaV);
-}
-
 // Returns a random point in the camera defocus disk.
 Point3 Camera::DefocusDiskSample() const
 {
     auto p = RandomInUnitDisk();
     return m_Center + (p[0] * m_DefocusDiskU) + (p[1] * m_DefocusDiskV);
+}
+
+// Returns the vector to a random point in the [-0.5,-0.5]-[+0.5,+0.5] unit square.
+Vector3 Camera::SampleSquare() const
+{
+    return {Random::Double() - 0.5, Random::Double() - 0.5, 0};
+}
+
+// Returns the vector to a random point in the square sub-pixel specified by grid
+// indices xS and yS, for an idealized unit square pixel [-0.5,-0.5] to [+0.5,+0.5]
+Vector3 Camera::SampleSquare(const int xS, const int yS) const
+{
+    const auto px = ((xS + Random::Double()) * m_RecipSqrtSpp) - 0.5;
+    const auto py = ((yS + Random::Double()) * m_RecipSqrtSpp) - 0.5;
+    return {px, py, 0};
+}
+
+// Returns the vector to a random point in the [-0.5,-0.5]-[+0.5,+0.5] unit circle.
+Vector3 Camera::SampleDisk() const
+{
+    return 0.5 * RandomInUnitDisk();
+}
+
+// Returns the vector to a random point in the circle sub-pixel specified by grid
+// indices xS and yS, for an idealized unit circle pixel [-0.5,-0.5] to [+0.5,+0.5]
+Vector3 Camera::SampleDisk(const int xS, const int yS) const
+{
+    const auto px = ((xS + RandomInUnitDisk().X()) * m_RecipSqrtSpp) - 0.5;
+    const auto py = ((yS + RandomInUnitDisk().Y()) * m_RecipSqrtSpp) - 0.5;
+    return {px, py, 0};
 }

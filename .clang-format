@@ -1,12 +1,40 @@
-# Format Style Options - Created with Clang Power Tools
 ---
 BasedOnStyle: WebKit
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveDeclarations: Consecutive
+AlignOperands: Align
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
-BreakBeforeBraces: Allman
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortLambdasOnASingleLine: All
+BinPackArguments: true
+BinPackParameters: true
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterExternBlock: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyNamespace: true
+  SplitEmptyRecord: true
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Custom
+BreakBeforeTernaryOperators: true
 ColumnLimit: 0
 Cpp11BracedListStyle: true
 IncludeCategories:
@@ -19,6 +47,10 @@ IncludeCategories:
   - Regex: '^<.*\.h>'
     Priority: 4
 IndentCaseLabels: true
+IndentPPDirectives: BeforeHash
+Language: Cpp
+RequiresClausePosition: WithPreceding
+SpaceBeforeCpp11BracedList: false
 SpaceBeforeParens: Never
 SpacesBeforeTrailingComments: 4
 TabWidth: 4

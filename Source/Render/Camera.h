@@ -25,14 +25,14 @@ public:
         Stratified   = 2
     };
 
-    double AspectRatio      = 1.0;      // Ratio of image width over height
-    int    ImageWidth       = 100;      // Rendered image width in pixel count
-    int    SamplesPerPixel  = 10;       // Count of random samples for each pixel
-    double PixelSampleScale = 1.0;      // Count of random samples for each pixel
-    int    SqrtSpp          = 3;        // Square root of number of samples per pixel
-    double SqrtSppScale     = 1.0;      // 1.0 / SamplesPerPixel or 1.0 / SqrtSpp * SqrtSpp:
-    int    MaxDepth         = 10;       // Maximum number of ray bounces into scene
-    Color3 Background;                  // Scene background color
+    double AspectRatio       = 1.0;    // Ratio of image width over height
+    int    ImageWidth        = 100;    // Rendered image width in pixel count
+    int    SamplesPerPixel   = 10;     // Count of random samples for each pixel
+    double PixelSamplesScale = 1.0;    // Color scale factor for a sum of pixel samples
+    int    SqrtSpp           = 3;      // Square root of number of samples per pixel
+    double SqrtSppScale      = 1.0;    // 1.0 / SamplesPerPixel or 1.0 / SqrtSpp * SqrtSpp:
+    int    MaxDepth          = 10;     // Maximum number of ray bounces into scene
+    Color3 Background;                 // Scene background color
 
     RenderType  RenderingType = RenderType::CPUMultiCore;
     SamplerType SamplingType  = SamplerType::Stratified;
@@ -66,21 +66,17 @@ private:
     Point3  m_Pixel00Loc;          // Location of pixel 0, 0
     Vector3 m_PixelDeltaU;         // Offset to pixel to the right
     Vector3 m_PixelDeltaV;         // Offset to pixel below
-    Vector3 m_U;                   // Camera frame basis vectors
-    Vector3 m_V;                   // Camera frame basis vectors
-    Vector3 m_W;                   // Camera frame basis vectors
+    Vector3 m_U;                   // Camera frame basis vector U
+    Vector3 m_V;                   // Camera frame basis vector V
+    Vector3 m_W;                   // Camera frame basis vector W
     Vector3 m_DefocusDiskU;        // Defocus disk horizontal radius
     Vector3 m_DefocusDiskV;        // Defocus disk vertical radius
 
-    // Returns a random point in the square surrounding a pixel at the origin.
-    Vector3 PixelSampleSquare() const;
-
-    // Returns a random point in the square surrounding a pixel at the origin, given the two subpixel indices.
-    Vector3 PixelSampleSquare(int xS, int yS) const;
-
-    // Generate a sample from the disk of given radius around a pixel at the origin.
-    Vector3 PixelSampleDisk(double radius) const;
-
-    // Returns a random point in the camera defocus disk.
     Point3 DefocusDiskSample() const;
+
+    // Pixel Sampling Functions
+    Vector3 SampleSquare() const;
+    Vector3 SampleSquare(int xS, int yS) const;    // Stratified
+    Vector3 SampleDisk() const;
+    Vector3 SampleDisk(int xS, int yS) const;    // Stratified
 };
