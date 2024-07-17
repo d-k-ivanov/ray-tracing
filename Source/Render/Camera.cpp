@@ -91,7 +91,7 @@ void Camera::Initialize()
 uint32_t Camera::GetPixel(const uint32_t x, const uint32_t y, const Hittable& world, const HittableList& lights) const
 {
     Color3 pixelColor(0, 0, 0);
-    if(StratifiedSampling)
+    if(SamplingType == SamplerType::Stratified)
     {
         for(int yS = 0; yS < this->SqrtSpp; yS++)
         {
@@ -120,7 +120,7 @@ Ray Camera::GetRay(const int x, const int y, const int xS, const int yS) const
     Vector3    pixelSample;
     const auto pixelCenter = m_Pixel00Loc + (x * m_PixelDeltaU) + (y * m_PixelDeltaV);
     // if required to sample pixels randomly around the pixel location (stratified sampling)
-    if(StratifiedSampling)
+    if(SamplingType == SamplerType::Stratified)
     {
         pixelSample = pixelCenter + PixelSampleSquare(xS, yS);
     }

@@ -66,10 +66,7 @@ public:
         // ImGui::Text("Image Width: %.2f", m_ImageWidth);
         // ImGui::Text("Image Height: %.2f", m_ImageHeight);
 
-        const char* renderersList[] = {
-            "Ray Tracer",
-            "Random INT",
-            "Hello World"};
+        const char* renderersList[] = {"Ray Tracer", "Random INT", "Hello World"};
         if(ImGui::Combo("Renderer", &m_RendererId, renderersList, IM_ARRAYSIZE(renderersList)))
         {
             SetScene();
@@ -81,11 +78,17 @@ public:
         ImGui::SameLine();
         ImGui::RadioButton("GPU", &m_RendererType, 2);
 
-        ImGui::Checkbox("Stratified Sampling", &m_StratifiedSampling);
+        ImGui::Text("Pixel Sampling Type:");
+        ImGui::RadioButton("Normal", &m_SamplingType, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("Accumulation", &m_SamplingType, 1);
+        ImGui::SameLine();
+        ImGui::RadioButton("Stratified", &m_SamplingType, 2);
+
         ImGui::Checkbox("Use Probability Density Functions (PDF)", &m_UsePDF);
         ImGui::Checkbox("Use Unidirectional Light", &m_UseUnidirectionalLight);
 
-        if(m_IsAccumulating)
+        if(static_cast<Camera::SamplerType>(m_SamplingType) == Camera::SamplerType::Accumulation)
         {
             m_SceneSamples = static_cast<int>(m_Renderer.GetFrameCounter());
             if(ImGui::Button("Render", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
@@ -109,8 +112,6 @@ public:
         }
 
         static bool loopRendering = false;
-        ImGui::Checkbox("Accumulate Samples", &m_IsAccumulating);
-        ImGui::SameLine();
         ImGui::Checkbox("Loop Rendering", &loopRendering);
 
         const int miliseconds = static_cast<int>(m_LastRenderTime) % 1000;
@@ -183,8 +184,7 @@ public:
                 SetScene();
                 Camera camera                 = m_Scene->GetCamera();
                 camera.RenderingType          = static_cast<Camera::RenderType>(m_RendererType);
-                camera.IsAccumulating         = m_IsAccumulating;
-                camera.StratifiedSampling     = m_StratifiedSampling;
+                camera.SamplingType           = static_cast<Camera::SamplerType>(m_SamplingType);
                 camera.UsePDF                 = m_UsePDF;
                 camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
                 m_Renderer.Render(camera, m_Scene->GetWorld(), m_Scene->GetLights());
@@ -278,9 +278,8 @@ private:
     Renderer m_Renderer;
     int      m_RendererId             = 0;
     int      m_RendererType           = 1;
-    bool     m_IsAccumulating         = false;
+    int      m_SamplingType           = 2;
     double   m_LastRenderTime         = 0.0;
-    bool     m_StratifiedSampling     = true;
     bool     m_UsePDF                 = true;
     bool     m_UseUnidirectionalLight = true;
 

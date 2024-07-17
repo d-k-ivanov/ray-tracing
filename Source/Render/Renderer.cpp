@@ -74,7 +74,7 @@ void Renderer::RenderRandom() const
 
 void Renderer::Render(Camera& camera, const Hittable& world, const HittableList& lights)
 {
-    if(camera.IsAccumulating)
+    if(camera.SamplingType == Camera::SamplerType::Accumulation)
     {
         camera.SamplesPerPixel = m_FrameCounter;
     }
@@ -96,7 +96,7 @@ void Renderer::Render(Camera& camera, const Hittable& world, const HittableList&
     std::clog << "\rDone.                 \n";
     m_Image->SetData(m_ImageData);
 
-    if(camera.IsAccumulating)
+    if(camera.SamplingType == Camera::SamplerType::Accumulation)
     {
         m_FrameCounter++;
     }
@@ -104,7 +104,7 @@ void Renderer::Render(Camera& camera, const Hittable& world, const HittableList&
 
 void Renderer::CPUOneCore(const Camera& camera, const Hittable& world, const HittableList& lights) const
 {
-    if(camera.IsAccumulating && m_FrameCounter == 1)
+    if(camera.SamplingType == Camera::SamplerType::Accumulation && m_FrameCounter == 1)
     {
         ResetPixelColorsAccumulator();
     }
@@ -114,7 +114,7 @@ void Renderer::CPUOneCore(const Camera& camera, const Hittable& world, const Hit
         std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
         for(uint32_t x = 0; x < m_Image->GetWidth(); x++)
         {
-            if(camera.IsAccumulating)
+            if(camera.SamplingType == Camera::SamplerType::Accumulation)
             {
                 Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y));
                 m_PixelColorsAccum[y * m_Image->GetWidth() + x] += camera.RayColor(r, camera.MaxDepth, world, lights);
@@ -132,7 +132,7 @@ void Renderer::CPUOneCore(const Camera& camera, const Hittable& world, const Hit
 
 void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const HittableList& lights)
 {
-    if(camera.IsAccumulating && m_FrameCounter == 1)
+    if(camera.SamplingType == Camera::SamplerType::Accumulation && m_FrameCounter == 1)
     {
         ResetPixelColorsAccumulator();
     }
@@ -146,7 +146,7 @@ void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const Hittabl
                 std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
                 [this, y, &camera, &world, &lights](const uint32_t x)
                 {
-                    if(camera.IsAccumulating)
+                    if(camera.SamplingType == Camera::SamplerType::Accumulation)
                     {
                         Ray r = camera.GetRay(static_cast<int>(x), static_cast<int>(y));
                         m_PixelColorsAccum[y * m_Image->GetWidth() + x] += camera.RayColor(r, camera.MaxDepth, world, lights);
