@@ -18,19 +18,15 @@ public:
 
     uint32_t GetFrameCounter() const { return m_FrameCounter; }
     void     ResetFrameCounter() { m_FrameCounter = 1; }
-    bool     IsAccumulating() const { return m_IsAccumulating; }
 
     void ResetPixelColorsAccumulator() const;
 
     void SetImageSize(uint32_t width, uint32_t height);
-    void Render(Camera& camera, const Hittable& world, const HittableList& lights);
     void RenderRandom() const;
     void RenderHelloWorld() const;
+    void Render(Camera& camera, const Hittable& world, const HittableList& lights);
     void CPUOneCore(const Camera& camera, const Hittable& world, const HittableList& lights) const;
-    void CPUOneCoreAccumulating(Camera& camera, const Hittable& world, const HittableList& lights);
     void CPUMultiCore(Camera& camera, const Hittable& world, const HittableList& lights);
-    void CPUMultiCoreAccumulating(Camera& camera, const Hittable& world, const HittableList& lights);
-    void CPUMultiCoreStratifiedAccumulating(Camera& camera, const Hittable& world, const HittableList& lights);
 
     std::shared_ptr<Image> GetImage() const { return m_Image; }
 

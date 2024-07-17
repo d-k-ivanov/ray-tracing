@@ -69,10 +69,7 @@ public:
         const char* renderersList[] = {
             "Ray Tracer",
             "Random INT",
-            "Hello World",
-            "CPU: One Core Accumulating",
-            "CPU: Multi Core Accumulating",
-            "CPU: Multi Core Stratified (WIP)"};
+            "Hello World"};
         if(ImGui::Combo("Renderer", &m_RendererId, renderersList, IM_ARRAYSIZE(renderersList)))
         {
             SetScene();
@@ -88,9 +85,7 @@ public:
         ImGui::Checkbox("Use Probability Density Functions (PDF)", &m_UsePDF);
         ImGui::Checkbox("Use Unidirectional Light", &m_UseUnidirectionalLight);
 
-        // TBA
-        // if(m_Renderer.IsAccumulating())
-        if(m_RendererId == 3 || m_RendererId == 6 || m_RendererId == 8)
+        if(m_IsAccumulating)
         {
             m_SceneSamples = static_cast<int>(m_Renderer.GetFrameCounter());
             if(ImGui::Button("Render", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
@@ -101,10 +96,12 @@ public:
             if(ImGui::Button("Reset", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
             {
                 m_Renderer.ResetFrameCounter();
+                Render();
             }
         }
         else
         {
+            m_Renderer.ResetFrameCounter();
             if(ImGui::Button("Render", ImVec2(-FLT_MIN, 0.0f)))
             {
                 Render();
@@ -112,6 +109,8 @@ public:
         }
 
         static bool loopRendering = false;
+        ImGui::Checkbox("Accumulate Samples", &m_IsAccumulating);
+        ImGui::SameLine();
         ImGui::Checkbox("Loop Rendering", &loopRendering);
 
         const int miliseconds = static_cast<int>(m_LastRenderTime) % 1000;
@@ -184,6 +183,7 @@ public:
                 SetScene();
                 Camera camera                 = m_Scene->GetCamera();
                 camera.RenderingType          = static_cast<Camera::RenderType>(m_RendererType);
+                camera.IsAccumulating         = m_IsAccumulating;
                 camera.StratifiedSampling     = m_StratifiedSampling;
                 camera.UsePDF                 = m_UsePDF;
                 camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
@@ -199,31 +199,6 @@ public:
             {
 
                 m_Renderer.RenderHelloWorld();
-                break;
-            }
-            case 3:
-            {
-                Camera camera                 = m_Scene->GetCamera();
-                camera.UsePDF                 = m_UsePDF;
-                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
-                m_Renderer.CPUOneCoreAccumulating(camera, m_Scene->GetWorld(), m_Scene->GetLights());
-                break;
-            }
-            case 4:
-            {
-                Camera camera                 = m_Scene->GetCamera();
-                camera.UsePDF                 = m_UsePDF;
-                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
-                m_Renderer.CPUMultiCoreAccumulating(camera, m_Scene->GetWorld(), m_Scene->GetLights());
-                break;
-            }
-            case 5:
-            {
-
-                Camera camera                 = m_Scene->GetCamera();
-                camera.UsePDF                 = m_UsePDF;
-                camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
-                m_Renderer.CPUMultiCoreStratifiedAccumulating(camera, m_Scene->GetWorld(), m_Scene->GetLights());
                 break;
             }
             default:
@@ -303,6 +278,7 @@ private:
     Renderer m_Renderer;
     int      m_RendererId             = 0;
     int      m_RendererType           = 1;
+    bool     m_IsAccumulating         = false;
     double   m_LastRenderTime         = 0.0;
     bool     m_StratifiedSampling     = true;
     bool     m_UsePDF                 = true;

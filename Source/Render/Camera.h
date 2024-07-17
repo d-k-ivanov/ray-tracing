@@ -18,14 +18,15 @@ public:
         GPU          = 2
     };
 
-    double AspectRatio      = 1.0;    // Ratio of image width over height
-    int    ImageWidth       = 100;    // Rendered image width in pixel count
-    int    SamplesPerPixel  = 10;     // Count of random samples for each pixel
-    double PixelSampleScale = 1.0;    // Count of random samples for each pixel
-    int    SqrtSpp          = 3;      // Square root of number of samples per pixel
-    double SqrtSppScale     = 1.0;    // 1.0 / SamplesPerPixel or 1.0 / SqrtSpp * SqrtSpp:
-    int    MaxDepth         = 10;     // Maximum number of ray bounces into scene
-    Color3 Background;                // Scene background color
+    double AspectRatio      = 1.0;      // Ratio of image width over height
+    int    ImageWidth       = 100;      // Rendered image width in pixel count
+    int    SamplesPerPixel  = 10;       // Count of random samples for each pixel
+    double PixelSampleScale = 1.0;      // Count of random samples for each pixel
+    int    SqrtSpp          = 3;        // Square root of number of samples per pixel
+    double SqrtSppScale     = 1.0;      // 1.0 / SamplesPerPixel or 1.0 / SqrtSpp * SqrtSpp:
+    bool   IsAccumulating   = false;    // Accumulate pixel colors over multiple frames
+    int    MaxDepth         = 10;       // Maximum number of ray bounces into scene
+    Color3 Background;                  // Scene background color
 
     RenderType RenderingType = RenderType::CPUMultiCore;
 
