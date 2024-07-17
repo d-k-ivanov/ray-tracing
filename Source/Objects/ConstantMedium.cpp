@@ -1,3 +1,4 @@
+// ReSharper disable CppUnreachableCode
 #include "ConstantMedium.h"
 
 #include <Render/HitRecord.h>

@@ -15,7 +15,7 @@ public:
     double  T = 0.0;
     double  U = 0.0;
     double  V = 0.0;
-    bool    FrontFace;
+    bool    FrontFace = false;
 
     // Sets the hit record normal vector.
     // NOTE: the parameter `outwardNormal` is assumed to have unit length.

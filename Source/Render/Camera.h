@@ -50,8 +50,7 @@ public:
     Ray GetRay(int x, int y, int xS = 0, int yS = 0) const;
 
     Color3 RayColorGradientBackground(const Ray& r, int depth, const Hittable& world) const;
-    Color3 RayColor(const Ray& r, int depth, const Hittable& world) const;
-    Color3 RayColor(const Ray& r, int depth, const Hittable& world, const Hittable& lights) const;
+    Color3 RayColor(const Ray& r, int depth, const Hittable& world, const HittableList& lights) const;
 
 private:
     int     m_ImageHeight  = 0;    // Rendered image height

@@ -98,14 +98,7 @@ uint32_t Camera::GetPixel(const uint32_t x, const uint32_t y, const Hittable& wo
             for(int xS = 0; xS < this->SqrtSpp; xS++)
             {
                 Ray r = this->GetRay(static_cast<int>(x), static_cast<int>(y), xS, yS);
-                if(lights.Objects.empty())
-                {
-                    pixelColor += this->RayColor(r, this->MaxDepth, world);
-                }
-                else
-                {
-                    pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
-                }
+                pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
             }
         }
     }
@@ -114,14 +107,7 @@ uint32_t Camera::GetPixel(const uint32_t x, const uint32_t y, const Hittable& wo
         for(int sample = 0; sample < this->SamplesPerPixel; sample++)
         {
             Ray r = this->GetRay(static_cast<int>(x), static_cast<int>(y));
-            if(lights.Objects.empty())
-            {
-                pixelColor += this->RayColor(r, this->MaxDepth, world);
-            }
-            else
-            {
-                pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
-            }
+            pixelColor += this->RayColor(r, this->MaxDepth, world, lights);
         }
     }
     return GetColorRGBA(pixelColor, this->PixelSampleScale);
@@ -167,7 +153,7 @@ Color3 Camera::RayColorGradientBackground(const Ray& r, const int depth, const H
         Color3 attenuation;
         if(rec.GetMaterial()->Scatter(r, rec, attenuation, scattered))
         {
-            return attenuation * RayColor(scattered, depth - 1, world);
+            return attenuation * RayColorGradientBackground(scattered, depth - 1, world);
         }
         return {0, 0, 0};
     }
@@ -178,84 +164,7 @@ Color3 Camera::RayColorGradientBackground(const Ray& r, const int depth, const H
     // return (1.0 - a) * Color3(1.0, 1.0, 1.0) + a * Color3(1.0, 0.0, 0.0);
 }
 
-Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world) const
-{
-    // If we've exceeded the ray bounce limit, no more light is gathered.
-    if(depth <= 0)
-    {
-        return {0, 0, 0};
-    }
-
-    HitRecord rec;
-
-    // If the ray hits nothing, return the background color.
-    if(!world.Hit(r, Interval(0.001, Infinity), rec))
-    {
-        return Background;
-    }
-
-    Color3 colorFromEmission;
-    Color3 colorFromScatter;
-
-    if(UseUnidirectionalLight)
-    {
-        colorFromEmission = rec.GetMaterial()->Emitted(r, rec, rec.U, rec.V, rec.P);
-    }
-    else
-    {
-        colorFromEmission = rec.GetMaterial()->Emitted(rec.U, rec.V, rec.P);
-    }
-
-    if(UsePDF)
-    {
-        ScatterRecord srec;
-
-        if(!rec.GetMaterial()->Scatter(r, rec, srec))
-        {
-            return colorFromEmission;
-        }
-
-        if(srec.SkipPDF)
-        {
-            return srec.Attenuation * RayColor(srec.SkipPDFRay, depth - 1, world);
-        }
-
-        // const CosinePDF surfacePDF(rec.Normal);
-        // const Ray       scattered = Ray(rec.P, surfacePDF.Generate(), r.Time());
-        // const auto      pdfVal    = surfacePDF.Value(scattered.Direction());
-
-        const auto       pdfPtr = std::make_shared<CosinePDF>(rec.Normal);
-        const MixturePDF mixedPDF(pdfPtr, srec.PDFPtr);
-
-        const Ray  scattered = Ray(rec.P, mixedPDF.Generate(), r.Time());
-        const auto pdfVal    = mixedPDF.Value(scattered.Direction());
-
-        // Scattering is impossible
-        if(isnan(pdfVal) || DoubleUtils::isEqual(pdfVal, 0.0, DoubleUtils::DefaultTolerance()))
-        {
-            return colorFromEmission;
-        }
-
-        const double scatteringPDF = rec.GetMaterial()->ScatteringPDF(r, rec, scattered);
-
-        const Color3 sampleColor = RayColor(scattered, depth - 1, world);
-        colorFromScatter         = (srec.Attenuation * scatteringPDF * sampleColor) / pdfVal;
-    }
-    else
-    {
-        Ray    scattered;
-        Color3 attenuation;
-
-        if(!rec.GetMaterial()->Scatter(r, rec, attenuation, scattered))
-            return colorFromEmission;
-
-        colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);
-    }
-
-    return colorFromEmission + colorFromScatter;
-}
-
-Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, const Hittable& lights) const
+Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, const HittableList& lights) const
 {
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if(depth <= 0)
@@ -297,8 +206,20 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
             return srec.Attenuation * RayColor(srec.SkipPDFRay, depth - 1, world, lights);
         }
 
-        const auto       lightPtr = std::make_shared<HittablePDF>(lights, rec.P);
-        const MixturePDF mixedPDF(lightPtr, srec.PDFPtr);
+        std::shared_ptr<PDF> pdfPtr;
+        if(lights.Objects.empty())
+        {
+            // const CosinePDF surfacePDF(rec.Normal);
+            // const Ray       scattered = Ray(rec.P, surfacePDF.Generate(), r.Time());
+            // const auto      pdfVal    = surfacePDF.Value(scattered.Direction());
+            pdfPtr = std::make_shared<CosinePDF>(rec.Normal);
+        }
+        else
+        {
+            pdfPtr = std::make_shared<HittablePDF>(lights, rec.P);
+        }
+
+        const MixturePDF mixedPDF(pdfPtr, srec.PDFPtr);
 
         const Ray  scattered = Ray(rec.P, mixedPDF.Generate(), r.Time());
         const auto pdfVal    = mixedPDF.Value(scattered.Direction());
@@ -320,9 +241,11 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Hittable& world, co
         Color3 attenuation;
 
         if(!rec.GetMaterial()->Scatter(r, rec, attenuation, scattered))
+        {
             return colorFromEmission;
+        }
 
-        colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);
+        colorFromScatter = attenuation * RayColor(scattered, depth - 1, world, lights);
     }
 
     return colorFromEmission + colorFromScatter;

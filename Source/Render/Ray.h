@@ -29,5 +29,5 @@ public:
 private:
     Point3  m_Origin;
     Vector3 m_Direction;
-    double  m_Time;
+    double  m_Time = 0;
 };
