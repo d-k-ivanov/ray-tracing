@@ -181,7 +181,6 @@ public:
         {
             case 0:
             {
-                SetScene();
                 Camera camera                 = m_Scene->GetCamera();
                 camera.RenderingType          = static_cast<Camera::RenderType>(m_RendererType);
                 camera.SamplingType           = static_cast<Camera::SamplerType>(m_SamplingType);

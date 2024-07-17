@@ -93,7 +93,7 @@ void Renderer::Render(Camera& camera, const Hittable& world, const HittableList&
             break;
     }
 
-    std::clog << "\rDone.                 \n";
+    std::clog << "\rDone.                                        ";
     m_Image->SetData(m_ImageData);
 
     if(camera.SamplingType == Camera::SamplerType::Accumulation)
@@ -111,7 +111,7 @@ void Renderer::CPUOneCore(const Camera& camera, const Hittable& world, const Hit
 
     for(uint32_t y = 0; y < m_Image->GetHeight(); y++)
     {
-        std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
+        std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << "                    " << std::flush;
         for(uint32_t x = 0; x < m_Image->GetWidth(); x++)
         {
             if(camera.SamplingType == Camera::SamplerType::Accumulation)
@@ -141,7 +141,7 @@ void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const Hittabl
         std::execution::par, m_ImageHeightIterator.begin(), m_ImageHeightIterator.end(),
         [this, &camera, &world, &lights](uint32_t y)
         {
-            std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << ' ' << std::flush;
+            std::clog << "\rScanlines remaining: " << (m_Image->GetHeight() - y) << "                    " << std::flush;
             std::for_each(
                 std::execution::par, m_ImageWidthIterator.begin(), m_ImageWidthIterator.end(),
                 [this, y, &camera, &world, &lights](const uint32_t x)
