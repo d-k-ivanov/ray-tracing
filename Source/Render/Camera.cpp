@@ -122,13 +122,13 @@ Ray Camera::GetRay(const int x, const int y, const int xS, const int yS) const
     // if required to sample pixels randomly around the pixel location (stratified sampling)
     if(SamplingType == SamplerType::Stratified)
     {
-        // pixelSampleOffset = SampleSquare(xS, yS);
-        pixelSampleOffset = SampleDisk(xS, yS);
+        pixelSampleOffset = SampleSquare(xS, yS);
+        // pixelSampleOffset = SampleDisk(xS, yS);
     }
     else
     {
-        // pixelSampleOffset = SampleSquare();
-        pixelSampleOffset = SampleDisk();
+        pixelSampleOffset = SampleSquare();
+        // pixelSampleOffset = SampleDisk();
     }
 
     // const auto pixelSample = m_Pixel00Lkoc + (x * m_PixelDeltaU) + (y * m_PixelDeltaV);

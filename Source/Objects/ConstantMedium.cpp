@@ -3,6 +3,8 @@
 
 #include <Render/HitRecord.h>
 
+#pragma warning(push)
+#pragma warning(disable : 6237)    // warning C6237: debugging variables
 bool ConstantMedium::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
 {
     // Print occasional samples when debugging. To enable, set enableDebug true.
@@ -71,6 +73,7 @@ bool ConstantMedium::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) co
 
     return true;
 }
+#pragma warning(pop)
 
 AABB ConstantMedium::BoundingBox() const
 {

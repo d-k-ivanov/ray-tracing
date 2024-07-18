@@ -72,6 +72,7 @@ public:
             SetScene();
         }
 
+        ImGui::Text("Renderer:");
         ImGui::RadioButton("CPU Single Core", &m_RendererType, 0);
         ImGui::SameLine();
         ImGui::RadioButton("CPU Multi Core", &m_RendererType, 1);
