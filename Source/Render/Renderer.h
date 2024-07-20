@@ -2,7 +2,7 @@
 
 #include "Color.h"
 
-#include <UI/Image.h>
+#include <Vulkan/Image.h>
 
 #include <memory>
 #include <vector>

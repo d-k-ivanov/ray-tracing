@@ -1,12 +1,12 @@
 
 #include <Render/Renderer.h>
 #include <Scenes/Scene.h>
-#include <UI/Application.h>
 #include <UI/ImGuiHelper.h>
-#include <UI/Image.h>
 #include <UI/Layer.h>
 #include <Utils/Log.h>
 #include <Utils/Timers.h>
+#include <Vulkan/Application.h>
+#include <Vulkan/Image.h>
 
 #include <imgui.h>
 
@@ -333,6 +333,7 @@ Application* CreateApplication(int argc, char** argv)
             }
         });
     LOG_INFO("Started...");
+    LOG_INFO("Vulkan SDK Header Version: {}", VK_HEADER_VERSION);
     return app;
 }
 

@@ -126,10 +126,6 @@ set(SOURCE_FILES
     Source/Render/Texture.cpp
     Source/Render/Texture.h
 
-    Source/UI/Application.cpp
-    Source/UI/Application.h
-    Source/UI/Image.cpp
-    Source/UI/Image.h
     Source/UI/ImGuiHelper.cpp
     Source/UI/ImGuiHelper.h
     Source/UI/Layer.cpp
@@ -173,6 +169,11 @@ set(SOURCE_FILES
     # Custom scenes
     Source/Scenes/CornellBoxLightsScene.cpp
     Source/Scenes/WhiteSperesScene.cpp
+
+    Source/Vulkan/Application.cpp
+    Source/Vulkan/Application.h
+    Source/Vulkan/Image.cpp
+    Source/Vulkan/Image.h
 
     # Shaders
     ${SHADER_FILES}
