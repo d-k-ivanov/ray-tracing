@@ -2,7 +2,7 @@
 
 #include "Texture.h"
 
-#include <UI/Image.h>
+#include <Vulkan/Image.h>
 
 class ImageTexture final : public Texture
 {
