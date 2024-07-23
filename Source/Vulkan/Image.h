@@ -4,6 +4,9 @@
 
 #include <string>
 
+namespace Vulkan
+{
+
 enum class ImageFormat
 {
     None = 0,
@@ -51,3 +54,5 @@ private:
 
     std::string m_Filepath;
 };
+
+}    // namespace Vulkan

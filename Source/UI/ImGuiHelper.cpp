@@ -2,6 +2,9 @@
 
 #include <imgui.h>
 
+namespace UI
+{
+
 void ImGuiSettings::ShowStyleSelector(const char* label)
 {
     static int styleIdx = 1;
@@ -42,3 +45,5 @@ void ImGuiSettings::ShowFontSelector(const char* label)
         ImGui::EndCombo();
     }
 }
+
+}    // namespace UI

@@ -4,15 +4,20 @@
 
 #include <memory>
 
+namespace Objects
+{
+
 class Translate final : public Hittable
 {
 public:
-    Translate(const std::shared_ptr<Hittable>& object, const Vector3& displacement);
-    bool Hit(const Ray& ray, Interval rayT, HitRecord& rec) const override;
-    AABB BoundingBox() const override;
+    Translate(const std::shared_ptr<Hittable>& object, const Math::Vector3& displacement);
+    bool       Hit(const Render::Ray& ray, Math::Interval rayT, Render::HitRecord& rec) const override;
+    Math::AABB BoundingBox() const override;
 
 private:
     std::shared_ptr<Hittable> m_Object;
-    Vector3                   m_Offset;
-    AABB                      m_BoundingBox;
+    Math::Vector3             m_Offset;
+    Math::AABB                m_BoundingBox;
 };
+
+}    // namespace Objects

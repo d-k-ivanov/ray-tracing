@@ -3,16 +3,19 @@
 #include <Math/Converters.h>
 #include <Render/HitRecord.h>
 
+namespace Objects
+{
+
 RotateY::RotateY(const std::shared_ptr<Hittable>& object, const double angle)
     : m_Object(object)
 {
-    const auto radians = DegreesToRadians(angle);
+    const auto radians = Math::DegreesToRadians(angle);
     m_SinTheta         = std::sin(radians);
     m_CosTheta         = std::cos(radians);
     m_BoundingBox      = m_Object->BoundingBox();
 
-    Point3 min(Infinity, Infinity, Infinity);
-    Point3 max(-Infinity, -Infinity, -Infinity);
+    Math::Point3 min(Math::Infinity, Math::Infinity, Math::Infinity);
+    Math::Point3 max(-Math::Infinity, -Math::Infinity, -Math::Infinity);
 
     for(int i = 0; i < 2; i++)
     {
@@ -27,7 +30,7 @@ RotateY::RotateY(const std::shared_ptr<Hittable>& object, const double angle)
                 const auto newx = m_CosTheta * x + m_SinTheta * z;
                 const auto newz = -m_SinTheta * x + m_CosTheta * z;
 
-                Vector3 tester(newx, y, newz);
+                Math::Vector3 tester(newx, y, newz);
 
                 for(int c = 0; c < 3; c++)
                 {
@@ -38,10 +41,10 @@ RotateY::RotateY(const std::shared_ptr<Hittable>& object, const double angle)
         }
     }
 
-    m_BoundingBox = AABB(min, max);
+    m_BoundingBox = Math::AABB(min, max);
 }
 
-bool RotateY::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
+bool RotateY::Hit(const Render::Ray& ray, const Math::Interval rayT, Render::HitRecord& rec) const
 {
     // Change the ray from world space to object space
     auto origin    = ray.Origin();
@@ -53,7 +56,7 @@ bool RotateY::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
     direction[0] = m_CosTheta * ray.Direction()[0] - m_SinTheta * ray.Direction()[2];
     direction[2] = m_SinTheta * ray.Direction()[0] + m_CosTheta * ray.Direction()[2];
 
-    const Ray rotatedRay(origin, direction, ray.Time());
+    const Render::Ray rotatedRay(origin, direction, ray.Time());
 
     // Determine whether an intersection exists in object space (and if so, where)
     if(!m_Object->Hit(rotatedRay, rayT, rec))
@@ -75,7 +78,9 @@ bool RotateY::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
     return true;
 }
 
-AABB RotateY::BoundingBox() const
+Math::AABB RotateY::BoundingBox() const
 {
     return m_BoundingBox;
 }
+
+}    // namespace Objects

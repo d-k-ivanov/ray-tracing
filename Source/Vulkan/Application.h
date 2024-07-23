@@ -11,6 +11,9 @@
 
 struct GLFWwindow;
 
+namespace Vulkan
+{
+
 struct ApplicationSpecs
 {
     std::string Name   = "Application";
@@ -32,11 +35,11 @@ public:
     template <typename T>
     void PushLayer()
     {
-        static_assert(std::is_base_of_v<Layer, T>, "Pushed type is not subclass of Layer!");
+        static_assert(std::is_base_of_v<UI::Layer, T>, "Pushed type is not subclass of Layer!");
         m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
     }
 
-    void PushLayer(const std::shared_ptr<Layer>& layer);
+    void PushLayer(const std::shared_ptr<UI::Layer>& layer);
 
     void                    Close();
     double                  GetTime() const;
@@ -61,9 +64,11 @@ private:
     double m_FrameTime     = 0.0f;
     double m_LastFrameTime = 0.0f;
 
-    std::vector<std::shared_ptr<Layer>> m_LayerStack;
-    std::function<void()>               m_MenubarCallback;
+    std::vector<std::shared_ptr<UI::Layer>> m_LayerStack;
+    std::function<void()>                   m_MenubarCallback;
 };
 
 // Implemented by CLIENT
 Application* CreateApplication(int argc, char** argv);
+
+}    // namespace Vulkan

@@ -3,6 +3,9 @@
 #include <Objects/HittableList.h>
 #include <Render/Camera.h>
 
+namespace Scenes
+{
+
 class Scene
 {
 public:
@@ -15,18 +18,18 @@ public:
     }
     virtual ~Scene() = default;
 
-    virtual Camera&       GetCamera();
-    virtual Hittable&     GetWorld();
-    virtual HittableList& GetLights();
+    virtual Render::Camera&        GetCamera();
+    virtual Objects::Hittable&     GetWorld();
+    virtual Objects::HittableList& GetLights();
 
 protected:
-    Camera       m_Camera;
-    HittableList m_World;
-    HittableList m_Lights;
-    double       m_AspectRatio     = 16.0 / 9.0;
-    int          m_Width           = 400;
-    int          m_SamplesPerPixel = 1;
-    int          m_MaxDepth        = 1;
+    Render::Camera        m_Camera;
+    Objects::HittableList m_World;
+    Objects::HittableList m_Lights;
+    double                m_AspectRatio     = 16.0 / 9.0;
+    int                   m_Width           = 400;
+    int                   m_SamplesPerPixel = 1;
+    int                   m_MaxDepth        = 1;
 };
 
 class RTWeekOneDefaultScene final : public Scene
@@ -136,3 +139,5 @@ class WhiteSperesScene final : public Scene
 public:
     WhiteSperesScene(double aspectRatio, int width, int samplesPerPixel, int maxDepth);
 };
+
+}    // namespace Scenes

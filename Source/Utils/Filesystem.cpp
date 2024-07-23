@@ -1,15 +1,18 @@
 #include "Filesystem.h"
 
 #ifdef _WIN32
-#include <Shlwapi.h>
-#include <windows.h>
+    #include <Shlwapi.h>
+    #include <windows.h>
 #else
-#include <libgen.h>
-#include <limits.h>
-#include <unistd.h>
+    #include <libgen.h>
+    #include <limits.h>
+    #include <unistd.h>
 #endif
 
 #include <filesystem>
+
+namespace Utils
+{
 
 std::string ThisExecutableLocation()
 {
@@ -28,3 +31,5 @@ std::string ThisExecutableLocation()
     const auto executableDir = weakly_canonical(std::filesystem::path(executablePath)).parent_path();
     return executableDir.string();
 }
+
+}    // namespace Utils

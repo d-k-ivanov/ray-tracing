@@ -4,6 +4,9 @@
 
 #include "Log.h"
 
+namespace Utils
+{
+
 #define VK_RESULT_CASE(code) \
     case code:               \
         out << #code;        \
@@ -106,3 +109,5 @@ const char* VulkanException::what() const noexcept
 {
     return m_ErrorString.c_str();
 }
+
+}    // namespace Utils

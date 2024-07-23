@@ -1,11 +1,14 @@
 #include "Material.h"
 
-Color3 Material::Emitted(double u, double v, const Point3& p) const
+namespace Render
+{
+
+Color3 Material::Emitted(double u, double v, const Math::Point3& p) const
 {
     return {0, 0, 0};
 }
 
-Color3 Material::Emitted(const Ray& rIn, const HitRecord& rec, double u, double v, const Point3& p) const
+Color3 Material::Emitted(const Ray& rIn, const HitRecord& rec, double u, double v, const Math::Point3& p) const
 {
     return {0, 0, 0};
 }
@@ -19,3 +22,5 @@ double Material::ScatteringPDF(const Ray& rIn, const HitRecord& rec, const Ray& 
 {
     return 0;
 }
+
+}    // namespace Render

@@ -4,6 +4,9 @@
 #include "SolidColor.h"
 #include "Texture.h"
 
+namespace Render
+{
+
 class Isotropic final : public Material
 {
 public:
@@ -26,3 +29,5 @@ public:
 private:
     std::shared_ptr<Texture> m_Albedo;
 };
+
+}    // namespace Render

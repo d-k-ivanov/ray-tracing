@@ -2,6 +2,9 @@
 
 #include <algorithm>
 
+namespace Math
+{
+
 double DoubleUtils::Epsilon()
 {
     // return std::numeric_limits<double>::epsilon();
@@ -44,3 +47,5 @@ bool DoubleUtils::isValueInRange(const double value, const double lowBound, cons
 {
     return isLessThanOrEqual(lowBound, value, absoluteEpsilon) && isLessThanOrEqual(value, upBound, absoluteEpsilon);
 }
+
+}    // namespace Math

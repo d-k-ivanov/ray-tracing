@@ -3,6 +3,9 @@
 #include <chrono>
 #include <string>
 
+namespace Utils
+{
+
 class Timer
 {
 public:
@@ -30,3 +33,5 @@ private:
     std::string m_Name;
     Timer       m_Timer;
 };
+
+}    // namespace Utils

@@ -1,5 +1,8 @@
 #include "Interval.h"
 
+namespace Math
+{
+
 // const static Interval Empty(+Infinity, -Infinity);
 // const static Interval Universe(-Infinity, +Infinity);
 
@@ -79,3 +82,5 @@ Interval Interval::Span(double a, double b)
         return {b, a};
     return {a, b};
 }
+
+}    // namespace Math

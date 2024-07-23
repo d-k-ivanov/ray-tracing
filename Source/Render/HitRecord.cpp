@@ -2,7 +2,10 @@
 
 #include "Ray.h"
 
-void HitRecord::SetFaceNormal(const Ray& r, const Vector3& outwardNormal)
+namespace Render
+{
+
+void HitRecord::SetFaceNormal(const Ray& r, const Math::Vector3& outwardNormal)
 {
     FrontFace = DotProduct(r.Direction(), outwardNormal) < 0;
     Normal    = FrontFace ? outwardNormal : -outwardNormal;
@@ -17,3 +20,5 @@ void HitRecord::SetMaterial(const std::shared_ptr<Material>& material)
 {
     m_Material = material;
 }
+
+}    // namespace Render

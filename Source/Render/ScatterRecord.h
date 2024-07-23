@@ -5,13 +5,21 @@
 
 #include <memory>
 
+namespace Math
+{
 class PDF;
+}
+
+namespace Render
+{
 
 class ScatterRecord
 {
 public:
-    Color3               Attenuation;
-    std::shared_ptr<PDF> PDFPtr;
-    bool                 SkipPDF = false;
-    Ray                  SkipPDFRay;
+    Color3                     Attenuation;
+    std::shared_ptr<Math::PDF> PDFPtr;
+    bool                       SkipPDF = false;
+    Ray                        SkipPDFRay;
 };
+
+}    // namespace Render

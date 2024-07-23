@@ -2,6 +2,9 @@
 
 #include "Converters.h"
 
+namespace Math
+{
+
 CosinePDF::CosinePDF(const Vector3& w)
 {
     m_Uvw.BuildFromW(w);
@@ -18,3 +21,5 @@ Vector3 CosinePDF::Generate() const
 {
     return m_Uvw.Local(RandomCosineDirection());
 }
+
+}    // namespace Math

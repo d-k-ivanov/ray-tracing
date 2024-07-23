@@ -1,6 +1,9 @@
 #include "CheckerTexture.h"
 
-Color3 CheckerTexture::Value(const double u, const double v, const Point3& point) const
+namespace Render
+{
+
+Color3 CheckerTexture::Value(const double u, const double v, const Math::Point3& point) const
 {
     const auto xInteger = static_cast<int>(std::floor(m_InvertedScale * point.X()));
     const auto yInteger = static_cast<int>(std::floor(m_InvertedScale * point.Y()));
@@ -10,3 +13,5 @@ Color3 CheckerTexture::Value(const double u, const double v, const Point3& point
 
     return isEven ? m_Even->Value(u, v, point) : m_Odd->Value(u, v, point);
 }
+
+}    // namespace Render

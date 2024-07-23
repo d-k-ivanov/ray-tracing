@@ -1,5 +1,8 @@
 #include "MixturePDF.h"
 
+namespace Math
+{
+
 MixturePDF::MixturePDF(const std::shared_ptr<PDF>& p0, const std::shared_ptr<PDF>& p1)
 {
     m_P[0] = p0;
@@ -13,7 +16,7 @@ double MixturePDF::Value(const Vector3& direction) const
 
 Vector3 MixturePDF::Generate() const
 {
-    if(Random::Double() < 0.5)
+    if(Utils::Random::Double() < 0.5)
     {
         return m_P[0]->Generate();
     }
@@ -22,3 +25,5 @@ Vector3 MixturePDF::Generate() const
         return m_P[1]->Generate();
     }
 }
+
+}    // namespace Math

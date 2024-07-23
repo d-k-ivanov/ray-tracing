@@ -6,13 +6,16 @@
 #include <algorithm>
 #include <execution>
 
+namespace Objects
+{
+
 BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects)
 {
-    m_BoundingBox = AABB::Empty;
+    m_BoundingBox = Math::AABB::Empty;
 
     for(const auto& object : srcObjects)
     {
-        m_BoundingBox = AABB(m_BoundingBox, object->BoundingBox());
+        m_BoundingBox = Math::AABB(m_BoundingBox, object->BoundingBox());
     }
 
     // const int  axis       = Random::Int(0, 2);
@@ -66,18 +69,18 @@ BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects)
     // m_BoundingBox = AABB(m_Left->BoundingBox(), m_Right->BoundingBox());
 }
 
-bool BVHNode::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
+bool BVHNode::Hit(const Render::Ray& ray, const Math::Interval rayT, Render::HitRecord& rec) const
 {
     if(!m_BoundingBox.Hit(ray, rayT))
         return false;
 
     const bool hitLeft  = m_Left->Hit(ray, rayT, rec);
-    const bool hitRight = m_Right->Hit(ray, Interval(rayT.Min, hitLeft ? rec.T : rayT.Max), rec);
+    const bool hitRight = m_Right->Hit(ray, Math::Interval(rayT.Min, hitLeft ? rec.T : rayT.Max), rec);
 
     return hitLeft || hitRight;
 }
 
-AABB BVHNode::BoundingBox() const
+Math::AABB BVHNode::BoundingBox() const
 {
     return m_BoundingBox;
 }
@@ -106,3 +109,5 @@ bool BVHNode::BoxZCompare(const std::shared_ptr<Hittable>& a, const std::shared_
 {
     return BoxCompare(a, b, 2);
 }
+
+}    // namespace Objects

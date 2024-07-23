@@ -3,6 +3,9 @@
 #include "ONB.h"
 #include "PDF.h"
 
+namespace Math
+{
+
 class CosinePDF final : public PDF
 {
 public:
@@ -14,3 +17,5 @@ public:
 private:
     ONB m_Uvw;
 };
+
+}    // namespace Math

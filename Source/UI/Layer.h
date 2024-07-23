@@ -1,5 +1,8 @@
 #pragma once
 
+namespace UI
+{
+
 class Layer
 {
 public:
@@ -10,3 +13,5 @@ public:
     virtual void OnUpdate(double deltaTime) { }
     virtual void OnUIRender() { }
 };
+
+}    // namespace UI

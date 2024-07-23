@@ -2,6 +2,9 @@
 
 #include "Material.h"
 
+namespace Render
+{
+
 class Metal final : public Material
 {
 public:
@@ -19,3 +22,5 @@ private:
     Color3 m_Albedo;
     double m_Fuzz;
 };
+
+}    // namespace Render

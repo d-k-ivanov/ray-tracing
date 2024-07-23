@@ -1,16 +1,21 @@
 #include "Scene.h"
 
-Camera& Scene::GetCamera()
+namespace Scenes
+{
+
+Render::Camera& Scene::GetCamera()
 {
     return m_Camera;
 }
 
-Hittable& Scene::GetWorld()
+Objects::Hittable& Scene::GetWorld()
 {
     return m_World;
 }
 
-HittableList& Scene::GetLights()
+Objects::HittableList& Scene::GetLights()
 {
     return m_Lights;
 }
+
+}    // namespace Scenes

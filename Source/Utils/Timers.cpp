@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+namespace Utils
+{
+
 Timer::Timer()
 {
     Reset();
@@ -27,3 +30,5 @@ ScopedTimer::~ScopedTimer()
     const double time = m_Timer.ElapsedMilliseconds();
     std::cout << "[TIMER] " << m_Name << " - " << time << "ms\n";
 }
+
+}    // namespace Utils

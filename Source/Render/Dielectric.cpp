@@ -4,20 +4,23 @@
 #include "Ray.h"
 #include "ScatterRecord.h"
 
+namespace Render
+{
+
 bool Dielectric::Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const
 {
     attenuation                  = Color3(1.0, 1.0, 1.0);
     const double refractionRatio = rec.FrontFace ? (1.0 / m_Ir) : m_Ir;
 
-    const Vector3 unitDirection = UnitVector(rIn.Direction());
+    const Math::Vector3 unitDirection = Math::UnitVector(rIn.Direction());
 
     const double cosTheta = fmin(DotProduct(-unitDirection, rec.Normal), 1.0);
     const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
-    const bool cannotRefract = refractionRatio * sinTheta > 1.0;
-    Vector3    direction;
+    const bool    cannotRefract = refractionRatio * sinTheta > 1.0;
+    Math::Vector3 direction;
 
-    if(cannotRefract || Reflectance(cosTheta, refractionRatio) > Random::Double())
+    if(cannotRefract || Reflectance(cosTheta, refractionRatio) > Utils::Random::Double())
     {
         direction = Reflect(unitDirection, rec.Normal);
     }
@@ -37,15 +40,15 @@ bool Dielectric::Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuati
     attenuation                  = Color3(1.0, 1.0, 1.0);
     const double refractionRatio = rec.FrontFace ? (1.0 / m_Ir) : m_Ir;
 
-    const Vector3 unitDirection = UnitVector(rIn.Direction());
+    const Math::Vector3 unitDirection = Math::UnitVector(rIn.Direction());
 
     const double cosTheta = fmin(DotProduct(-unitDirection, rec.Normal), 1.0);
     const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
-    const bool cannotRefract = refractionRatio * sinTheta > 1.0;
-    Vector3    direction;
+    const bool    cannotRefract = refractionRatio * sinTheta > 1.0;
+    Math::Vector3 direction;
 
-    if(cannotRefract || Reflectance(cosTheta, refractionRatio) > Random::Double())
+    if(cannotRefract || Reflectance(cosTheta, refractionRatio) > Utils::Random::Double())
     {
         direction = Reflect(unitDirection, rec.Normal);
     }
@@ -68,15 +71,15 @@ bool Dielectric::Scatter(const Ray& rIn, const HitRecord& rec, ScatterRecord& sr
 
     const double refractionRatio = rec.FrontFace ? (1.0 / m_Ir) : m_Ir;
 
-    const Vector3 unitDirection = UnitVector(rIn.Direction());
+    const Math::Vector3 unitDirection = Math::UnitVector(rIn.Direction());
 
     const double cosTheta = fmin(DotProduct(-unitDirection, rec.Normal), 1.0);
     const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
-    const bool cannotRefract = refractionRatio * sinTheta > 1.0;
-    Vector3    direction;
+    const bool    cannotRefract = refractionRatio * sinTheta > 1.0;
+    Math::Vector3 direction;
 
-    if(cannotRefract || Reflectance(cosTheta, refractionRatio) > Random::Double())
+    if(cannotRefract || Reflectance(cosTheta, refractionRatio) > Utils::Random::Double())
     {
         direction = Reflect(unitDirection, rec.Normal);
     }
@@ -97,3 +100,5 @@ double Dielectric::Reflectance(const double cosine, const double refIdx)
     r0      = r0 * r0;
     return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
+
+}    // namespace Render

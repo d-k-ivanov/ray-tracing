@@ -11,6 +11,9 @@
 
 #include <random>
 
+namespace Utils
+{
+
 class Random
 {
 public:
@@ -34,3 +37,5 @@ private:
     static thread_local std::minstd_rand                                             s_RandomEngine;
     static thread_local std::uniform_int_distribution<std::minstd_rand::result_type> s_RandomDistribution;
 };
+
+}    // namespace Utils

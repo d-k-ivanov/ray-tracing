@@ -2,12 +2,17 @@
 
 #include <Math/Converters.h>
 
-double Hittable::PDFValue(const Vector3& origin, const Vector3& direction) const
+namespace Objects
+{
+
+double Hittable::PDFValue(const Math::Vector3& origin, const Math::Vector3& direction) const
 {
     return 0.0;
 }
 
-Vector3 Hittable::Random(const Vector3& origin) const
+Math::Vector3 Hittable::Random(const Math::Vector3& origin) const
 {
     return {1, 0, 0};
 }
+
+}    // namespace Objects

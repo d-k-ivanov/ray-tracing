@@ -5,6 +5,9 @@
 
 #include <Render/Ray.h>
 
+namespace Math
+{
+
 // Axis-Aligned Bounding Boxes
 class AABB
 {
@@ -24,9 +27,9 @@ public:
     // Return an AABB that has no side narrower than some delta, padding if necessary.
     AABB            Pad() const;
     const Interval& AxisInterval(int n) const;
-    bool            HitNonOptimized(const Ray& ray, Interval rayT) const;
-    bool            Hit(const Ray& ray, Interval rayT) const;
-    bool            HitNew(const Ray& ray, Interval rayT) const;
+    bool            HitNonOptimized(const Render::Ray& ray, Interval rayT) const;
+    bool            Hit(const Render::Ray& ray, Interval rayT) const;
+    bool            HitNew(const Render::Ray& ray, Interval rayT) const;
 
     // Returns the index of the longest axis of the bounding box.
     int LongestAxis() const;
@@ -48,3 +51,4 @@ inline AABB operator+(const Vector3& offset, const AABB& bbox)
 {
     return bbox + offset;
 }
+}    // namespace Math

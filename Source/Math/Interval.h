@@ -4,6 +4,9 @@
 
 #include <cmath>
 
+namespace Math
+{
+
 class Interval
 {
 public:
@@ -44,3 +47,5 @@ inline Interval operator+(const double displacement, const Interval& intervalVal
 {
     return intervalValue + displacement;
 }
+
+}    // namespace Math

@@ -4,6 +4,9 @@
 
 #include <memory>
 
+namespace Math
+{
+
 class MixturePDF final : public PDF
 {
 public:
@@ -15,3 +18,5 @@ public:
 private:
     std::shared_ptr<PDF> m_P[2];
 };
+
+}    // namespace Math

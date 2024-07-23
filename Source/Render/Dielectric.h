@@ -2,6 +2,9 @@
 
 #include "Material.h"
 
+namespace Render
+{
+
 class Dielectric final : public Material
 {
 public:
@@ -19,3 +22,5 @@ private:
 
     static double Reflectance(double cosine, double refIdx);
 };
+
+}    // namespace Render

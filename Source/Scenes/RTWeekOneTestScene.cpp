@@ -6,6 +6,9 @@
 #include <Render/Lambertian.h>
 // #include <Render/Metal.h>
 
+namespace Scenes
+{
+
 RTWeekOneTestScene::RTWeekOneTestScene(const double aspectRatio, const int width, const int samplesPerPixel, const int maxDepth)
     : Scene(aspectRatio, width, samplesPerPixel, maxDepth)
 {
@@ -34,18 +37,18 @@ RTWeekOneTestScene::RTWeekOneTestScene(const double aspectRatio, const int width
     // m_World.Add(std::make_shared<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, materialRight));
 
     // Camera Test
-    auto r             = cos(Pi / 4);
-    auto materialLeft  = std::make_shared<Lambertian>(Color3(0, 0, 1));
-    auto materialRight = std::make_shared<Lambertian>(Color3(1, 0, 0));
+    auto r             = cos(Math::Pi / 4);
+    auto materialLeft  = std::make_shared<Render::Lambertian>(Render::Color3(0, 0, 1));
+    auto materialRight = std::make_shared<Render::Lambertian>(Render::Color3(1, 0, 0));
     //
-    m_World.Add(std::make_shared<Sphere>(Point3(-r, 0, -1), r, materialLeft));
-    m_World.Add(std::make_shared<Sphere>(Point3(r, 0, -1), r, materialRight));
+    m_World.Add(std::make_shared<Objects::Sphere>(Math::Point3(-r, 0, -1), r, materialLeft));
+    m_World.Add(std::make_shared<Objects::Sphere>(Math::Point3(r, 0, -1), r, materialRight));
 
     m_Camera.AspectRatio     = m_AspectRatio;
     m_Camera.ImageWidth      = m_Width;
     m_Camera.SamplesPerPixel = m_SamplesPerPixel;
     m_Camera.MaxDepth        = m_MaxDepth;
-    m_Camera.Background      = Color3(0.70, 0.80, 1.00);
+    m_Camera.Background      = Render::Color3(0.70, 0.80, 1.00);
 
     // m_Camera.Vfov     = 90;
     // m_Camera.Vfov     = 20;
@@ -59,3 +62,5 @@ RTWeekOneTestScene::RTWeekOneTestScene(const double aspectRatio, const int width
     // m_Camera.DefocusAngle = 10.0;
     // m_Camera.FocusDist    = 3.4;
 }
+
+}    // namespace Scenes

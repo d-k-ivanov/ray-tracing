@@ -2,6 +2,9 @@
 
 #include "Vector3.h"
 
+namespace Math
+{
+
 Vector3 ONB::operator[](const int i) const
 {
     return m_Axis[i];
@@ -47,3 +50,5 @@ void ONB::BuildFromW(const Vector3& w)
     m_Axis[1]           = v;
     m_Axis[2]           = unitW;
 }
+
+}    // namespace Math

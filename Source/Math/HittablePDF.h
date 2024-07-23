@@ -4,10 +4,13 @@
 
 #include <Objects/Hittable.h>
 
+namespace Math
+{
+
 class HittablePDF final : public PDF
 {
 public:
-    HittablePDF(const Hittable& objects, const Point3& origin)
+    HittablePDF(const Objects::Hittable& objects, const Point3& origin)
         : m_Objects(objects)
         , m_Origin(origin)
     {
@@ -17,6 +20,8 @@ public:
     Vector3 Generate() const override;
 
 private:
-    const Hittable& m_Objects;
-    Point3          m_Origin;
+    const Objects::Hittable& m_Objects;
+    Point3                   m_Origin;
 };
+
+}    // namespace Math

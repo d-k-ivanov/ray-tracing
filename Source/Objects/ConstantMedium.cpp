@@ -3,22 +3,25 @@
 
 #include <Render/HitRecord.h>
 
+namespace Objects
+{
+
 #pragma warning(push)
 #pragma warning(disable : 6237)    // warning C6237: debugging variables
-bool ConstantMedium::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
+bool ConstantMedium::Hit(const Render::Ray& ray, const Math::Interval rayT, Render::HitRecord& rec) const
 {
     // Print occasional samples when debugging. To enable, set enableDebug true.
     constexpr bool enableDebug = false;
-    constexpr bool debugging   = enableDebug && Random::Double() < 0.00001;
+    constexpr bool debugging   = enableDebug && Utils::Random::Double() < 0.00001;
 
-    HitRecord rec1, rec2;
+    Render::HitRecord rec1, rec2;
 
-    if(!m_Boundary->Hit(ray, Interval::Universe, rec1))
+    if(!m_Boundary->Hit(ray, Math::Interval::Universe, rec1))
     {
         return false;
     }
 
-    if(!m_Boundary->Hit(ray, Interval(rec1.T + 0.0001, Infinity), rec2))
+    if(!m_Boundary->Hit(ray, Math::Interval(rec1.T + 0.0001, Math::Infinity), rec2))
     {
         return false;
     }
@@ -50,7 +53,7 @@ bool ConstantMedium::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) co
 
     const auto rayLength              = ray.Direction().Length();
     const auto distanceInsideBoundary = (rec2.T - rec1.T) * rayLength;
-    const auto hitDistance            = m_NegativeInvertedDensity * std::log(Random::Double());
+    const auto hitDistance            = m_NegativeInvertedDensity * std::log(Utils::Random::Double());
 
     if(hitDistance > distanceInsideBoundary)
     {
@@ -67,15 +70,17 @@ bool ConstantMedium::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) co
                   << "rec.P = " << rec.P << '\n';
     }
 
-    rec.Normal    = Vector3(1, 0, 0);    // arbitrary
-    rec.FrontFace = true;                // also arbitrary
+    rec.Normal    = Math::Vector3(1, 0, 0);    // arbitrary
+    rec.FrontFace = true;                      // also arbitrary
     rec.SetMaterial(m_PhaseFunction);
 
     return true;
 }
 #pragma warning(pop)
 
-AABB ConstantMedium::BoundingBox() const
+Math::AABB ConstantMedium::BoundingBox() const
 {
     return m_Boundary->BoundingBox();
 }
+
+}    // namespace Objects

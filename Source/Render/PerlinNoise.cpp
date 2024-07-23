@@ -1,10 +1,13 @@
 #include "PerlinNoise.h"
 
+namespace Render
+{
+
 Perlin::Perlin()
 {
     for(int i = 0; i < PointCount; i++)
     {
-        m_RandomVector[i] = UnitVector(Vector3::Random(-1, 1));
+        m_RandomVector[i] = Math::UnitVector(Math::Vector3::Random(-1, 1));
     }
 
     PerlinGeneratePerm(m_PermX);
@@ -12,7 +15,7 @@ Perlin::Perlin()
     PerlinGeneratePerm(m_PermZ);
 }
 
-double Perlin::Noise(const Point3& p) const
+double Perlin::Noise(const Math::Point3& p) const
 {
     const auto u = p.X() - floor(p.X());
     const auto v = p.Y() - floor(p.Y());
@@ -21,7 +24,7 @@ double Perlin::Noise(const Point3& p) const
     const auto j = static_cast<int>(floor(p.Y()));
     const auto k = static_cast<int>(floor(p.Z()));
 
-    Vector3 c[2][2][2];
+    Math::Vector3 c[2][2][2];
 
     for(int di = 0; di < 2; di++)
     {
@@ -36,7 +39,7 @@ double Perlin::Noise(const Point3& p) const
     return PerlinInterp(c, u, v, w);
 }
 
-double Perlin::Turbulence(const Point3& p, const int depth) const
+double Perlin::Turbulence(const Math::Point3& p, const int depth) const
 {
     auto accum  = 0.0;
     auto tempP  = p;
@@ -64,14 +67,14 @@ void Perlin::Permute(int* p, const int n)
 {
     for(int i = n - 1; i > 0; i--)
     {
-        const int target = Random::Int(0, i);
+        const int target = Utils::Random::Int(0, i);
         const int tmp    = p[i];
         p[i]             = p[target];
         p[target]        = tmp;
     }
 }
 
-double Perlin::PerlinInterp(const Vector3 c[2][2][2], const double u, const double v, const double w)
+double Perlin::PerlinInterp(const Math::Vector3 c[2][2][2], const double u, const double v, const double w)
 {
     const auto uu = u * u * (3 - 2 * u);
     const auto vv = v * v * (3 - 2 * v);
@@ -85,10 +88,12 @@ double Perlin::PerlinInterp(const Vector3 c[2][2][2], const double u, const doub
         {
             for(int k = 0; k < 2; k++)
             {
-                Vector3 weightV(u - i, v - j, w - k);
+                Math::Vector3 weightV(u - i, v - j, w - k);
                 accum += ((i * uu + (1 - i) * (1 - uu)) * (j * vv + (1 - j) * (1 - vv)) * (k * ww + (1 - k) * (1 - ww)) * DotProduct(c[i][j][k], weightV));
             }
         }
     }
     return accum;
 }
+
+}    // namespace Render

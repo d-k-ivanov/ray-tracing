@@ -1,5 +1,8 @@
 #include "Vector3.h"
 
+namespace Math
+{
+
 double Vector3::X() const
 {
     return E[0];
@@ -84,10 +87,12 @@ bool Vector3::NearZero() const
 
 Vector3 Vector3::Random()
 {
-    return {Random::Double(), Random::Double(), Random::Double()};
+    return {Utils::Random::Double(), Utils::Random::Double(), Utils::Random::Double()};
 }
 
 Vector3 Vector3::Random(const double min, const double max)
 {
-    return {Random::Double(min, max), Random::Double(min, max), Random::Double(min, max)};
+    return {Utils::Random::Double(min, max), Utils::Random::Double(min, max), Utils::Random::Double(min, max)};
 }
+
+}    // namespace Math

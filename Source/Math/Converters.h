@@ -2,6 +2,9 @@
 
 #include "Constants.h"
 
+namespace Math
+{
+
 inline double DegreesToRadians(const double degrees)
 {
     return degrees * Pi / 180.0;
@@ -23,3 +26,5 @@ public:
     static bool   isLessThanOrEqual(double lhs, double rhs, double absoluteEpsilon = Epsilon());
     static bool   isValueInRange(double value, double lowBound, double upBound, double absoluteEpsilon = Epsilon());
 };
+
+}    // namespace Math

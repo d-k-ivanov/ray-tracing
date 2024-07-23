@@ -5,7 +5,10 @@
 
 #include <cmath>
 
-using Color3 = Vector3;
+namespace Render
+{
+
+using Color3 = Math::Vector3;
 
 inline double LinearToGamma(const double linearComponent)
 {
@@ -56,7 +59,7 @@ inline uint32_t GetColorRGBA(const Color3& color, const double colorScale)
     green = LinearToGamma(green);
     blue  = LinearToGamma(blue);
 
-    static const Interval Intensity(0.000, 0.999);
+    static const Math::Interval Intensity(0.000, 0.999);
 
     const uint8_t r = static_cast<uint8_t>(255.999 * Intensity.Clamp(red));
     const uint8_t g = static_cast<uint8_t>(255.999 * Intensity.Clamp(green));
@@ -99,7 +102,7 @@ inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const double 
     green *= colorScale;
     blue *= colorScale;
 
-    static const Interval Intensity(0.000, 0.999);
+    static const Math::Interval Intensity(0.000, 0.999);
 
     const uint8_t r = static_cast<uint8_t>(255.999 * Intensity.Clamp(red));
     const uint8_t g = static_cast<uint8_t>(255.999 * Intensity.Clamp(green));
@@ -111,5 +114,7 @@ inline uint32_t GetColorRGBANoGammaCorrection(const Color3& color, const double 
 
 inline uint32_t GetRandomColorRGBA()
 {
-    return Random::UInt() | 0xff000000;
+    return Utils::Random::UInt() | 0xff000000;
 }
+
+}    // namespace Render

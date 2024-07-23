@@ -4,6 +4,9 @@
 
 #include <Vulkan/Image.h>
 
+namespace Render
+{
+
 class ImageTexture final : public Texture
 {
 public:
@@ -12,8 +15,10 @@ public:
     {
     }
 
-    Color3 Value(double u, double v, const Point3& p) const override;
+    Color3 Value(double u, double v, const Math::Point3& p) const override;
 
 private:
-    Image m_Image;
+    Vulkan::Image m_Image;
 };
+
+}    // namespace Render

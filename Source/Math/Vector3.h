@@ -7,18 +7,21 @@
 #include <cmath>
 #include <iostream>
 
+namespace Math
+{
+
 class Vector3
 {
 public:
     double E[3];
 
     Vector3()
-        : E {0, 0, 0}
+        : E{0, 0, 0}
     {
     }
 
     Vector3(const double e0, const double e1, const double e2)
-        : E {e0, e1, e2}
+        : E{e0, e1, e2}
     {
     }
 
@@ -111,7 +114,7 @@ inline Vector3 RandomInUnitDisk()
 {
     while(true)
     {
-        auto p = Vector3(Random::Double(-1, 1), Random::Double(-1, 1), 0);
+        auto p = Vector3(Utils::Random::Double(-1, 1), Utils::Random::Double(-1, 1), 0);
         if(p.LengthSquared() < 1)
         {
             return p;
@@ -164,8 +167,8 @@ inline Vector3 Refract(const Vector3& uv, const Vector3& n, const double etaIOve
 
 inline Vector3 RandomCosineDirection()
 {
-    const auto r1 = Random::Double();
-    const auto r2 = Random::Double();
+    const auto r1 = Utils::Random::Double();
+    const auto r2 = Utils::Random::Double();
 
     const auto phi = 2 * Pi * r1;
     const auto x   = cos(phi) * sqrt(r2);
@@ -174,3 +177,5 @@ inline Vector3 RandomCosineDirection()
 
     return {x, y, z};
 }
+
+}    // namespace Math

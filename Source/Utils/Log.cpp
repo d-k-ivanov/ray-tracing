@@ -5,6 +5,9 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+namespace Utils
+{
+
 std::shared_ptr<spdlog::logger> Log::s_Logger;
 
 std::shared_ptr<spdlog::logger>& Log::GetLogger()
@@ -31,3 +34,5 @@ void Log::SetLogLevelWarn()
 {
     s_Logger->set_level(spdlog::level::warn);
 }
+
+}    // namespace Utils

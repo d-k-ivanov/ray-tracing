@@ -2,17 +2,20 @@
 
 #include <Render/HitRecord.h>
 
-Translate::Translate(const std::shared_ptr<Hittable>& object, const Vector3& displacement)
+namespace Objects
+{
+
+Translate::Translate(const std::shared_ptr<Hittable>& object, const Math::Vector3& displacement)
     : m_Object(object)
     , m_Offset(displacement)
 {
     m_BoundingBox = m_Object->BoundingBox() + m_Offset;
 }
 
-bool Translate::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
+bool Translate::Hit(const Render::Ray& ray, const Math::Interval rayT, Render::HitRecord& rec) const
 {
     // Move the ray backwards by the offset
-    const Ray offsetRay(ray.Origin() - m_Offset, ray.Direction(), ray.Time());
+    const Render::Ray offsetRay(ray.Origin() - m_Offset, ray.Direction(), ray.Time());
 
     // Determine whether an intersection exists along the offset ray (and if so, where)
     if(!m_Object->Hit(offsetRay, rayT, rec))
@@ -24,7 +27,9 @@ bool Translate::Hit(const Ray& ray, const Interval rayT, HitRecord& rec) const
     return true;
 }
 
-AABB Translate::BoundingBox() const
+Math::AABB Translate::BoundingBox() const
 {
     return m_BoundingBox;
 }
+
+}    // namespace Objects

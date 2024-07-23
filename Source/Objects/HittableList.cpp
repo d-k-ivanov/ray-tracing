@@ -2,6 +2,9 @@
 
 #include <Render/HitRecord.h>
 
+namespace Objects
+{
+
 HittableList::HittableList(const std::shared_ptr<Hittable>& object)
 {
     Add(object);
@@ -15,18 +18,18 @@ void HittableList::Clear()
 void HittableList::Add(const std::shared_ptr<Hittable>& object)
 {
     Objects.emplace_back(object);
-    m_BoundingBox = AABB(m_BoundingBox, object->BoundingBox());
+    m_BoundingBox = Math::AABB(m_BoundingBox, object->BoundingBox());
 }
 
-bool HittableList::Hit(const Ray& r, const Interval rayT, HitRecord& rec) const
+bool HittableList::Hit(const Render::Ray& r, const Math::Interval rayT, Render::HitRecord& rec) const
 {
-    HitRecord tempRec;
-    bool      hitAnything  = false;
-    auto      closestSoFar = rayT.Max;
+    Render::HitRecord tempRec;
+    bool              hitAnything  = false;
+    auto              closestSoFar = rayT.Max;
 
     for(const auto& object : Objects)
     {
-        if(object->Hit(r, Interval(rayT.Min, closestSoFar), tempRec))
+        if(object->Hit(r, Math::Interval(rayT.Min, closestSoFar), tempRec))
         {
             hitAnything  = true;
             closestSoFar = tempRec.T;
@@ -37,12 +40,12 @@ bool HittableList::Hit(const Ray& r, const Interval rayT, HitRecord& rec) const
     return hitAnything;
 }
 
-AABB HittableList::BoundingBox() const
+Math::AABB HittableList::BoundingBox() const
 {
     return m_BoundingBox;
 }
 
-double HittableList::PDFValue(const Point3& origin, const Vector3& direction) const
+double HittableList::PDFValue(const Math::Point3& origin, const Math::Vector3& direction) const
 {
     const auto weight = 1.0 / static_cast<double>(Objects.size());
     auto       sum    = 0.0;
@@ -53,8 +56,10 @@ double HittableList::PDFValue(const Point3& origin, const Vector3& direction) co
     return sum;
 }
 
-Vector3 HittableList::Random(const Vector3& origin) const
+Math::Vector3 HittableList::Random(const Math::Vector3& origin) const
 {
     const auto intSize = static_cast<int>(Objects.size());
-    return Objects[Random::Int(0, intSize - 1)]->Random(origin);
+    return Objects[Utils::Random::Int(0, intSize - 1)]->Random(origin);
 }
+
+}    // namespace Objects

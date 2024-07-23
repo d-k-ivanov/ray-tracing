@@ -9,59 +9,62 @@
 
 #include "Utils/VulkanException.h"
 
+namespace Vulkan
+{
+
 namespace Impl
 {
 
-uint32_t GetVulkanMemoryType(const VkMemoryPropertyFlags properties, const uint32_t typeBits)
-{
-    VkPhysicalDeviceMemoryProperties vkProps;
-    vkGetPhysicalDeviceMemoryProperties(Application::GetPhysicalDevice(), &vkProps);
-    for(uint32_t i = 0; i < vkProps.memoryTypeCount; i++)
+    uint32_t GetVulkanMemoryType(const VkMemoryPropertyFlags properties, const uint32_t typeBits)
     {
-        if((vkProps.memoryTypes[i].propertyFlags & properties) == properties && typeBits & (1 << i))
-            return i;
+        VkPhysicalDeviceMemoryProperties vkProps;
+        vkGetPhysicalDeviceMemoryProperties(Application::GetPhysicalDevice(), &vkProps);
+        for(uint32_t i = 0; i < vkProps.memoryTypeCount; i++)
+        {
+            if((vkProps.memoryTypes[i].propertyFlags & properties) == properties && typeBits & (1 << i))
+                return i;
+        }
+
+        return 0xffffffff;
     }
 
-    return 0xffffffff;
-}
-
-uint32_t BytesPerPixel(const ImageFormat format)
-{
-    switch(format)
+    uint32_t BytesPerPixel(const ImageFormat format)
     {
-        case ImageFormat::RGBA:
-            return 4;
-        case ImageFormat::RGBA32F:
-            return 16;
-        case ImageFormat::None:
-            return 0;
+        switch(format)
+        {
+            case ImageFormat::RGBA:
+                return 4;
+            case ImageFormat::RGBA32F:
+                return 16;
+            case ImageFormat::None:
+                return 0;
+        }
+        return 0;
     }
-    return 0;
-}
 
-VkFormat FormatToVulkanFormat(const ImageFormat format)
-{
-    switch(format)
+    VkFormat FormatToVulkanFormat(const ImageFormat format)
     {
-        case ImageFormat::RGBA:
-            return VK_FORMAT_R8G8B8A8_UNORM;
-        case ImageFormat::RGBA32F:
-            return VK_FORMAT_R32G32B32A32_SFLOAT;
-        case ImageFormat::None:
-            return static_cast<VkFormat>(0);
+        switch(format)
+        {
+            case ImageFormat::RGBA:
+                return VK_FORMAT_R8G8B8A8_UNORM;
+            case ImageFormat::RGBA32F:
+                return VK_FORMAT_R32G32B32A32_SFLOAT;
+            case ImageFormat::None:
+                return static_cast<VkFormat>(0);
+        }
+        return static_cast<VkFormat>(0);
     }
-    return static_cast<VkFormat>(0);
-}
 
-// Return the value clamped to the range [low, high).
-uint32_t Clamp(const uint32_t x, const uint32_t low, const uint32_t high)
-{
-    if(x < low)
-        return low;
-    if(x < high)
-        return x;
-    return high - 1;
-}
+    // Return the value clamped to the range [low, high).
+    uint32_t Clamp(const uint32_t x, const uint32_t low, const uint32_t high)
+    {
+        if(x < low)
+            return low;
+        if(x < high)
+            return x;
+        return high - 1;
+    }
 
 }    // namespace Impl
 
@@ -334,3 +337,5 @@ void Image::Release()
     m_StagingBuffer       = nullptr;
     m_StagingBufferMemory = nullptr;
 }
+
+}    // namespace Vulkan

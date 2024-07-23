@@ -48,6 +48,7 @@ IncludeCategories:
     Priority: 4
 IndentCaseLabels: true
 IndentPPDirectives: BeforeHash
+InsertNewlineAtEOF: true
 Language: Cpp
 RequiresClausePosition: WithPreceding
 SpaceBeforeCpp11BracedList: false

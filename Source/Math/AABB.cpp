@@ -1,6 +1,9 @@
 // Axis-Aligned Bounding Boxes
 #include "AABB.h"
 
+namespace Math
+{
+
 AABB::AABB(const Interval& x, const Interval& y, const Interval& z)
     : X(x)
     , Y(y)
@@ -52,7 +55,7 @@ const Interval& AABB::AxisInterval(const int n) const
     return X;
 }
 
-bool AABB::HitNonOptimized(const Ray& ray, Interval rayT) const
+bool AABB::HitNonOptimized(const Render::Ray& ray, Interval rayT) const
 {
     for(int axis = 0; axis < 3; axis++)
     {
@@ -72,7 +75,7 @@ bool AABB::HitNonOptimized(const Ray& ray, Interval rayT) const
     return true;
 }
 
-bool AABB::Hit(const Ray& ray, Interval rayT) const
+bool AABB::Hit(const Render::Ray& ray, Interval rayT) const
 {
     for(int axis = 0; axis < 3; axis++)
     {
@@ -97,7 +100,7 @@ bool AABB::Hit(const Ray& ray, Interval rayT) const
 }
 
 // New approach: https://github.com/RayTracing/raytracing.github.io/pull/1422
-bool AABB::HitNew(const Ray& ray, Interval rayT) const
+bool AABB::HitNew(const Render::Ray& ray, Interval rayT) const
 {
     const Point3&  rayOrig = ray.Origin();
     const Vector3& rayDir  = ray.Direction();
@@ -145,3 +148,5 @@ void AABB::PadToMinimums()
 
 const AABB AABB::Empty    = AABB(Interval::Empty, Interval::Empty, Interval::Empty);
 const AABB AABB::Universe = AABB(Interval::Universe, Interval::Universe, Interval::Universe);
+
+}    // namespace Math

@@ -2,6 +2,9 @@
 
 #include "Vector3.h"
 
+namespace Math
+{
+
 class ONB
 {
 public:
@@ -21,3 +24,5 @@ public:
 private:
     Vector3 m_Axis[3];
 };
+
+}    // namespace Math

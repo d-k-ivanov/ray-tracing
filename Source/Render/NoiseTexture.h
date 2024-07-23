@@ -3,6 +3,9 @@
 #include "PerlinNoise.h"
 #include "Texture.h"
 
+namespace Render
+{
+
 class NoiseTexture final : public Texture
 {
 public:
@@ -13,9 +16,11 @@ public:
     {
     }
 
-    Color3 Value(double u, double v, const Point3& p) const override;
+    Color3 Value(double u, double v, const Math::Point3& p) const override;
 
 private:
     Perlin m_Noise;
     double m_Scale;
 };
+
+}    // namespace Render

@@ -8,6 +8,9 @@
 #include <cstring>
 #include <execution>
 
+namespace Render
+{
+
 void Renderer::ResetPixelColorsAccumulator() const
 {
     std::memset(m_PixelColorsAccum, 0, static_cast<uint64_t>(m_Image->GetWidth()) * m_Image->GetHeight() * sizeof(Color3));
@@ -25,7 +28,7 @@ void Renderer::SetImageSize(uint32_t width, uint32_t height)
     }
     else
     {
-        m_Image = std::make_shared<Image>(width, height, ImageFormat::RGBA);
+        m_Image = std::make_shared<Vulkan::Image>(width, height, Vulkan::ImageFormat::RGBA);
     }
 
     delete[] m_ImageData;
@@ -72,7 +75,7 @@ void Renderer::RenderRandom() const
     m_Image->SetData(m_ImageData);
 }
 
-void Renderer::Render(Camera& camera, const Hittable& world, const HittableList& lights)
+void Renderer::Render(Camera& camera, const Objects::Hittable& world, const Objects::HittableList& lights)
 {
     if(camera.SamplingType == Camera::SamplerType::Accumulation)
     {
@@ -102,7 +105,7 @@ void Renderer::Render(Camera& camera, const Hittable& world, const HittableList&
     }
 }
 
-void Renderer::CPUOneCore(const Camera& camera, const Hittable& world, const HittableList& lights) const
+void Renderer::CPUOneCore(const Camera& camera, const Objects::Hittable& world, const Objects::HittableList& lights) const
 {
     if(camera.SamplingType == Camera::SamplerType::Accumulation && m_FrameCounter == 1)
     {
@@ -130,7 +133,7 @@ void Renderer::CPUOneCore(const Camera& camera, const Hittable& world, const Hit
     }
 }
 
-void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const HittableList& lights)
+void Renderer::CPUMultiCore(Camera& camera, const Objects::Hittable& world, const Objects::HittableList& lights)
 {
     if(camera.SamplingType == Camera::SamplerType::Accumulation && m_FrameCounter == 1)
     {
@@ -161,3 +164,5 @@ void Renderer::CPUMultiCore(Camera& camera, const Hittable& world, const Hittabl
                 });
         });
 }
+
+}    // namespace Render

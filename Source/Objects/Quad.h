@@ -4,32 +4,40 @@
 
 #include <memory>
 
+namespace Render
+{
 class Material;
+}
+
+namespace Objects
+{
 
 class Quad final : public Hittable
 {
 public:
-    Quad(const Point3& q, const Vector3& u, const Vector3& v, const std::shared_ptr<Material>& m);
+    Quad(const Math::Point3& q, const Math::Vector3& u, const Math::Vector3& v, const std::shared_ptr<Render::Material>& m);
 
-    void SetBoundingBox();
-    AABB BoundingBox() const override;
-    bool Hit(const Ray& ray, Interval rayT, HitRecord& rec) const override;
+    void       SetBoundingBox();
+    Math::AABB BoundingBox() const override;
+    bool       Hit(const Render::Ray& ray, Math::Interval rayT, Render::HitRecord& rec) const override;
 
     // Given the hit point in plane coordinates, return false if it is outside the
     // primitive, otherwise set the hit record UV coordinates and return true.
-    bool IsInterior(double a, double b, HitRecord& rec) const;
+    bool IsInterior(double a, double b, Render::HitRecord& rec) const;
 
-    double  PDFValue(const Point3& origin, const Vector3& direction) const override;
-    Vector3 Random(const Point3& origin) const override;
+    double        PDFValue(const Math::Point3& origin, const Math::Vector3& direction) const override;
+    Math::Vector3 Random(const Math::Point3& origin) const override;
 
 private:
-    Point3                    m_Q;
-    Vector3                   m_U;
-    Vector3                   m_V;
-    std::shared_ptr<Material> m_Material;
-    AABB                      m_BoundingBox;
-    Vector3                   m_Normal;
-    double                    m_D;
-    Vector3                   m_W;
-    double                    m_Area;
+    Math::Point3                      m_Q;
+    Math::Vector3                     m_U;
+    Math::Vector3                     m_V;
+    std::shared_ptr<Render::Material> m_Material;
+    Math::AABB                        m_BoundingBox;
+    Math::Vector3                     m_Normal;
+    double                            m_D;
+    Math::Vector3                     m_W;
+    double                            m_Area;
 };
+
+}    // namespace Objects

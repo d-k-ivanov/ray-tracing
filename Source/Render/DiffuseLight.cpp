@@ -2,6 +2,9 @@
 
 #include "HitRecord.h"
 
+namespace Render
+{
+
 bool DiffuseLight::Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenuation, Ray& scattered) const
 {
     return false;
@@ -12,12 +15,12 @@ bool DiffuseLight::Scatter(const Ray& rIn, const HitRecord& rec, Color3& attenua
     return false;
 }
 
-Color3 DiffuseLight::Emitted(const double u, const double v, const Point3& p) const
+Color3 DiffuseLight::Emitted(const double u, const double v, const Math::Point3& p) const
 {
     return m_Emit->Value(u, v, p);
 }
 
-Color3 DiffuseLight::Emitted(const Ray& rIn, const HitRecord& rec, const double u, const double v, const Point3& p) const
+Color3 DiffuseLight::Emitted(const Ray& rIn, const HitRecord& rec, const double u, const double v, const Math::Point3& p) const
 {
     if(!rec.FrontFace)
     {
@@ -25,3 +28,5 @@ Color3 DiffuseLight::Emitted(const Ray& rIn, const HitRecord& rec, const double 
     }
     return m_Emit->Value(u, v, p);
 }
+
+}    // namespace Render

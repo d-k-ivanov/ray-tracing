@@ -2,6 +2,9 @@
 
 #include "Texture.h"
 
+namespace Render
+{
+
 class SolidColor final : public Texture
 {
 public:
@@ -15,8 +18,10 @@ public:
     {
     }
 
-    Color3 Value(double u, double v, const Point3& point) const override;
+    Color3 Value(double u, double v, const Math::Point3& point) const override;
 
 private:
     Color3 m_ColorValue;
 };
+
+}    // namespace Render

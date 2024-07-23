@@ -4,6 +4,9 @@
 
 #include <memory>
 
+namespace Render
+{
+
 class CheckerTexture final : public Texture
 {
 public:
@@ -21,10 +24,12 @@ public:
     {
     }
 
-    Color3 Value(double u, double v, const Point3& point) const override;
+    Color3 Value(double u, double v, const Math::Point3& point) const override;
 
 private:
     double                   m_InvertedScale;
     std::shared_ptr<Texture> m_Even;
     std::shared_ptr<Texture> m_Odd;
 };
+
+}    // namespace Render

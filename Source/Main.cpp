@@ -12,7 +12,7 @@
 
 bool g_ApplicationRunning = true;
 
-class RayTracinUILayer final : public Layer
+class RayTracinUILayer final : public UI::Layer
 {
 public:
     void OnAttach() override
@@ -24,8 +24,8 @@ public:
     {
         ImGui::Begin("Settings");
         ImGui::SeparatorText("Style");
-        ImGuiSettings::ShowStyleSelector("Colors");
-        ImGuiSettings::ShowFontSelector("Font");
+        UI::ImGuiSettings::ShowStyleSelector("Colors");
+        UI::ImGuiSettings::ShowFontSelector("Font");
 
         ImGui::SeparatorText("Rendering");
         const char* sceneList[] = {
@@ -89,7 +89,7 @@ public:
         ImGui::Checkbox("Use Probability Density Functions (PDF)", &m_UsePDF);
         ImGui::Checkbox("Use Unidirectional Light", &m_UseUnidirectionalLight);
 
-        if(static_cast<Camera::SamplerType>(m_SamplingType) == Camera::SamplerType::Accumulation)
+        if(static_cast<Render::Camera::SamplerType>(m_SamplingType) == Render::Camera::SamplerType::Accumulation)
         {
             m_SceneSamples = static_cast<int>(m_Renderer.GetFrameCounter());
             if(ImGui::Button("Render", ImVec2(ImGui::GetWindowSize().x * 0.45f, 0.0f)))
@@ -175,16 +175,16 @@ public:
 
     void Render()
     {
-        const Timer timer;
+        const Utils::Timer timer;
 
         m_Renderer.SetImageSize(m_ViewportWidth, m_ViewportHeight);
         switch(m_RendererId)
         {
             case 0:
             {
-                Camera camera                 = m_Scene->GetCamera();
-                camera.RenderingType          = static_cast<Camera::RenderType>(m_RendererType);
-                camera.SamplingType           = static_cast<Camera::SamplerType>(m_SamplingType);
+                Render::Camera camera         = m_Scene->GetCamera();
+                camera.RenderingType          = static_cast<Render::Camera::RenderType>(m_RendererType);
+                camera.SamplingType           = static_cast<Render::Camera::SamplerType>(m_SamplingType);
                 camera.UsePDF                 = m_UsePDF;
                 camera.UseUnidirectionalLight = m_UseUnidirectionalLight;
                 m_Renderer.Render(camera, m_Scene->GetWorld(), m_Scene->GetLights());
@@ -216,78 +216,78 @@ public:
         switch(m_SceneId)
         {
             case 0:
-                m_Scene = std::make_shared<RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekOneDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 1:
-                m_Scene = std::make_shared<RTWeekOneTestScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekOneTestScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 2:
-                m_Scene = std::make_shared<RTWeekOneFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekOneFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 3:
-                m_Scene = std::make_shared<RTWeekNextDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextDefaultScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 4:
-                m_Scene = std::make_shared<RTWeekNextRandomSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextRandomSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 5:
-                m_Scene = std::make_shared<RTWeekNextTwoSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextTwoSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 6:
-                m_Scene = std::make_shared<RTWeekNextEarthScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextEarthScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 7:
-                m_Scene = std::make_shared<RTWeekNextTwoPerlinSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextTwoPerlinSpheresScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 8:
-                m_Scene = std::make_shared<RTWeekNextQuadsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextQuadsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 9:
-                m_Scene = std::make_shared<RTWeekNextSimpleLightScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextSimpleLightScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 10:
-                m_Scene = std::make_shared<RTWeekNextCornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextCornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 11:
-                m_Scene = std::make_shared<RTWeekNextCornellSmokeScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextCornellSmokeScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 12:
-                m_Scene = std::make_shared<RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekNextFinalScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 13:
-                m_Scene = std::make_shared<RTWeekRestACornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekRestACornellBoxScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 14:
-                m_Scene = std::make_shared<RTWeekRestBCornellBoxMirrorScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekRestBCornellBoxMirrorScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 15:
-                m_Scene = std::make_shared<RTWeekRestCCornellBoxGlassScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::RTWeekRestCCornellBoxGlassScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 16:
-                m_Scene = std::make_shared<WhiteSperesScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::WhiteSperesScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
             case 17:
             default:
-                m_Scene = std::make_shared<CornellBoxLightsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
+                m_Scene = std::make_shared<Scenes::CornellBoxLightsScene>(m_AspectRatio, m_ViewportWidth, m_SceneSamples, m_SceneDepth);
                 break;
         }
     }
 
 private:
     // Rendering
-    Renderer m_Renderer;
-    int      m_RendererId             = 0;
-    int      m_RendererType           = 1;
-    int      m_SamplingType           = 2;
-    double   m_LastRenderTime         = 0.0;
-    bool     m_UsePDF                 = true;
-    bool     m_UseUnidirectionalLight = true;
+    Render::Renderer m_Renderer;
+    int              m_RendererId             = 0;
+    int              m_RendererType           = 1;
+    int              m_SamplingType           = 2;
+    double           m_LastRenderTime         = 0.0;
+    bool             m_UsePDF                 = true;
+    bool             m_UseUnidirectionalLight = true;
 
     // Scene
-    std::shared_ptr<Scene> m_Scene        = nullptr;
-    int                    m_SceneId      = 0;
-    int                    m_SceneDepth   = 50;
-    int                    m_SceneSamples = 4;
+    std::shared_ptr<Scenes::Scene> m_Scene        = nullptr;
+    int                            m_SceneId      = 0;
+    int                            m_SceneDepth   = 50;
+    int                            m_SceneSamples = 4;
 
     // Output
     // double   m_AspectRatio    = 16.0 / 9.0;
@@ -303,7 +303,7 @@ private:
     ImVec2 m_InvertedY = {1, 0};
 };
 
-class ImGuiDemoLayer final : public Layer
+class ImGuiDemoLayer final : public UI::Layer
 {
 public:
     void OnUIRender() override
@@ -312,12 +312,12 @@ public:
     }
 };
 
-Application* CreateApplication(int argc, char** argv)
+Vulkan::Application* CreateApplication(int argc, char** argv)
 {
-    ApplicationSpecs spec;
+    Vulkan::ApplicationSpecs spec;
     spec.Name = "Ray Tracing";
 
-    Application* app = new Application(spec);
+    Vulkan::Application* app = new Vulkan::Application(spec);
     app->PushLayer<RayTracinUILayer>();
     app->PushLayer<ImGuiDemoLayer>();
     app->SetMenubarCallback(
@@ -339,11 +339,11 @@ Application* CreateApplication(int argc, char** argv)
 
 int main(const int argc, char** argv)
 {
-    Log::Init();
+    Utils::Log::Init();
     LOG_INFO("Starting...");
     while(g_ApplicationRunning)
     {
-        Application* app = CreateApplication(argc, argv);
+        Vulkan::Application* app = CreateApplication(argc, argv);
         app->Run();
         delete app;
     }
