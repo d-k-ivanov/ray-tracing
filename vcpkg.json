@@ -11,9 +11,10 @@
         {
             "name": "imgui",
             "features": [
-              "docking-experimental",
-              "glfw-binding",
-              "vulkan-binding"
+                "freetype",
+                "docking-experimental",
+                "glfw-binding",
+                "vulkan-binding"
             ]
         },
         {
@@ -21,6 +22,9 @@
         },
         {
             "name": "stb"
+        },
+        {
+            "name": "tinyobjloader"
         },
         {
             "name": "vulkan"
