@@ -282,6 +282,7 @@ void UserInterface::DrawSettings(const Statistics& statistics) const
         ImGui::Text("Frame rate: %.1f fps", statistics.FrameRate);
         ImGui::Text("Primary ray rate: %.2f Gr/s", statistics.RayRate);
         ImGui::Text("Accumulated samples:  %u", statistics.TotalSamples);
+        ImGui::Text("Camera position:  %.1f %.1f %.1f", statistics.CameraLocation.x, statistics.CameraLocation.y, statistics.CameraLocation.z);
         ImGui::NewLine();
 
         ImGui::Text("Help");
@@ -407,6 +408,7 @@ void UserInterface::DrawStats(const Statistics& statistics) const
         ImGui::Text("Frame rate: %.1f fps", statistics.FrameRate);
         ImGui::Text("Primary ray rate: %.2f Gr/s", statistics.RayRate);
         ImGui::Text("Accumulated samples:  %u", statistics.TotalSamples);
+        ImGui::Text("Camera position:  %.1f %.1f %.1f", statistics.CameraLocation.x, statistics.CameraLocation.y, statistics.CameraLocation.z);
     }
     ImGui::End();
 }

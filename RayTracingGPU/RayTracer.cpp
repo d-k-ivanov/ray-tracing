@@ -169,9 +169,9 @@ void RayTracer::Render(const VkCommandBuffer commandBuffer, const uint32_t image
         const auto extent = SwapChain().Extent();
 
         stats.RayRate = static_cast<float>(static_cast<double>(extent.width * extent.height) * m_NumberOfSamples / (timeDelta * 1000000000));
-
         stats.TotalSamples = m_TotalNumberOfSamples;
     }
+    stats.CameraLocation = m_ModelViewController.ModelView()[3];
 
     m_UserInterface->Render(commandBuffer, SwapChainFrameBuffer(imageIndex), stats);
 }

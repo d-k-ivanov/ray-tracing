@@ -5,6 +5,8 @@
 #include <functional>
 #include <memory>
 
+#include <glm/vec3.hpp>
+
 namespace Engine
 {
 class CommandPool;
@@ -27,6 +29,7 @@ struct Statistics final
     float      FrameRate;
     float      RayRate;
     uint32_t   TotalSamples;
+    glm::vec3  CameraLocation;
 };
 
 class UserInterface final
