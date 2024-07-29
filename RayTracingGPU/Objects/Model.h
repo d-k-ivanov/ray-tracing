@@ -23,7 +23,7 @@ public:
     Model& operator=(Model&&)      = delete;
 
     static Model LoadModel(const std::string& filename);
-    static Model CreateCornellBox(float scale);
+    static Model CreateCornellBox(float scale, bool light = true);
     static Model CreateBox(const glm::vec3& p0, const glm::vec3& p1, const Render::Material& material);
     static Model CreateSphere(const glm::vec3& center, float radius, const Render::Material& material, bool isProcedural);
 

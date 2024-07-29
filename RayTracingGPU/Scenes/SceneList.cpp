@@ -60,6 +60,7 @@ namespace Scenes
 const std::vector<std::pair<std::string, std::function<SceneAssets(SceneList::CameraInitialSate&)>>> SceneList::AllScenes =
     {
         {"Cube And Spheres", CubeAndSpheres},
+        {"Cornell Box Lights", CornellBoxLights},
         {"Ray Tracing In One Weekend", RayTracingInOneWeekend},
         {"Planets In One Weekend", PlanetsInOneWeekend},
         {"Lucy In One Weekend", LucyInOneWeekend},
@@ -261,6 +262,56 @@ SceneAssets SceneList::CornellBoxLucy(CameraInitialSate& camera)
     models.push_back(lucy0);
 
     return std::forward_as_tuple(std::move(models), std::vector<Render::Texture>());
+}
+
+SceneAssets SceneList::CornellBoxLights(CameraInitialSate& camera)
+{
+    camera.ModelView       = lookAt(glm::vec3(278, 278, 800), glm::vec3(278, 278, 0), glm::vec3(0, 1, 0));
+    camera.FieldOfView     = 40;
+    camera.Aperture        = 0.0f;
+    camera.FocusDistance   = 10.0f;
+    camera.ControlSpeed    = 500.0f;
+    camera.GammaCorrection = true;
+    camera.HasSky          = false;
+
+    std::vector<Objects::Model> models;
+    models.push_back(Objects::Model::CreateCornellBox(555, /*light*/ false));
+
+    constexpr auto i = glm::mat4(1);
+
+    auto red   = Render::Material::Lambertian(glm::vec3(0.65f, 0.05f, 0.05f));
+    auto white = Render::Material::Lambertian(glm::vec3(0.73f, 0.73f, 0.73f));
+    auto green = Render::Material::Lambertian(glm::vec3(0.12f, 0.45f, 0.15f));
+
+    auto lightR   = Render::Material::DiffuseLight(glm::vec3(20.0f, 0.7f, 0.7f));
+    auto lightG   = Render::Material::DiffuseLight(glm::vec3(0.7f, 20.0f, 0.7f));
+    auto lightB   = Render::Material::DiffuseLight(glm::vec3(0.7f, 0.7f, 20.0f));
+    auto lightW   = Render::Material::DiffuseLight(glm::vec3(15, 15, 15));
+    auto glass    = Render::Material::Dielectric(1.5f);
+    auto aluminum = Render::Material::Metallic(glm::vec3(0.8, 0.85, 0.88), 0.0);
+    auto nullMat  = Render::Material();
+
+    models.push_back(Objects::Model::CreateSphere(glm::vec3(530, 530, -277), 50.0f, lightR, true));
+    models.push_back(Objects::Model::CreateSphere(glm::vec3(277, 530, -277), 50.0f, lightG, true));
+    models.push_back(Objects::Model::CreateSphere(glm::vec3(30, 530, -277), 50.0f, lightB, true));
+
+    // models.push_back(Objects::Model::CreateBox(glm::vec3(455, 150, 554), glm::vec3(10, 150, 554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 100, -554), glm::vec3(455, 90, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 150, -554), glm::vec3(455, 140, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 200, -554), glm::vec3(455, 190, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 250, -554), glm::vec3(455, 240, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 300, -554), glm::vec3(455, 290, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 350, -554), glm::vec3(455, 340, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 400, -554), glm::vec3(455, 390, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 450, -554), glm::vec3(455, 440, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 500, -554), glm::vec3(455, 490, -555), lightW));
+
+
+    models.push_back(Objects::Model::CreateSphere(glm::vec3(405, 100, -277.5), 100.0f, white, true));
+    models.push_back(Objects::Model::CreateSphere(glm::vec3(150, 100, -277.5), 100.0f, glass, true));
+
+
+    return std::make_tuple(std::move(models), std::vector<Render::Texture>());
 }
 
 }    // namespace Scenes

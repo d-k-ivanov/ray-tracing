@@ -28,8 +28,8 @@ UI::UserSettings CreateUserSettings()
 
     userSettings.IsRayTraced     = true;
     userSettings.AccumulateRays  = true;
-    userSettings.NumberOfSamples = 32;
-    userSettings.NumberOfBounces = 32;
+    userSettings.NumberOfSamples = 16;
+    userSettings.NumberOfBounces = 50;
     // userSettings.MaxNumberOfSamples = 64 * 1024;
     userSettings.MaxNumberOfSamples = UINT32_MAX - 1;
 

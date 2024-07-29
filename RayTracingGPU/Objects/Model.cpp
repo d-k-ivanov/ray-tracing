@@ -164,13 +164,20 @@ Model Model::LoadModel(const std::string& filename)
     return {std::move(vertices), std::move(indices), std::move(materials), nullptr};
 }
 
-Model Model::CreateCornellBox(const float scale)
+Model Model::CreateCornellBox(const float scale, const bool light)
 {
     std::vector<Vertex>           vertices;
     std::vector<uint32_t>         indices;
     std::vector<Render::Material> materials;
 
-    CornellBox::Create(scale, vertices, indices, materials);
+    if(light)
+    {
+        CornellBox::Create(scale, vertices, indices, materials);
+    }
+    else
+    {
+        CornellBox::CreateNoLight(scale, vertices, indices, materials);
+    }
 
     return {std::move(vertices), std::move(indices), std::move(materials), nullptr};
 }
