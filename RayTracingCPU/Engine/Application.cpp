@@ -76,7 +76,7 @@ namespace Impl
         (void)messageCode;
         (void)pUserData;
         (void)pLayerPrefix;
-        LOG_WARN(ConcatenateStrings("[vulkan] Debug report from ObjectType:", objectType, " Message: ", pMessage));
+        LOG_WARN(Utils::ConcatenateStrings("[vulkan] Debug report from ObjectType:", objectType, " Message: ", pMessage));
         // (void)fprintf(stderr, "[vulkan] Debug report from ObjectType: %i\nMessage: %s\n\n", objectType, pMessage);
         return VK_FALSE;
     }

@@ -1,5 +1,7 @@
 #include "Interval.h"
 
+#include <algorithm>
+
 namespace Math
 {
 
@@ -22,8 +24,8 @@ Interval::Interval(const double min, const double max)
 }
 
 Interval::Interval(const Interval& a, const Interval& b)
-    : Min(std::fmin(a.Min, b.Min))
-    , Max(std::fmax(a.Max, b.Max))
+    : Min(std::min(a.Min, b.Min))
+    , Max(std::max(a.Max, b.Max))
 {
     // New approach: https://github.com/RayTracing/raytracing.github.io/pull/1422
     // Min = a.Min <= b.Min ? a.Min : b.Min;

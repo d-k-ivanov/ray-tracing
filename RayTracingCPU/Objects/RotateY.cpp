@@ -34,8 +34,8 @@ RotateY::RotateY(const std::shared_ptr<Hittable>& object, const double angle)
 
                 for(int c = 0; c < 3; c++)
                 {
-                    min[c] = std::fmin(min[c], tester[c]);
-                    max[c] = std::fmax(max[c], tester[c]);
+                    min[c] = std::min(min[c], tester[c]);
+                    max[c] = std::max(max[c], tester[c]);
                 }
             }
         }

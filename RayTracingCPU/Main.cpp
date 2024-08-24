@@ -285,9 +285,9 @@ private:
 
     // Scene
     std::shared_ptr<Scenes::Scene> m_Scene        = nullptr;
-    int                            m_SceneId      = 0;
+    int                            m_SceneId      = 17;
     int                            m_SceneDepth   = 50;
-    int                            m_SceneSamples = 4;
+    int                            m_SceneSamples = 10;
 
     // Output
     // double   m_AspectRatio    = 16.0 / 9.0;
