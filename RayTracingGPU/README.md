@@ -1,3 +1,3 @@
-# Ray-Tracing on CPU
+# Ray-Tracing on GPU
 
-![Ray-Tracing on CPU UI](./Resources/screenshot.png)
+![Ray-Tracing on GPU UI](./Resources/screenshot.png)
