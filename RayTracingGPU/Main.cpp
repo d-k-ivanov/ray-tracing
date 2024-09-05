@@ -28,7 +28,7 @@ UI::UserSettings CreateUserSettings()
 
     userSettings.IsRayTraced     = true;
     userSettings.AccumulateRays  = true;
-    userSettings.NumberOfSamples = 16;
+    userSettings.NumberOfSamples = 10;
     userSettings.NumberOfBounces = 50;
     // userSettings.MaxNumberOfSamples = 64 * 1024;
     userSettings.MaxNumberOfSamples = UINT32_MAX - 1;
@@ -62,7 +62,7 @@ int main(const int argc, char* argv[], char* env[])
     try
     {
         const UI::UserSettings     userSettings = CreateUserSettings();
-        const Engine::WindowConfig windowConfig{"Vulkan Window", 800, 800, false, false, true};
+        const Engine::WindowConfig windowConfig{"Vulkan Window", 600, 600, false, false, true};
         // VK_PRESENT_MODE_IMMEDIATE_KHR    = 0
         // VK_PRESENT_MODE_MAILBOX_KHR      = 1
         // VK_PRESENT_MODE_FIFO_KHR         = 2 (default)

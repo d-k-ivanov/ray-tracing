@@ -291,9 +291,9 @@ SceneAssets SceneList::CornellBoxLights(CameraInitialSate& camera)
     auto aluminum = Render::Material::Metallic(glm::vec3(0.8, 0.85, 0.88), 0.0);
     auto nullMat  = Render::Material();
 
-    models.push_back(Objects::Model::CreateSphere(glm::vec3(530, 530, -277), 50.0f, lightR, true));
-    models.push_back(Objects::Model::CreateSphere(glm::vec3(277, 530, -277), 50.0f, lightG, true));
-    models.push_back(Objects::Model::CreateSphere(glm::vec3(30, 530, -277), 50.0f, lightB, true));
+    models.push_back(Objects::Model::CreateSphere(glm::vec3(530, 530, -277), 50.0f, lightG, true));
+    models.push_back(Objects::Model::CreateSphere(glm::vec3(277, 530, -277), 50.0f, lightB, true));
+    models.push_back(Objects::Model::CreateSphere(glm::vec3(30, 530, -277), 50.0f, lightR, true));
 
     // models.push_back(Objects::Model::CreateBox(glm::vec3(455, 150, 554), glm::vec3(10, 150, 554), lightW));
     models.push_back(Objects::Model::CreateBox(glm::vec3(100, 100, -554), glm::vec3(455, 90, -555), lightW));

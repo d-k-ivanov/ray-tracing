@@ -324,7 +324,7 @@ void UserInterface::DrawSettings(const Statistics& statistics) const
         uint32_t min = 1, max = 1024;
         ImGui::SliderScalar("Samples", ImGuiDataType_U32, &Settings().NumberOfSamples, &min, &max);
         min = 1, max = 512;
-        ImGui::SliderScalar("Bounces", ImGuiDataType_U32, &Settings().NumberOfBounces, &min, &max);
+        ImGui::SliderScalar("Depth", ImGuiDataType_U32, &Settings().NumberOfBounces, &min, &max);
         ImGui::NewLine();
 
         ImGui::Text("Camera");
@@ -334,11 +334,11 @@ void UserInterface::DrawSettings(const Statistics& statistics) const
         ImGui::SliderFloat("Focus", &Settings().FocusDistance, 0.1f, 20.0f, "%.1f");
         ImGui::NewLine();
 
-        ImGui::Text("Profiler");
-        ImGui::Separator();
-        ImGui::Checkbox("Show heatmap", &Settings().ShowHeatmap);
-        ImGui::SliderFloat("Scaling", &Settings().HeatmapScale, 0.10f, 10.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-        ImGui::NewLine();
+        // ImGui::Text("Profiler");
+        // ImGui::Separator();
+        // ImGui::Checkbox("Show heatmap", &Settings().ShowHeatmap);
+        // ImGui::SliderFloat("Scaling", &Settings().HeatmapScale, 0.10f, 10.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+        // ImGui::NewLine();
     }
     ImGui::End();
 }

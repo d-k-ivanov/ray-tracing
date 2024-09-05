@@ -23,9 +23,7 @@ vec2 GetSphereTexCoord(const vec3 point)
     const float theta = asin(point.y);
     const float pi    = 3.1415926535897932384626433832795;
 
-    return vec2(
-        (phi + pi) / (2 * pi),
-        1 - (theta + pi / 2) / pi);
+    return vec2((phi + pi) / (2 * pi), 1 - (theta + pi / 2) / pi);
 }
 
 void main()
