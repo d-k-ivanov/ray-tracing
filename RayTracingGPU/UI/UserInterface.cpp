@@ -334,11 +334,11 @@ void UserInterface::DrawSettings(const Statistics& statistics) const
         ImGui::SliderFloat("Focus", &Settings().FocusDistance, 0.1f, 20.0f, "%.1f");
         ImGui::NewLine();
 
-        // ImGui::Text("Profiler");
-        // ImGui::Separator();
-        // ImGui::Checkbox("Show heatmap", &Settings().ShowHeatmap);
-        // ImGui::SliderFloat("Scaling", &Settings().HeatmapScale, 0.10f, 10.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-        // ImGui::NewLine();
+        ImGui::Text("Profiler");
+        ImGui::Separator();
+        ImGui::Checkbox("Show heatmap", &Settings().ShowHeatmap);
+        ImGui::SliderFloat("Scaling", &Settings().HeatmapScale, 0.10f, 10.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+        ImGui::NewLine();
     }
     ImGui::End();
 }
