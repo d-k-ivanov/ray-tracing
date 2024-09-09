@@ -62,7 +62,7 @@ int main(const int argc, char* argv[], char* env[])
     try
     {
         const UI::UserSettings     userSettings = CreateUserSettings();
-        const Engine::WindowConfig windowConfig{"Vulkan Window", 600, 600, false, false, true};
+        const Engine::WindowConfig windowConfig{"Ray Tracing", 600, 600, false, false, true};
         // VK_PRESENT_MODE_IMMEDIATE_KHR    = 0
         // VK_PRESENT_MODE_MAILBOX_KHR      = 1
         // VK_PRESENT_MODE_FIFO_KHR         = 2 (default)
