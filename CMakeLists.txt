@@ -34,6 +34,10 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(EXE_PLATFORM_KEYWORD "MACOSX_BUNDLE")
 endif()
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(-Wno-changes-meaning)
+endif()
+
 add_subdirectory(RayTracingCPU)
 add_subdirectory(RayTracingGPU)
 

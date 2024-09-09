@@ -236,7 +236,7 @@ Color3 Camera::RayColor(const Ray& r, const int depth, const Objects::Hittable& 
         const auto pdfVal    = mixedPDF.Value(scattered.Direction());
 
         // Scattering is impossible
-        if(isnan(pdfVal) || Math::DoubleUtils::isEqual(pdfVal, 0.0, Math::DoubleUtils::DefaultTolerance()))
+        if(std::isnan(pdfVal) || Math::DoubleUtils::isEqual(pdfVal, 0.0, Math::DoubleUtils::DefaultTolerance()))
         {
             return colorFromEmission;
         }
