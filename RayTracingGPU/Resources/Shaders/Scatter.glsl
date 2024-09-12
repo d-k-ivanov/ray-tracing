@@ -3,12 +3,12 @@
 #include "Random.glsl"
 #include "RayPayload.glsl"
 
-// Polynomial approximation by Christophe Schlick
-float Schlick(const float cosine, const float refractionIndex)
+// Polynomial approximation for reflectance by Christophe Schlick.
+float Reflectance(const float cosine, const float refIdx)
 {
-    float r0 = (1 - refractionIndex) / (1 + refractionIndex);
-    r0 *= r0;
-    return r0 + (1 - r0) * pow(1 - cosine, 5);
+    float r0 = (1 - refIdx) / (1 + refIdx);
+    r0       = r0 * r0;
+    return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
 
 // Lambertian
@@ -44,7 +44,7 @@ RayPayload ScatterDieletric(const Material m, const vec3 direction, const vec3 n
     const float cosine        = dot > 0 ? m.RefractionIndex * dot : -dot;
 
     const vec3  refracted   = refract(direction, outwardNormal, niOverNt);
-    const float reflectProb = refracted != vec3(0) ? Schlick(cosine, m.RefractionIndex) : 1;
+    const float reflectProb = refracted != vec3(0) ? Reflectance(cosine, m.RefractionIndex) : 1;
 
     const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[nonuniformEXT(m.DiffuseTextureId)], texCoord) : vec4(1);
 
