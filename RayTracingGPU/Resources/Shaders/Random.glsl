@@ -59,3 +59,21 @@ vec3 RandomInUnitSphere(inout uint seed)
         }
     }
 }
+
+vec3 RandomUnitVector(inout uint seed)
+{
+    return normalize(RandomInUnitSphere(seed));
+}
+
+vec3 RandomOnHemisphere(inout uint seed, const vec3 normal)
+{
+    const vec3 onUnitSphere = RandomUnitVector(seed);
+    if(dot(onUnitSphere, normal) > 0.0)    // In the same hemisphere as the normal
+    {
+        return onUnitSphere;
+    }
+    else
+    {
+        return -onUnitSphere;
+    }
+}

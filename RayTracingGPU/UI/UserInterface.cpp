@@ -322,7 +322,7 @@ void UserInterface::DrawSettings(const Statistics& statistics) const
         ImGui::Checkbox("Accumulate rays between frames", &Settings().AccumulateRays);
 
         uint32_t min = 1, max = 1024;
-        ImGui::SliderScalar("Samples", ImGuiDataType_U32, &Settings().NumberOfSamples, &min, &max);
+        ImGui::InputScalar("Samples", ImGuiDataType_U32, &Settings().NumberOfSamples, &min, &max);
         min = 1, max = 512;
         ImGui::SliderScalar("Depth", ImGuiDataType_U32, &Settings().NumberOfBounces, &min, &max);
         ImGui::NewLine();

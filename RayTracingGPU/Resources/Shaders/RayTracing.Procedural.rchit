@@ -43,5 +43,10 @@ void main()
     const vec3  normal   = (point - center) / radius;
     const vec2  texCoord = GetSphereTexCoord(normal);
 
-    Ray = Scatter(material, gl_WorldRayDirectionEXT, normal, texCoord, gl_HitTEXT, Ray.RandomSeed);
+    float cosThetaMax = sqrt(1 - radius * radius / dot(center - point, center - point));
+    float solidAngle  = 2 * 3.1415926535897932384626433832795 * (1 - cosThetaMax);
+
+    float pdfValue = 1 / solidAngle;
+
+    Ray = Scatter(material, gl_WorldRayDirectionEXT, normal, texCoord, gl_HitTEXT, Ray.RandomSeed, pdfValue);
 }

@@ -54,17 +54,67 @@ void main()
                 rayColor = vec3(0, 0, 0);
                 break;
             }
+            // gl_RayFlagsCullBackFacingTrianglesEXT, gl_RayFlagsCullFrontFacingTrianglesEXT, gl_RayFlagsOpaqueEXT, gl_RayFlagsNoOpaqueEXT
+            // const uint rayFlags = gl_RayFlagsCullBackFacingTrianglesEXT;
+            const uint rayFlags = gl_RayFlagsOpaqueEXT;
 
-            traceRayEXT(
-                Scene, gl_RayFlagsOpaqueEXT, 0xff,
-                0 /*sbtRecordOffset*/, 0 /*sbtRecordStride*/, 0 /*missIndex*/,
-                origin.xyz, tMin, direction.xyz, tMax, 0 /*payload*/);
+            traceRayEXT(Scene,            // acceleration structure
+                        rayFlags,         // rayFlags:
+                        0xff,             // cullMask
+                        0,                // sbtRecordOffset
+                        0,                // sbtRecordStride
+                        0,                // missIndex
+                        origin.xyz,       // ray origin
+                        tMin,             // ray min range
+                        direction.xyz,    // ray direction
+                        tMax,             // ray max range
+                        0                 // payload (location = 0)
+            );
 
-            const vec3  hitColor    = Ray.ColorAndDistance.rgb;
+            const vec3  attenuation = Ray.ColorAndDistance.rgb;
+            const vec3  emitColor   = Ray.EmitColor.rgb;
             const float t           = Ray.ColorAndDistance.w;
-            const bool  isScattered = Ray.ScatterDirection.w > 0;
 
-            rayColor *= hitColor;
+            const bool isScattered = Ray.ScatterDirection.w > 0;
+
+            if(Ray.ScatterDirection.w == 0)
+            {
+                rayColor *= emitColor;
+                break;
+            }
+
+// Enable this block to use the pdf value from the ray payload.
+#if 1
+            if(Ray.SkipPdf)
+            {
+                rayColor *= attenuation;
+            }
+            else
+            {
+
+                const float scatteringPdfValue = Ray.ScatterPdf;
+
+                // float pdfValue = scatteringPdfValue;
+                // float cosTheta = dot(normalize(direction.xyz), normalize(Ray.ScatterDirection.xyz));
+                // float pdfValue = 1 / (2 * 3.1415926535897932384626433832795f) * (1 + cosTheta);
+                // float pdfValue = 1 / (2 * 3.1415926535897932384626433832795f);
+                float pdfValue = Ray.Pdf;
+
+                if(isnan(pdfValue) || pdfValue == 0)
+                {
+                     rayColor *= attenuation;
+                }
+                else
+                {
+                    // vec3  colorFromScatter = (attenuation * scatteringPdfValue * rayColor) / pdfValue;
+                    vec3 colorFromScatter = (attenuation * scatteringPdfValue * rayColor) / pdfValue;
+                    rayColor              = emitColor + colorFromScatter;
+                }
+            }
+
+#else
+            rayColor = emitColor + attenuation * rayColor;
+#endif
 
             // Trace missed, or end of trace.
             if(t < 0 || !isScattered)

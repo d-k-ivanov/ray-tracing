@@ -296,15 +296,15 @@ SceneAssets SceneList::CornellBoxLights(CameraInitialSate& camera)
     models.push_back(Objects::Model::CreateSphere(glm::vec3(30, 530, -277), 50.0f, lightR, true));
 
     // models.push_back(Objects::Model::CreateBox(glm::vec3(455, 150, 554), glm::vec3(10, 150, 554), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 100, -554), glm::vec3(455, 90, -555), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 150, -554), glm::vec3(455, 140, -555), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 200, -554), glm::vec3(455, 190, -555), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 250, -554), glm::vec3(455, 240, -555), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 300, -554), glm::vec3(455, 290, -555), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 350, -554), glm::vec3(455, 340, -555), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 400, -554), glm::vec3(455, 390, -555), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 450, -554), glm::vec3(455, 440, -555), lightW));
-    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 500, -554), glm::vec3(455, 490, -555), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 100, -555), glm::vec3(455, 90,  -554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 150, -555), glm::vec3(455, 140, -554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 200, -555), glm::vec3(455, 190, -554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 250, -555), glm::vec3(455, 240, -554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 300, -555), glm::vec3(455, 290, -554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 350, -555), glm::vec3(455, 340, -554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 400, -555), glm::vec3(455, 390, -554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 450, -555), glm::vec3(455, 440, -554), lightW));
+    models.push_back(Objects::Model::CreateBox(glm::vec3(100, 500, -555), glm::vec3(455, 490, -554), lightW));
 
 
     models.push_back(Objects::Model::CreateSphere(glm::vec3(405, 100, -277.5), 100.0f, white, true));

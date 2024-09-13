@@ -17,9 +17,11 @@ void main()
         const vec3  skyColor = mix(vec3(1.0), vec3(0.5, 0.7, 1.0), t);
 
         Ray.ColorAndDistance = vec4(skyColor, -1);
+        Ray.EmitColor        = vec4(skyColor, -1);
     }
     else
     {
         Ray.ColorAndDistance = vec4(0, 0, 0, -1);
+        Ray.EmitColor        = vec4(0, 0, 0, -1);
     }
 }
