@@ -102,11 +102,14 @@ void main()
 
                 if(isnan(pdfValue) || pdfValue == 0)
                 {
-                     rayColor *= attenuation;
+                    // rayColor *= attenuation;
+                    rayColor *= emitColor;
+                    // rayColor = emitColor + attenuation * rayColor;
+                    // pdfValue = scatteringPdfValue;
+                    // pdfValue = 1.0;
                 }
                 else
                 {
-                    // vec3  colorFromScatter = (attenuation * scatteringPdfValue * rayColor) / pdfValue;
                     vec3 colorFromScatter = (attenuation * scatteringPdfValue * rayColor) / pdfValue;
                     rayColor              = emitColor + colorFromScatter;
                 }

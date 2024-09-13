@@ -199,23 +199,22 @@ void main()
     const vec3 direction    = gl_WorldRayDirectionEXT;
     const vec2 texCoord     = Mix(v0.TexCoord, v1.TexCoord, v2.TexCoord, barycentrics);
 
-    float pdfValue = 0.0;
-
-    if(material.MaterialModel == MaterialDiffuseLight)
+    // vec3 worldPos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
+    // vec3 worldPos = gl_WorldRayDirectionEXT;
+    vec3 pos = v0.Position * barycentrics.x + v1.Position * barycentrics.y + v2.Position * barycentrics.z;
+    // vec2 randomUV = vec2(RandomFloat(Ray.RandomSeed), RandomFloat(Ray.RandomSeed));
+    vec2  randomUV = vec2(rnd(), rnd());
+    vec3  out_dir;
+    float pdfValue = SampleSphericalTriangle(pos, v0.Position, v1.Position, v2.Position, randomUV, out_dir);
+    if(dot(-out_dir, normal) < 0.0)
     {
-        vec3 worldPos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-        // vec2 randomUV = vec2(RandomFloat(Ray.RandomSeed), RandomFloat(Ray.RandomSeed));
-        vec2 randomUV = vec2(rnd(), rnd());
-        vec3 out_dir;
-        pdfValue = SampleSphericalTriangle(worldPos, v0.Position, v1.Position, v2.Position, randomUV, out_dir);
-        if(dot(-out_dir, normal) < 0.0)
-        {
-            pdfValue = 0.0;
-        }
-        // float cosTheta = dot(normalize(gl_WorldRayDirectionEXT), normal);
-        // pdfValue = 1 / (2 * 3.1415926535897932384626433832795f) * (1 + cosTheta);
-        // pdfValue = 1.0f / (2.0f * 3.1415926535897932384626433832795);
+        // pdfValue = 0.0;
+        pdfValue = 1.0f / (2.0f * 3.1415926535897932384626433832795);
     }
+
+    // float cosTheta = dot(normalize(gl_WorldRayDirectionEXT), normal);
+    // pdfValue = 1 / (2 * 3.1415926535897932384626433832795f) * (1 + cosTheta);
+    // pdfValue = 1.0f / (2.0f * 3.1415926535897932384626433832795);
 
     Ray = Scatter(material, direction, normal, texCoord, gl_HitTEXT, Ray.RandomSeed, pdfValue);
 }

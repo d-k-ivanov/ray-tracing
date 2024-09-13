@@ -45,8 +45,12 @@ void main()
 
     float cosThetaMax = sqrt(1 - radius * radius / dot(center - point, center - point));
     float solidAngle  = 2 * 3.1415926535897932384626433832795 * (1 - cosThetaMax);
+    float pdfValue    = 1 / solidAngle;
 
-    float pdfValue = 1 / solidAngle;
+    if(isnan(pdfValue))
+    {
+        pdfValue = 1 / (4 * 3.1415926535897932384626433832795);
+    }
 
     Ray = Scatter(material, gl_WorldRayDirectionEXT, normal, texCoord, gl_HitTEXT, Ray.RandomSeed, pdfValue);
 }

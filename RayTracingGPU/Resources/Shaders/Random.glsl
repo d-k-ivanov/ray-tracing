@@ -77,3 +77,17 @@ vec3 RandomOnHemisphere(inout uint seed, const vec3 normal)
         return -onUnitSphere;
     }
 }
+
+vec3 RandomCosineDirection(inout uint seed)
+{
+    const float pi = 3.1415926535897932384626433832795;
+    const float r1 = RandomFloat(seed);
+    const float r2 = RandomFloat(seed);
+
+    const float phi = 2 * pi * r1;
+    const float x   = cos(phi) * sqrt(r2);
+    const float y   = sin(phi) * sqrt(r2);
+    const float z   = sqrt(1 - r2);
+
+    return vec3(x, y, z);
+}
