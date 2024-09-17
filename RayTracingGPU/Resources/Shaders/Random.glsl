@@ -1,5 +1,7 @@
 #extension GL_EXT_control_flow_attributes : require
 
+#include "Common.glsl"
+
 // Generates a seed for a random number generator from 2 inputs plus a backoff
 // https://github.com/nvpro-samples/optix_prime_baking/blob/332a886f1ac46c0b3eea9e89a59593470c755a0e/random.h
 // https://github.com/nvpro-samples/vk_raytracing_tutorial_KHR/tree/master/ray_tracing_jitter_cam
@@ -65,7 +67,7 @@ vec3 RandomUnitVector(inout uint seed)
     return normalize(RandomInUnitSphere(seed));
 }
 
-vec3 RandomOnHemisphere(inout uint seed, const vec3 normal)
+vec3 RandomOnHemisphere0(inout uint seed, const vec3 normal)
 {
     const vec3 onUnitSphere = RandomUnitVector(seed);
     if(dot(onUnitSphere, normal) > 0.0)    // In the same hemisphere as the normal
@@ -78,9 +80,31 @@ vec3 RandomOnHemisphere(inout uint seed, const vec3 normal)
     }
 }
 
+vec3 RandomOnHemisphere1(inout uint seed)
+{
+    const vec2  u         = vec2(RandomFloat(seed), RandomFloat(seed));
+    float       phi       = 2.0f * M_PI * u.x;
+    float       cos_phi   = cos(phi);
+    float       sin_phi   = sin(phi);
+    float       cos_theta = sqrt(u.y);
+    float       sin_theta = sqrt(1.0f - cos_theta * cos_theta);
+    return vec3(sin_theta * cos_phi, cos_theta, sin_theta * sin_phi);
+}
+
+vec3 RandomOnHemisphere2(inout uint seed, in vec3 x, in vec3 y, in vec3 z)
+{
+    float r1 = RandomFloat(seed);
+    float r2 = RandomFloat(seed);
+    float sq = sqrt(r1);
+
+    vec3 direction = vec3(cos(2 * M_PI * r2) * sq, sin(2 * M_PI * r2) * sq, sqrt(1.0f - r1));
+    direction = direction.x * x + direction.y * y + direction.z * z;
+    return direction;
+}
+
 vec3 RandomCosineDirection(inout uint seed)
 {
-    const float pi = 3.1415926535897932384626433832795;
+    const float pi = M_PI;
     const float r1 = RandomFloat(seed);
     const float r2 = RandomFloat(seed);
 

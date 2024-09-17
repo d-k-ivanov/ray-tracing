@@ -1,15 +1,8 @@
 #extension GL_EXT_nonuniform_qualifier : require
 
+#include "Common.glsl"
 #include "Random.glsl"
 #include "RayPayload.glsl"
-
-// Polynomial approximation for reflectance by Christophe Schlick.
-float Reflectance(const float cosine, const float refIdx)
-{
-    float r0 = (1 - refIdx) / (1 + refIdx);
-    r0       = r0 * r0;
-    return r0 + (1 - r0) * pow((1 - cosine), 5);
-}
 
 // Lambertian
 RayPayload ScatterLambertian(const Material m, const vec3 direction, const vec3 normal, const vec2 texCoord, const float t, inout uint seed, float pdf)
@@ -17,13 +10,22 @@ RayPayload ScatterLambertian(const Material m, const vec3 direction, const vec3 
     const bool isScattered      = dot(direction, normal) < 0;
     const vec4 texColor         = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[nonuniformEXT(m.DiffuseTextureId)], texCoord) : vec4(1);
     const vec4 colorAndDistance = vec4(m.Diffuse.rgb * texColor.rgb, t);
-    const vec4 scatter          = vec4(normal + RandomOnHemisphere(seed, normal), isScattered ? 1 : 0);
-    // const vec4 scatter          = vec4(normal + RandomCosineDirection(seed), isScattered ? 1 : 0);
-    const vec4 emitColor = vec4(0);
 
-    const float cosTheta = dot(normal, scatter.xyz);
-    // const float scatterPdf = cosTheta < 0 ? 0.0 : cosTheta / 3.1415926535897932384626433832795;
-    const float scatterPdf = 1 / (2 * 3.1415926535897932384626433832795);
+    vec3 tangent, bitangent;
+    CreateCoordinateSystem(normal, tangent, bitangent);
+
+    // const vec4 scatter       = vec4(normal + RandomInUnitSphere(seed), isScattered ? 1 : 0);
+    const vec4 scatter       = vec4(RandomOnHemisphere0(seed, normal), isScattered ? 1 : 0);
+    // const vec4 scatter          = vec4(AlignWithNormal(RandomOnHemisphere1(seed), normal), isScattered ? 1 : 0);
+    // const vec4 scatter          = vec4(RandomOnHemisphere2(seed, tangent, bitangent, normal), isScattered ? 1 : 0);
+    // const vec4 scatter       = vec4(RandomCosineDirection(seed), isScattered ? 1 : 0);
+
+    const vec4 emitColor   = vec4(0);
+    const float cosTheta   = dot(normal, normalize(scatter.xyz));
+    const float scatterPdf = cosTheta < 0 ? 0.0 : cosTheta / M_PI;
+    // const float scatterPdf = cosTheta < 0 ? 0.0 : cosTheta / M_TWO_PI;
+    // const float scatterPdf = cosTheta < 0 ? 0.0 : 1 / M_TWO_PI;
+    // const float scatterPdf = 1 / M_TWO_PI;
 
     return RayPayload(colorAndDistance, emitColor, scatter, seed, pdf, false /*SkipPdf*/, scatterPdf);
 }
@@ -34,10 +36,17 @@ RayPayload ScatterMetallic(const Material m, const vec3 direction, const vec3 no
     const vec3 reflected   = reflect(direction, normal);
     const bool isScattered = dot(reflected, normal) > 0;
 
+    vec3 tangent, bitangent;
+    CreateCoordinateSystem(normal, tangent, bitangent);
+
     const vec4 texColor         = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[nonuniformEXT(m.DiffuseTextureId)], texCoord) : vec4(1);
     const vec4 colorAndDistance = vec4(m.Diffuse.rgb * texColor.rgb, t);
-    const vec4 scatter          = vec4(reflected + m.Fuzziness * RandomOnHemisphere(seed, normal), isScattered ? 1 : 0);
-    // const vec4  scatter    = vec4(reflected + m.Fuzziness * RandomCosineDirection(seed), isScattered ? 1 : 0);
+    const vec4 scatter          = vec4(reflected + m.Fuzziness * RandomInUnitSphere(seed), isScattered ? 1 : 0);
+    // const vec4 scatter       = vec4(reflected + m.Fuzziness * RandomOnHemisphere0(seed, normal), isScattered ? 1 : 0);
+    // const vec4 scatter       = vec4(reflected + m.Fuzziness * RandomOnHemisphere1(seed), isScattered ? 1 : 0);
+    // const vec4 scatter       = vec4(reflected + m.Fuzziness * RandomOnHemisphere2(seed, tangent, bitangent, normal), isScattered ? 1 : 0);
+    // const vec4  scatter      = vec4(reflected + m.Fuzziness * RandomCosineDirection(seed), isScattered ? 1 : 0);
+
     const vec4  emitColor  = vec4(0);
     const float scatterPdf = 0.0;
 
@@ -59,7 +68,7 @@ RayPayload ScatterDieletric(const Material m, const vec3 direction, const vec3 n
     const vec4  emitColor  = vec4(0);
     const float scatterPdf = 0.0;
 
-    // const float pdf       = 1.0 / (4.0f * 3.1415926535897932384626433832795); iotropic
+    // const float pdf       = 1.0 / (4.0f * M_PI); isotropic
 
     return RandomFloat(seed) < reflectProb
                ? RayPayload(vec4(texColor.rgb, t), emitColor, vec4(reflect(direction, normal), 1), seed, pdf, true /*SkipPdf*/, scatterPdf)
@@ -71,14 +80,16 @@ RayPayload ScatterDiffuseLight(const Material m, const vec3 direction, const vec
 {
     bool frontFace = dot(direction, normal) < 0 ? true : false;
 
-    const vec4  colorAndDistance = vec4(m.Diffuse.rgb, t);
-    const vec4  scatter          = vec4(1, 0, 0, 0);
-    vec4        emitColor        = vec4(0);
-    const float scatterPdf       = 0.0;
+    // vec4  colorAndDistance = vec4(m.Diffuse.rgb, t);
+    vec4  colorAndDistance = vec4(0, 0, 0, t);
+    vec4  scatter          = vec4(1, 0, 0, 0);
+    vec4  emitColor        = vec4(0);
+    float scatterPdf       = 0.0;
 
     if(frontFace)
     {
-        emitColor = m.Diffuse;
+        emitColor        = vec4(m.Diffuse.rgb, 1.0);
+        colorAndDistance = vec4(1, 1, 1, t);
     }
 
     return RayPayload(colorAndDistance, emitColor, scatter, seed, pdf, false /*SkipPdf*/, scatterPdf);

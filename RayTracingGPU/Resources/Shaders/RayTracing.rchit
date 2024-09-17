@@ -10,23 +10,12 @@ layout(binding = 6) readonly buffer MaterialArray { Material[] Materials; };
 layout(binding = 7) readonly buffer OffsetArray { uvec2[] Offsets; };
 layout(binding = 8) uniform sampler2D[] TextureSamplers;
 
+#include "Common.glsl"
 #include "Scatter.glsl"
 #include "Vertex.glsl"
 
-const float PI = 3.1415926535897932384626433832795f;
-
 hitAttributeEXT vec2       HitAttributes;
 rayPayloadInEXT RayPayload Ray;
-
-vec2 Mix(vec2 a, vec2 b, vec2 c, vec3 barycentrics)
-{
-    return a * barycentrics.x + b * barycentrics.y + c * barycentrics.z;
-}
-
-vec3 Mix(vec3 a, vec3 b, vec3 c, vec3 barycentrics)
-{
-    return a * barycentrics.x + b * barycentrics.y + c * barycentrics.z;
-}
 
 // Gram-Schmidt method
 vec3 orthogonalize(in vec3 a, in vec3 b)
@@ -38,7 +27,7 @@ vec3 orthogonalize(in vec3 a, in vec3 b)
 // Return arcsine(x) given that .57 < x
 float asin_tail(const float x)
 {
-    return (PI / 2) - ((x + 2.71745038) * x + 14.0375338) * (0.00440413551 * ((x - 8.31223679) * x + 25.3978882)) * sqrt(1 - x);
+    return (M_PI / 2) - ((x + 2.71745038) * x + 14.0375338) * (0.00440413551 * ((x - 8.31223679) * x + 25.3978882)) * sqrt(1 - x);
 }
 
 // Taken from apple libm source code
@@ -63,7 +52,7 @@ float angle_between(const vec3 v1, const vec3 v2)
 {
     if(dot(v1, v2) < 0)
     {
-        return PI - 2 * portable_asinf(length(v1 + v2) / 2);
+        return M_PI - 2 * portable_asinf(length(v1 + v2) / 2);
     }
     else
     {
@@ -78,7 +67,7 @@ float acos_positive_tail(const float x)
 
 float acos_negative_tail(const float x)
 {
-    return PI - (((x - 2.71850395) * x + 14.7303705)) * (0.00393401226 * ((x + 8.60734272) * x + 27.0927486)) * sqrt(1 + x);
+    return M_PI - (((x - 2.71850395) * x + 14.7303705)) * (0.00393401226 * ((x + 8.60734272) * x + 27.0927486)) * sqrt(1 + x);
 }
 
 float portable_acosf(float x)
@@ -90,7 +79,7 @@ float portable_acosf(float x)
     else if(x <= 0.62)
     {
         const float x2 = x * x;
-        return (PI / 2) - x - (0.0700945929 * x * ((x2 + 1.57144082) * x2 + 1.25210774)) * (x2 * ((x2 - 1.53757966) * x2 + 1.89929986));
+        return (M_PI / 2) - x - (0.0700945929 * x * ((x2 + 1.57144082) * x2 + 1.25210774)) * (x2 * ((x2 - 1.53757966) * x2 + 1.89929986));
     }
     else
     {
@@ -135,7 +124,7 @@ float SampleSphericalTriangle(const vec3 P, const vec3 p1, const vec3 p2, const 
     const float beta  = angle_between(AB, CB);
     const float gamma = angle_between(BC, AC);
 
-    const float area = alpha + beta + gamma - PI;
+    const float area = alpha + beta + gamma - M_PI;
     if(area <= 0.00005f)
     {
         return 0.0;
@@ -199,22 +188,22 @@ void main()
     const vec3 direction    = gl_WorldRayDirectionEXT;
     const vec2 texCoord     = Mix(v0.TexCoord, v1.TexCoord, v2.TexCoord, barycentrics);
 
-    // vec3 worldPos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-    // vec3 worldPos = gl_WorldRayDirectionEXT;
-    vec3 pos = v0.Position * barycentrics.x + v1.Position * barycentrics.y + v2.Position * barycentrics.z;
-    // vec2 randomUV = vec2(RandomFloat(Ray.RandomSeed), RandomFloat(Ray.RandomSeed));
-    vec2  randomUV = vec2(rnd(), rnd());
+    // vec3 pos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
+    // vec3 pos = gl_WorldRayDirectionEXT;
+    vec3 pos      = v0.Position * barycentrics.x + v1.Position * barycentrics.y + v2.Position * barycentrics.z;
+    vec2 randomUV = vec2(RandomFloat(Ray.RandomSeed), RandomFloat(Ray.RandomSeed));
+    // vec2  randomUV = vec2(rnd(), rnd());
     vec3  out_dir;
     float pdfValue = SampleSphericalTriangle(pos, v0.Position, v1.Position, v2.Position, randomUV, out_dir);
-    if(dot(-out_dir, normal) < 0.0)
-    {
-        // pdfValue = 0.0;
-        pdfValue = 1.0f / (2.0f * 3.1415926535897932384626433832795);
-    }
+    // if(dot(-out_dir, normal) < 0.0)
+    // {
+    //     pdfValue = 0.0f;
+    //     // pdfValue = 1.0f / (2.0f * M_PI);
+    // }
 
     // float cosTheta = dot(normalize(gl_WorldRayDirectionEXT), normal);
-    // pdfValue = 1 / (2 * 3.1415926535897932384626433832795f) * (1 + cosTheta);
-    // pdfValue = 1.0f / (2.0f * 3.1415926535897932384626433832795);
+    // pdfValue = 1 / (2 * M_PI) * (1 + cosTheta);
+    // pdfValue = 1.0f / (2.0f * M_PI);
 
     Ray = Scatter(material, direction, normal, texCoord, gl_HitTEXT, Ray.RandomSeed, pdfValue);
 }

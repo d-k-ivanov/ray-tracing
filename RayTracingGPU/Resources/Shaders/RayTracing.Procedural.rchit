@@ -11,6 +11,7 @@ layout(binding = 7) readonly buffer OffsetArray { uvec2[] Offsets; };
 layout(binding = 8) uniform sampler2D[] TextureSamplers;
 layout(binding = 9) readonly buffer SphereArray { vec4[] Spheres; };
 
+#include "Common.glsl"
 #include "Scatter.glsl"
 #include "Vertex.glsl"
 
@@ -21,7 +22,7 @@ vec2 GetSphereTexCoord(const vec3 point)
 {
     const float phi   = atan(point.x, point.z);
     const float theta = asin(point.y);
-    const float pi    = 3.1415926535897932384626433832795;
+    const float pi    = M_PI;
 
     return vec2((phi + pi) / (2 * pi), 1 - (theta + pi / 2) / pi);
 }
@@ -44,13 +45,16 @@ void main()
     const vec2  texCoord = GetSphereTexCoord(normal);
 
     float cosThetaMax = sqrt(1 - radius * radius / dot(center - point, center - point));
-    float solidAngle  = 2 * 3.1415926535897932384626433832795 * (1 - cosThetaMax);
+    float solidAngle  = 2 * M_PI * (1 - cosThetaMax);
     float pdfValue    = 1 / solidAngle;
 
     if(isnan(pdfValue))
     {
-        pdfValue = 1 / (4 * 3.1415926535897932384626433832795);
+        // pdfValue = 1 / (4 * M_PI);
+        // pdfValue = 1 / (2 * M_PI);
+        pdfValue = 0.0f;
     }
+    pdfValue = 1 / (2 * M_PI);
 
     Ray = Scatter(material, gl_WorldRayDirectionEXT, normal, texCoord, gl_HitTEXT, Ray.RandomSeed, pdfValue);
 }

@@ -18,10 +18,16 @@ void main()
 
         Ray.ColorAndDistance = vec4(skyColor, -1);
         Ray.EmitColor        = vec4(skyColor, -1);
+        // Ray.Pdf              = 0.0f;
+        // Ray.SkipPdf          = true;
+        // Ray.ScatterPdf       = 0.0f;
     }
     else
     {
         Ray.ColorAndDistance = vec4(0, 0, 0, -1);
         Ray.EmitColor        = vec4(0, 0, 0, -1);
+        // Ray.Pdf              = 0.0f;
+        // Ray.SkipPdf          = true;
+        // Ray.ScatterPdf       = 0.0f;
     }
 }

@@ -6,6 +6,7 @@ project(${PROJECT_NAME} VERSION ${APP_VERSION_MAJOR}.${APP_VERSION_MINOR}.${APP_
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Resources/ray-tracing.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/ray-tracing.rc")
 
 set(SHADER_FILES
+    Resources/Shaders/Common.glsl
     Resources/Shaders/Graphics.frag
     Resources/Shaders/Graphics.vert
     Resources/Shaders/Heatmap.glsl
