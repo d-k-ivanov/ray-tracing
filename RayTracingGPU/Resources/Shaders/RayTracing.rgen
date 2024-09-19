@@ -85,7 +85,7 @@ void main()
             }
 
 // Enable this block to use the pdf value from the ray payload.
-#if 0
+#if 1
             if(Ray.SkipPdf)
             {
                 rayColor = emitColor + attenuation * rayColor;

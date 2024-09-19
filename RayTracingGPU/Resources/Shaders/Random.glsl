@@ -140,3 +140,30 @@ vec3 RandomCosineDirectionN(inout uint seed, vec3 n)
     /* Make our hemisphere orient around the normal. */
     return tangent * ph.x + bitangent * ph.y + n * ph.z;
 }
+
+vec3 RandomCosineDirection2(inout uint seed)
+{
+    float sin_theta = sqrt(RandomFloat(seed));
+    float cos_theta = sqrt(1.0f - sin_theta * sin_theta);
+
+    // random in plane angle
+    float psi = 2.0f * M_PI * RandomFloat(seed);
+
+    // three vector components
+    float a = cos(psi) * sin_theta;
+    float b = sin(psi) * sin_theta;
+    float c = cos_theta;
+
+    // Tangent space
+    vec3 tangent = vec3(1.0f, 0.0f, 0.0f);
+    vec3 bitangent = vec3(0.0f, 1.0f, 0.0f);
+    vec3 normal    = vec3(0.0f, 0.0f, 1.0f);
+
+    // multiply by corresponding directions
+    vec3 v1 = tangent * a;
+    vec3 v2 = bitangent * b;
+    vec3 v3 = normal * c;
+
+    // add up to get velocity, vel=v1+v2+v3
+    return v1 + v2 + v3;
+}

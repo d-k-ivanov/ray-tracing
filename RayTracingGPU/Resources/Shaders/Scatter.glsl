@@ -53,11 +53,12 @@ RayPayload ScatterMetallic(const Material m, const vec3 direction, const vec3 no
 
     const vec4 texColor         = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[nonuniformEXT(m.DiffuseTextureId)], texCoord) : vec4(1);
     const vec4 colorAndDistance = vec4(m.Diffuse.rgb * texColor.rgb, t);
-    const vec4 scatter          = vec4(reflected + m.Fuzziness * RandomInUnitSphere(seed), isScattered ? 1 : 0);
+    // const vec4 scatter          = vec4(reflected + m.Fuzziness * RandomInUnitSphere(seed), isScattered ? 1 : 0);
     // const vec4 scatter       = vec4(reflected + m.Fuzziness * RandomOnHemisphere0(seed, normal), isScattered ? 1 : 0);
     // const vec4 scatter       = vec4(reflected + m.Fuzziness * RandomOnHemisphere1(seed), isScattered ? 1 : 0);
     // const vec4 scatter       = vec4(reflected + m.Fuzziness * RandomOnHemisphere2(seed, tangent, bitangent, normal), isScattered ? 1 : 0);
     // const vec4  scatter      = vec4(reflected + m.Fuzziness * RandomCosineDirection(seed), isScattered ? 1 : 0);
+    const vec4  scatter      = vec4(reflected + m.Fuzziness * RandomCosineDirection2(seed), isScattered ? 1 : 0);
 
     const vec4  emitColor  = vec4(0);
     const float scatterPdf = 1.0;
