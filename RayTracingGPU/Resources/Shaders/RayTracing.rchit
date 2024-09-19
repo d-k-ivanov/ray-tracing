@@ -188,22 +188,31 @@ void main()
     const vec3 direction    = gl_WorldRayDirectionEXT;
     const vec2 texCoord     = Mix(v0.TexCoord, v1.TexCoord, v2.TexCoord, barycentrics);
 
-    // vec3 pos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
+
+    // float distanceSquared = gl_HitTEXT * gl_HitTEXT * dot(gl_WorldRayDirectionEXT, gl_WorldRayDirectionEXT);
+    // float cosTheta = abs(dot(direction, normal) / length(direction));
+    // float area = 0.5f * length(cross(v1.Position - v0.Position, v2.Position - v0.Position));
+    // float area = 1.0f / (2.0f * M_PI) * (1 + cosTheta) * distanceSquared;
+    // float pdfValue = 1.0f / (distanceSquared / (cosTheta * area));
+
+    vec3 pos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
     // vec3 pos = gl_WorldRayDirectionEXT;
-    vec3 pos      = v0.Position * barycentrics.x + v1.Position * barycentrics.y + v2.Position * barycentrics.z;
+    // vec3 pos      = v0.Position * barycentrics.x + v1.Position * barycentrics.y + v2.Position * barycentrics.z;
     vec2 randomUV = vec2(RandomFloat(Ray.RandomSeed), RandomFloat(Ray.RandomSeed));
     // vec2  randomUV = vec2(rnd(), rnd());
     vec3  out_dir;
-    float pdfValue = SampleSphericalTriangle(pos, v0.Position, v1.Position, v2.Position, randomUV, out_dir);
+    float pdfValue;
+    pdfValue = SampleSphericalTriangle(pos, v0.Position, v1.Position, v2.Position, randomUV, out_dir);
     // if(dot(-out_dir, normal) < 0.0)
     // {
-    //     pdfValue = 0.0f;
+    //     pdfValue = 1.0f;
     //     // pdfValue = 1.0f / (2.0f * M_PI);
     // }
 
-    // float cosTheta = dot(normalize(gl_WorldRayDirectionEXT), normal);
+    // float cosTheta = dot(normalize(direction), normal);
     // pdfValue = 1 / (2 * M_PI) * (1 + cosTheta);
     // pdfValue = 1.0f / (2.0f * M_PI);
+    // pdfValue = 1.0f;
 
     Ray = Scatter(material, direction, normal, texCoord, gl_HitTEXT, Ray.RandomSeed, pdfValue);
 }

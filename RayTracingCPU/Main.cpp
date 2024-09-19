@@ -145,7 +145,10 @@ public:
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         // ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(400, 225));
         // ImGui::SetNextWindowSizeConstraints(ImVec2(400, 225), ImVec2(400, 225));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
         ImGui::Begin("Viewport");
+
+        // Set the viewport background color
 
         // m_ViewportWidth  = static_cast<uint32_t>(ImGui::GetContentRegionAvail().x);
         // m_ViewportHeight = static_cast<uint32_t>(ImGui::GetContentRegionAvail().y);
@@ -165,6 +168,7 @@ public:
             ImGui::Image(image->GetDescriptorSet(), {m_ImageWidth, m_ImageHeight});
         }
         ImGui::End();
+        ImGui::PopStyleColor();
         ImGui::PopStyleVar();
 
         if(loopRendering)
@@ -295,8 +299,8 @@ private:
     float    m_ImageHeight    = 0;
     float    m_ImageWidth     = 0;
     uint32_t m_ViewportHeight = 0;
-    uint32_t m_ViewportWidth  = 600;
-    int      m_Width          = 600;
+    uint32_t m_ViewportWidth  = 700;
+    int      m_Width          = 700;
 
     // ImGui Stuff
     ImVec2 m_InvertedX = {0, 1};

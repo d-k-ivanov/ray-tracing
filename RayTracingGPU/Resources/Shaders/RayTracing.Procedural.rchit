@@ -52,9 +52,10 @@ void main()
     {
         // pdfValue = 1 / (4 * M_PI);
         // pdfValue = 1 / (2 * M_PI);
-        pdfValue = 0.0f;
+        pdfValue = 1.0f;
     }
-    pdfValue = 1 / (2 * M_PI);
+    // pdfValue = 1 / (2 * M_PI);
+    // ppdfValue = 1.0f;
 
     Ray = Scatter(material, gl_WorldRayDirectionEXT, normal, texCoord, gl_HitTEXT, Ray.RandomSeed, pdfValue);
 }

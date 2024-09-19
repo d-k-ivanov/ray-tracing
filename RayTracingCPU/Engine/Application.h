@@ -17,8 +17,8 @@ namespace Engine
 struct ApplicationSpecs
 {
     std::string Name   = "Application";
-    int         Width  = 1600;
-    int         Height = 900;
+    int         Width  = 1360;
+    int         Height = 768;
 };
 
 class Application

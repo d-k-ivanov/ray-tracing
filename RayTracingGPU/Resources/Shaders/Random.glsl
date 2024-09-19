@@ -115,3 +115,28 @@ vec3 RandomCosineDirection(inout uint seed)
 
     return vec3(x, y, z);
 }
+
+vec3 RandomCosineDirectionN(inout uint seed, vec3 n)
+{
+    vec3  rand  = RandomUnitVector(seed);
+    float r     = rand.x * 0.5 + 0.5;     // [-1..1) -> [0..1)
+    float angle = (rand.y + 1.0) * M_PI;  // [-1..1] -> [0..2*PI)
+    float sr    = sqrt(r);
+    vec2  p     = vec2(sr * cos(angle), sr * sin(angle));
+    /*
+     * Unproject disk point up onto hemisphere:
+     * 1.0 == sqrt(x*x + y*y + z*z) -> z = sqrt(1.0 - x*x - y*y)
+     */
+    vec3 ph = vec3(p.xy, sqrt(1.0 - p * p));
+    /*
+     * Compute some arbitrary tangent space for orienting
+     * our hemisphere 'ph' around the normal. We use the camera's up vector
+     * to have some fix reference vector over the whole screen.
+     */
+    vec3 tangent   = normalize(rand);
+    vec3 bitangent = cross(tangent, n);
+    tangent        = cross(bitangent, n);
+
+    /* Make our hemisphere orient around the normal. */
+    return tangent * ph.x + bitangent * ph.y + n * ph.z;
+}

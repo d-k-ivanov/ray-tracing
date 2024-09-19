@@ -307,9 +307,16 @@ SceneAssets SceneList::CornellBoxLights(CameraInitialSate& camera)
     models.push_back(Objects::Model::CreateBox(glm::vec3(100, 500, -555), glm::vec3(455, 490, -554), lightW));
 
 
-    models.push_back(Objects::Model::CreateSphere(glm::vec3(405, 100, -277.5), 100.0f, white, true));
-    models.push_back(Objects::Model::CreateSphere(glm::vec3(150, 100, -277.5), 100.0f, glass, true));
+    // auto obj0 = Objects::Model::CreateBox(glm::vec3(0, 0, -165), glm::vec3(165, 165, 0), white);
+    // obj0.Transform(rotate(translate(i, glm::vec3(555 - 130 - 165, 0, -65)), glm::radians(-18.0f), glm::vec3(0, 1, 0)));
+    auto obj0 = Objects::Model::CreateSphere(glm::vec3(405, 100, -277.5), 100.0f, white, true);
+    models.push_back(obj0);
 
+    // auto obj1 = Objects::Model::CreateBox(glm::vec3(0, 0, -165), glm::vec3(165, 330, 0), white);
+    // obj1.Transform(rotate(translate(i, glm::vec3(555 - 265 - 165, 0, -295)), glm::radians(15.0f), glm::vec3(0, 1, 0)));
+    auto obj1 = Objects::Model::CreateSphere(glm::vec3(150, 100, -277.5), 100.0f, glass, true);
+    // auto obj1 = Objects::Model::CreateSphere(glm::vec3(150, 100, -277.5), 100.0f, white, true);
+    models.push_back(obj1);
 
     return std::make_tuple(std::move(models), std::vector<Render::Texture>());
 }

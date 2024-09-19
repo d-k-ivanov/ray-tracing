@@ -78,7 +78,7 @@ void main()
 
             const bool isScattered = Ray.ScatterDirection.w > 0;
 
-            if(Ray.ScatterDirection.w == 0)
+            if(t < 0 || !isScattered)
             {
                 rayColor *= emitColor;
                 break;
@@ -88,7 +88,7 @@ void main()
 #if 0
             if(Ray.SkipPdf)
             {
-                rayColor *= attenuation;
+                rayColor = emitColor + attenuation * rayColor;
             }
             else
             {
@@ -111,8 +111,8 @@ void main()
                 }
                 else
                 {
-                    vec3 colorFromScatter = (attenuation * scatteringPdfValue * rayColor) / pdfValue;
-                    rayColor              = emitColor + colorFromScatter;
+                    vec3 colorFromScatter = (emitColor + attenuation * scatteringPdfValue ) / pdfValue;
+                    rayColor              = colorFromScatter * rayColor;
                 }
             }
 

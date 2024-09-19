@@ -12,21 +12,33 @@ RayPayload ScatterLambertian(const Material m, const vec3 direction, const vec3 
     const vec4 colorAndDistance = vec4(m.Diffuse.rgb * texColor.rgb, t);
 
     vec3 tangent, bitangent;
+    vec4 scatter;
     CreateCoordinateSystem(normal, tangent, bitangent);
 
-    // const vec4 scatter       = vec4(normal + RandomInUnitSphere(seed), isScattered ? 1 : 0);
-    const vec4 scatter       = vec4(RandomOnHemisphere0(seed, normal), isScattered ? 1 : 0);
-    // const vec4 scatter          = vec4(AlignWithNormal(RandomOnHemisphere1(seed), normal), isScattered ? 1 : 0);
-    // const vec4 scatter          = vec4(RandomOnHemisphere2(seed, tangent, bitangent, normal), isScattered ? 1 : 0);
-    // const vec4 scatter       = vec4(RandomCosineDirection(seed), isScattered ? 1 : 0);
+    // scatter       = vec4(normal + RandomInUnitSphere(seed), isScattered ? 1 : 0);
+    // scatter       = vec4(RandomOnHemisphere0(seed, normal), isScattered ? 1 : 0);
+    // scatter          = vec4(AlignWithNormal(RandomOnHemisphere1(seed), normal), isScattered ? 1 : 0);
+    scatter          = vec4(RandomOnHemisphere2(seed, tangent, bitangent, normal), isScattered ? 1 : 0);
+    // scatter          = vec4(AlignWithNormal(RandomCosineDirection(seed), normal), isScattered ? 1 : 0);
+    // scatter          = vec4(RandomCosineDirectionN(seed, normal), isScattered ? 1 : 0);
+    // scatter          = vec4(AlignWithNormal(RandomUnitVector(seed), normal), isScattered ? 1 : 0);
 
     const vec4 emitColor   = vec4(0);
-    const float cosTheta   = dot(normal, normalize(scatter.xyz));
-    const float scatterPdf = cosTheta < 0 ? 0.0 : cosTheta / M_PI;
-    // const float scatterPdf = cosTheta < 0 ? 0.0 : cosTheta / M_TWO_PI;
-    // const float scatterPdf = cosTheta < 0 ? 0.0 : 1 / M_TWO_PI;
-    // const float scatterPdf = 1 / M_TWO_PI;
+    float       scatterPdf;
+    float cosTheta;
 
+    vec3 scatterTransform = scatter.x * bitangent + scatter.y * tangent + scatter.z * normalize(normal);
+
+    // cosTheta = dot(normal, scatterTransform);
+    cosTheta = dot(normal, scatter.xyz);
+
+    scatterPdf    = cosTheta < 0 ? 0.0 : cosTheta / M_PI;
+    // scatterPdf = cosTheta < 0 ? 0.0 : cosTheta / M_TWO_PI;
+    // scatterPdf = cosTheta < 0 ? 0.0 : 1 / M_TWO_PI;
+    // scatterPdf = 1 / M_TWO_PI;
+    // scatterPdf = 1.0f;
+
+    // scatter = vec4(scatterTransform, isScattered ? 1 : 0);
     return RayPayload(colorAndDistance, emitColor, scatter, seed, pdf, false /*SkipPdf*/, scatterPdf);
 }
 
@@ -48,7 +60,7 @@ RayPayload ScatterMetallic(const Material m, const vec3 direction, const vec3 no
     // const vec4  scatter      = vec4(reflected + m.Fuzziness * RandomCosineDirection(seed), isScattered ? 1 : 0);
 
     const vec4  emitColor  = vec4(0);
-    const float scatterPdf = 0.0;
+    const float scatterPdf = 1.0;
 
     return RayPayload(colorAndDistance, emitColor, scatter, seed, pdf, false /*SkipPdf*/, scatterPdf);
 }
