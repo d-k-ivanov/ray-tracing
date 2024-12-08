@@ -165,7 +165,7 @@ public:
 
             const ImVec2 cursorPosition = ImVec2((ImGui::GetWindowSize().x - m_ImageWidth) * 0.5f, (ImGui::GetWindowSize().y - m_ImageHeight) * 0.5f);
             ImGui::SetCursorPos(cursorPosition);
-            ImGui::Image(image->GetDescriptorSet(), {m_ImageWidth, m_ImageHeight});
+            ImGui::Image(reinterpret_cast<ImTextureID>(image->GetDescriptorSet()), {m_ImageWidth, m_ImageHeight});
         }
         ImGui::End();
         ImGui::PopStyleColor();
