@@ -12,6 +12,7 @@ endif()
 message(STATUS "${CMAKE_CURRENT_LIST_FILE}: Setting up vcpkg toolchain")
 
 set(VCPKG_INITIALIZED 1)
+set(VCPKG_INSTALL_OPTIONS "--x-abi-tools-use-exact-versions;--no-print-usage")
 
 # ###############################################################################
 # Toolchain settings

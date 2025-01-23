@@ -1,6 +1,7 @@
 {
     "name": "raytracing",
     "version": "1.0.0",
+    "builtin-baseline": "57629cd105d8262ea3030e9c54c83a977d47af18",
     "dependencies": [
         {
             "name": "glfw3"
